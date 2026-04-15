@@ -1,51 +1,52 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import { invoke } from "@tauri-apps/api/core";
 import "./App.css";
+import { useState } from "react";
+import { GameCanvas } from "./game/GameCanvas";
+import type { Lang } from "./game/i18n/messages";
 
-function App() {
-  const [greetMsg, setGreetMsg] = useState("");
-  const [name, setName] = useState("");
-
-  async function greet() {
-    // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-    setGreetMsg(await invoke("greet", { name }));
-  }
+export default function App() {
+  const [language, setLanguage] = useState<Lang>("ja");
 
   return (
-    <main className="container">
-      <h1>Welcome to Tauri + React</h1>
+    <div className="relative h-screen w-screen overflow-hidden bg-slate-950 text-white">
+      <GameCanvas language={language} />
 
-      <div className="row">
-        <a href="https://vite.dev" target="_blank">
-          <img src="/vite.svg" className="logo vite" alt="Vite logo" />
-        </a>
-        <a href="https://tauri.app" target="_blank">
-          <img src="/tauri.svg" className="logo tauri" alt="Tauri logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+      <div className="pointer-events-none absolute inset-0">
+        <div className="flex items-start justify-between p-4">
+          <div className="pointer-events-auto rounded-2xl border border-white/10 bg-black/30 px-4 py-3 backdrop-blur">
+            <div className="text-lg font-bold">Pixi + Tauri Template</div>
+            <div className="text-sm text-slate-300">
+              React = UI / Pixi = Game Screen
+            </div>
+          </div>
+
+          <div className="pointer-events-auto flex gap-2 rounded-2xl border border-white/10 bg-black/30 p-2 backdrop-blur">
+            <button
+              className={`rounded-xl px-3 py-2 text-sm ${
+                language === "ja"
+                  ? "bg-blue-500 text-white"
+                  : "bg-white/10 text-slate-200 hover:bg-white/20"
+              }`}
+              onClick={() => setLanguage("ja")}
+            >
+              日本語
+            </button>
+            <button
+              className={`rounded-xl px-3 py-2 text-sm ${
+                language === "en"
+                  ? "bg-blue-500 text-white"
+                  : "bg-white/10 text-slate-200 hover:bg-white/20"
+              }`}
+              onClick={() => setLanguage("en")}
+            >
+              English
+            </button>
+          </div>
+        </div>
+
+        <div className="pointer-events-none absolute bottom-4 left-4 rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-sm text-slate-300 backdrop-blur">
+          Tauri desktop game starter
+        </div>
       </div>
-      <p>Click on the Tauri, Vite, and React logos to learn more.</p>
-
-      <form
-        className="row"
-        onSubmit={(e) => {
-          e.preventDefault();
-          greet();
-        }}
-      >
-        <input
-          id="greet-input"
-          onChange={(e) => setName(e.currentTarget.value)}
-          placeholder="Enter a name..."
-        />
-        <button type="submit">Greet</button>
-      </form>
-      <p>{greetMsg}</p>
-    </main>
+    </div>
   );
 }
-
-export default App;
