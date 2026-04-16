@@ -47,7 +47,7 @@ export class GameApp {
     this.sceneManager = new SceneManager(this.app, this.app.stage);
 
     this.setupResize();
-    this.setupSound();
+    //this.setupSound();
 
     this.showTitleScene();
   }
@@ -60,15 +60,15 @@ export class GameApp {
     this.resizeObserver.observe(this.root);
   }
 
-  private setupSound() {
-    try {
-      if (!sound.exists("click")) {
-        sound.add("click", "/sounds/click.mp3");
-      }
-    } catch (error) {
-      console.warn("optional sound load failed", error);
-    }
-  }
+  //private setupSound() {
+  //  try {
+  //    if (!sound.exists("click")) {
+  //      sound.add("click", "/sounds/click.mp3");
+  //    }
+  //  } catch (error) {
+  //    console.warn("optional sound load failed", error);
+  //  }
+  //}
 
   t(key: MessageKey) {
     return t(this.language, key);
