@@ -4,7 +4,7 @@ import type { Lang } from "./i18n/messages";
 
 type Props = {
   language: Lang;
-  currentScene: SceneKey;
+  currentScene?: SceneKey;
   setCurrentScene: (v:SceneKey)=>void;
 };
 

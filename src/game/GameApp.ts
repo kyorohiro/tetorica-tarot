@@ -13,7 +13,7 @@ export class GameApp {
   private sceneManager: SceneManager | null = null;
   private resizeObserver: ResizeObserver | null = null;
 
-  private currentScene: SceneKey;
+  private currentScene: SceneKey|undefined;
   private language: Lang;
 
   private initialized = false;
@@ -25,7 +25,7 @@ export class GameApp {
   constructor(
     private readonly root: HTMLElement,
     language: Lang,
-    currentScene: SceneKey,
+    currentScene: SceneKey| undefined,
     setCurrentScene: (v: SceneKey) => void,
   ) {
     this.language = language;
