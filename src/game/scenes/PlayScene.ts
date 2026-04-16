@@ -120,7 +120,7 @@ export class PlayScene implements Scene {
       const first = this.pickRandomCard();
 
       this.currentCardId = first.id;
-      this.currentReversed = Math.random() < 0.5;
+      this.currentReversed = Math.random() < 0.3;
 
       await this.card.setTextures(first.url, backCardUrl);
     }
