@@ -106,9 +106,15 @@ export class PlayScene implements Scene {
   private layoutCard() {
     if (!this.width || !this.height) return;
 
-    const cardWidth = Math.min(320, this.width * 0.28);
-    const cardHeight = cardWidth * 1.7;
-
+    let cardWidth; 
+    let cardHeight;
+    if(this.width*1.7 > this.height) {
+      cardHeight = this.height * 0.7;
+      cardWidth = cardHeight/1.7
+    } else {
+      cardWidth = this.width * 0.7; 
+      cardHeight = cardWidth * 1.7;
+    }
     this.card.setSize(cardWidth, cardHeight);
     this.card.setPosition(this.width * 0.5, this.height * 0.55);
   }
