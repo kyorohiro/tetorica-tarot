@@ -5,7 +5,7 @@ import { TitleScene } from "./scenes/TitleScene";
 import { PlayScene } from "./scenes/PlayScene";
 import { t, type Lang, type MessageKey } from "./i18n/messages";
 
-type SceneKey = "title" | "play";
+export type SceneKey = "title" | "play";
 
 export class GameApp {
   private readonly app = new Application();
@@ -13,19 +13,24 @@ export class GameApp {
   private sceneManager: SceneManager | null = null;
   private resizeObserver: ResizeObserver | null = null;
 
-  private currentScene: SceneKey = "title";
+  private currentScene: SceneKey;
   private language: Lang;
 
   private initialized = false;
   private destroyed = false;
   private destroyRequested = false;
-  private playScene: PlayScene| undefined;
+  private playScene: PlayScene | undefined;
+  private setCurrentScene: (v: SceneKey) => void;
 
   constructor(
     private readonly root: HTMLElement,
     language: Lang,
+    currentScene: SceneKey,
+    setCurrentScene: (v: SceneKey) => void,
   ) {
     this.language = language;
+    this.currentScene = currentScene;
+    this.setCurrentScene = setCurrentScene;
   }
 
   async init() {
@@ -75,7 +80,7 @@ export class GameApp {
     return t(this.language, key);
   }
 
-  getLanguage() : Lang{
+  getLanguage(): Lang {
     return this.language;
   }
 
@@ -91,28 +96,35 @@ export class GameApp {
   }
 
   showTitleScene() {
+    console.log("> showTitleScene", this.currentScene )
     if (!this.initialized || this.destroyed || !this.sceneManager) return;
 
-    this.currentScene = "title";
-    this.sceneManager.change(
-      new TitleScene(this),
-      this.app.screen.width,
-      this.app.screen.height,
-    );
+    //this.currentScene = "title";
+    if (this.currentScene != "title") {
+      this.setCurrentScene("title");
+      this.sceneManager.change(
+        new TitleScene(this),
+        this.app.screen.width,
+        this.app.screen.height,
+      );
+    }
   }
 
   showPlayScene() {
     if (!this.initialized || this.destroyed || !this.sceneManager) return;
 
-    this.currentScene = "play";
-    if(!this.playScene) {
-      this.playScene = new PlayScene(this)
+    if (this.currentScene != "play") {
+      //this.currentScene = "play";
+      this.setCurrentScene("play");
+      if (!this.playScene) {
+        this.playScene = new PlayScene(this)
+      }
+      this.sceneManager.change(
+        this.playScene,
+        this.app.screen.width,
+        this.app.screen.height,
+      );
     }
-    this.sceneManager.change(
-      this.playScene,
-      this.app.screen.width,
-      this.app.screen.height,
-    );
   }
 
   //playClick() {

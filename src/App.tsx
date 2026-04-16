@@ -2,13 +2,15 @@ import "./App.css";
 import { useState } from "react";
 import { GameCanvas } from "./game/GameCanvas";
 import type { Lang } from "./game/i18n/messages";
+import { SceneKey } from "./game/GameApp";
 
 export default function App() {
   const [language, setLanguage] = useState<Lang>("ja");
+  const [currentScene, setCurrentScene] = useState<SceneKey>();
 
   return (
     <div className="relative h-screen w-screen overflow-hidden bg-slate-950 text-white">
-      <GameCanvas language={language} />
+      <GameCanvas language={language} currentScene={currentScene} setCurrentScene={setCurrentScene} />
 
       <div className="pointer-events-none absolute inset-0">
         <div className="flex items-start justify-end p-4">
@@ -36,8 +38,8 @@ export default function App() {
         <div className="flex items-start justify-start p-4 top-1 absolute">
           <div className="pointer-events-auto flex gap-2 rounded-2xl border border-white/10 bg-black/30 p-2 backdrop-blur">
             <button
-              className={`rounded-xl px-3 py-2 text-sm bg-white/10 text-slate-200 hover:bg-white/20`}
-              onClick={() => setLanguage("ja")}
+              className={`rounded-xl px-3 py-2 text-sm bg-white/10 text-slate-200 hover:bg-white/20 ${currentScene == "title" ? "hidden" : ""}`}
+              onClick={() => setCurrentScene("title")}
             >
               Back
             </button>
