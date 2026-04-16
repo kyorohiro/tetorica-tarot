@@ -6,8 +6,8 @@ export class TarotCardView {
   private readonly frontCard = new Sprite();
   private readonly backCard = new Sprite();
 
-  private frontTexture: Texture | null = null;
-  private backTexture: Texture | null = null;
+  //private frontTexture: Texture | null = null;
+  //private backTexture: Texture | null = null;
 
   private isFront = true;
   private isFlipping = false;
@@ -32,8 +32,8 @@ export class TarotCardView {
       Assets.load(backUrl),
     ]);
 
-    this.frontTexture = frontTexture;
-    this.backTexture = backTexture;
+    //this.frontTexture = frontTexture;
+    //this.backTexture = backTexture;
 
     this.frontCard.texture = frontTexture;
     this.backCard.texture = backTexture;
@@ -43,7 +43,7 @@ export class TarotCardView {
 
   async setFrontTexture(frontUrl: string) {
     const frontTexture = await Assets.load(frontUrl);
-    this.frontTexture = frontTexture;
+    //this.frontTexture = frontTexture;
     this.frontCard.texture = frontTexture;
   }
 
