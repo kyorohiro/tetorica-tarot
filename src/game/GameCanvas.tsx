@@ -43,7 +43,7 @@ export function GameCanvas({ language, currentScene, setCurrentScene }: Props) {
     if(currentScene == "title") {
       gameRef.current?.showTitleScene();
     } else if(currentScene == "play") {
-      gameRef.current?.showPlayScene();
+      gameRef.current?.showPlayScene(true);
     }
   }, [currentScene]);
 

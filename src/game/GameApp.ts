@@ -110,13 +110,13 @@ export class GameApp {
     }
   }
 
-  showPlayScene() {
+  showPlayScene(forceUpdate?:boolean|undefined) {
     if (!this.initialized || this.destroyed || !this.sceneManager) return;
 
-    if (this.currentScene != "play") {
+    if (forceUpdate || this.currentScene != "play") {
       //this.currentScene = "play";
       this.setCurrentScene("play");
-      if (!this.playScene) {
+      if (forceUpdate || !this.playScene) {
         this.playScene = new PlayScene(this)
       }
       this.sceneManager.change(
