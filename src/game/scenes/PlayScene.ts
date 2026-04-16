@@ -2,6 +2,7 @@ import { Container, Sprite, Texture, Assets } from "pixi.js";
 import type { Scene } from "../core/Scene";
 import type { GameApp } from "../GameApp";
 import { makeButton } from "../ui/makeButton";
+import { Matrix } from "pixi.js";
 
 import backCardUrl from "../../assets/CardBacks.jpg";
 
@@ -42,6 +43,10 @@ export class PlayScene implements Scene {
   private isFront = true;
   private isFlipping = false;
 
+  //
+  private cardCenterX = 0;
+  private cardCenterY = 0;
+
   constructor(private readonly game: GameApp) {
     this.bg.tint = 0x111827;
 
@@ -59,6 +64,30 @@ export class PlayScene implements Scene {
     this.refreshText();
 
     this.container.addChild(this.bg, this.cardRoot, this.backButton);
+  }
+
+  private applyCardMatrix(progress: number) {
+    const sx = Math.max(Math.abs(1 - progress * 2), 0.02);
+    const sy = 1 + 0.04 * Math.sin(progress * Math.PI);
+    const bend = Math.sin(progress * Math.PI);
+    const angle = 0.01 * bend;
+    const skewY = 0.12 * bend;
+
+    const scaleMatrix = new Matrix().scale(sx, sy);
+    const rotateMatrix = new Matrix().rotate(angle);
+    const skewMatrix = new Matrix(1, Math.tan(skewY), 0, 1, 0, 0);
+    const translateMatrix = new Matrix().translate(
+      this.cardCenterX,
+      this.cardCenterY,
+    );
+
+    const matrix = new Matrix();
+    matrix.append(translateMatrix);
+    matrix.append(rotateMatrix);
+    matrix.append(scaleMatrix);
+    matrix.append(skewMatrix);
+    
+    this.cardRoot.setFromMatrix(matrix);
   }
 
   private refreshText() {
@@ -110,7 +139,10 @@ export class PlayScene implements Scene {
     this.backCard.width = cardWidth;
     this.backCard.height = cardHeight;
 
-    this.cardRoot.position.set(this.width * 0.5, this.height * 0.55);
+    this.cardCenterX = this.width * 0.5;
+    this.cardCenterY = this.height * 0.55;
+
+    this.applyCardMatrix(0);
   }
 
   private updateFaceVisibility() {
@@ -119,7 +151,6 @@ export class PlayScene implements Scene {
   }
 
   private flipCard() {
-    if (!this.frontTexture || !this.backTexture) return;
     if (this.isFlipping) return;
 
     this.isFlipping = true;
@@ -133,11 +164,7 @@ export class PlayScene implements Scene {
       const now = performance.now();
       const t = Math.min((now - start) / duration, 1);
 
-      const sx = Math.abs(1 - t * 2);
-
-      this.cardRoot.scale.x = Math.max(sx, 0.02);
-      this.cardRoot.scale.y = 1 + 0.04 * Math.sin(t * Math.PI);
-      this.cardRoot.rotation = 0.02 * Math.sin(t * Math.PI);
+      this.applyCardMatrix(t);
 
       if (!swapped && t >= 0.5) {
         this.isFront = !this.isFront;
@@ -148,8 +175,7 @@ export class PlayScene implements Scene {
       if (t < 1) {
         requestAnimationFrame(tick);
       } else {
-        this.cardRoot.scale.set(1, 1);
-        this.cardRoot.rotation = 0;
+        this.applyCardMatrix(0);
         this.isFlipping = false;
       }
     };
