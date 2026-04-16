@@ -1,8 +1,8 @@
-import { Container, Sprite, Texture, Assets } from "pixi.js";
+import { Container, Sprite, Texture } from "pixi.js";
 import type { Scene } from "../core/Scene";
 import type { GameApp } from "../GameApp";
 import { makeButton } from "../ui/makeButton";
-import { Matrix } from "pixi.js";
+import { TarotCardView } from "./TarotCardView";
 
 import backCardUrl from "../../assets/CardBacks.jpg";
 
@@ -11,20 +11,24 @@ const cardModules = import.meta.glob("../../assets/*.jpg", {
   import: "default",
 }) as Record<string, string>;
 
-const frontCardUrls = Object.entries(cardModules)
+const frontCards = Object.entries(cardModules)
   .filter(([path]) => {
-    return !path.endsWith("/CardBacks.jpg") && !path.endsWith("/00-TheFool copy.jpg");
+    return (
+      !path.endsWith("/CardBacks.jpg") &&
+      !path.endsWith("/00-TheFool copy.jpg")
+    );
   })
-  .map(([, url]) => url);
+  .map(([path, url]) => ({
+    path,
+    url,
+    name: path.split("/").pop()?.replace(".jpg", "") ?? "Unknown",
+  }));
 
 export class PlayScene implements Scene {
   container = new Container();
 
   private readonly bg = new Sprite(Texture.WHITE);
-  private readonly cardRoot = new Container();
-  private readonly frontCard = new Sprite();
-  private readonly backCard = new Sprite();
-  private baseRotation = 0;
+  private readonly card = new TarotCardView();
 
   private readonly backButton = makeButton(
     "",
@@ -39,86 +43,46 @@ export class PlayScene implements Scene {
   private width = 0;
   private height = 0;
 
-  private frontTexture: Texture | null = null;
-  private backTexture: Texture | null = null;
-  private isFront = true;
-  private isFlipping = false;
-
-  //
-  private cardCenterX = 0;
-  private cardCenterY = 0;
-
   constructor(private readonly game: GameApp) {
     this.bg.tint = 0x111827;
 
-    this.frontCard.anchor.set(0.5);
-    this.backCard.anchor.set(0.5);
+    this.card.onTap(async () => {
+      this.game.playClick();
 
-    this.cardRoot.eventMode = "static";
-    this.cardRoot.cursor = "pointer";
-    this.cardRoot.on("pointertap", async () => {
-      await this.flipCard();
+      // 表 → 裏
+      if (this.card.showingFront) {
+        await this.card.flip();
+        return;
+      }
+
+      // 裏 → 次カードを仕込んで表へ
+      const next = this.pickRandomCard();
+      await this.card.setFrontTexture(next.url);
+      this.card.setReversed(Math.random() < 0.5);
+      this.card.showBack();
+      await this.card.flip();
     });
-
-    this.cardRoot.addChild(this.backCard, this.frontCard);
 
     this.refreshText();
 
-    this.container.addChild(this.bg, this.cardRoot, this.backButton);
-  }
-
-  private applyCardMatrix(progress: number) {
-    const sx = Math.max(Math.abs(1 - progress * 2), 0.02);
-    const sy = 1 + 0.04 * Math.sin(progress * Math.PI);
-    const bend = Math.sin(progress * Math.PI);
-    const angle = this.baseRotation + 0.01 * bend;
-    const skewY = 0.12 * bend;
-
-    const scaleMatrix = new Matrix().scale(sx, sy);
-    const rotateMatrix = new Matrix().rotate(angle);
-    const skewMatrix = new Matrix(1, Math.tan(skewY), 0, 1, 0, 0);
-    const translateMatrix = new Matrix().translate(
-      this.cardCenterX,
-      this.cardCenterY,
-    );
-
-    const matrix = new Matrix();
-    matrix.append(translateMatrix);
-    matrix.append(rotateMatrix);
-    matrix.append(scaleMatrix);
-    matrix.append(skewMatrix);
-
-    this.cardRoot.setFromMatrix(matrix);
+    this.container.addChild(this.bg, this.card.container, this.backButton);
   }
 
   private refreshText() {
     this.backButton.setLabel(this.game.t("backToTitle"));
   }
 
-
-  private async setRandomCard() {
-    const randomFrontUrl =
-      frontCardUrls[Math.floor(Math.random() * frontCardUrls.length)];
-
-    this.frontTexture = await Assets.load(randomFrontUrl);
-    if (this.frontTexture) {
-      this.frontCard.texture = this.frontTexture;
-    }
-
-    this.baseRotation = Math.random() < 0.5 ? 0 : Math.PI;
-    this.isFront = true;
-    this.updateFaceVisibility();
-    this.applyCardMatrix(0);
+  private pickRandomCard() {
+    return frontCards[Math.floor(Math.random() * frontCards.length)];
   }
 
   async mount() {
-    this.backTexture = await Assets.load(backCardUrl);
-    this.backCard.texture = this.backTexture!;
+    const first = this.pickRandomCard();
 
-    await this.setRandomCard();
+    await this.card.setTextures(first.url, backCardUrl);
+    this.card.setReversed(Math.random() < 0.5);
+    this.card.showFront();
 
-    this.isFront = true;
-    this.updateFaceVisibility();
     this.layoutCard();
   }
 
@@ -145,63 +109,7 @@ export class PlayScene implements Scene {
     const cardWidth = Math.min(320, this.width * 0.28);
     const cardHeight = cardWidth * 1.7;
 
-    this.frontCard.width = cardWidth;
-    this.frontCard.height = cardHeight;
-
-    this.backCard.width = cardWidth;
-    this.backCard.height = cardHeight;
-
-    this.cardCenterX = this.width * 0.5;
-    this.cardCenterY = this.height * 0.55;
-
-    this.applyCardMatrix(0);
-  }
-
-  private updateFaceVisibility() {
-    this.frontCard.visible = this.isFront;
-    this.backCard.visible = !this.isFront;
-  }
-
-  private async flipCard() {
-    if (this.isFlipping) return;
-    if (!this.backTexture) return;
-
-    this.isFlipping = true;
-    this.game.playClick();
-
-    const willShowFront = !this.isFront;
-
-    // 裏 → 表 に行く時は、先に次カードを仕込む
-    if (willShowFront) {
-      await this.setRandomCard();
-      this.isFront = false;
-      this.updateFaceVisibility();
-    }
-
-    const duration = 360;
-    const start = performance.now();
-    let swapped = false;
-
-    const tick = () => {
-      const now = performance.now();
-      const t = Math.min((now - start) / duration, 1);
-
-      this.applyCardMatrix(t);
-
-      if (!swapped && t >= 0.5) {
-        this.isFront = willShowFront;
-        this.updateFaceVisibility();
-        swapped = true;
-      }
-
-      if (t < 1) {
-        requestAnimationFrame(tick);
-      } else {
-        this.applyCardMatrix(0);
-        this.isFlipping = false;
-      }
-    };
-
-    requestAnimationFrame(tick);
+    this.card.setSize(cardWidth, cardHeight);
+    this.card.setPosition(this.width * 0.5, this.height * 0.55);
   }
 }
