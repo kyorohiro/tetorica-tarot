@@ -39,7 +39,7 @@ export class PlayScene implements Scene {
   private readonly backButton = makeButton(
     "",
     () => {
-      this.game.playClick();
+      //this.game.playClick();
       this.game.showTitleScene();
     },
     180,
@@ -69,26 +69,27 @@ export class PlayScene implements Scene {
   });
 
   constructor(private readonly game: GameApp) {
+    console.log("> constructor");
     this.bg.tint = 0x111827;
 
     this.card.onTap(async () => {
-      this.game.playClick();
+      //this.game.playClick();
 
       if (this.card.showingFront) {
         await this.card.flip();
         return;
       }
 
-      const next = this.pickRandomCard();
-      const reversed = Math.random() < 0.5;
-
-      this.currentCardId = next.id;
-      this.currentReversed = reversed;
-      this.refreshCardText();
-
-      await this.card.setFrontTexture(next.url);
-      this.card.setReversed(reversed);
-      this.card.showBack();
+      //const next = this.pickRandomCard();
+      //const reversed = Math.random() < 0.5;
+      //
+      //this.currentCardId = next.id;
+      //this.currentReversed = reversed;
+      //this.refreshCardText();
+      //
+      //await this.card.setFrontTexture(next.url);
+      //this.card.setReversed(reversed);
+      //this.card.showBack();
       await this.card.flip();
     });
 
@@ -115,12 +116,15 @@ export class PlayScene implements Scene {
   }
 
   async mount() {
-    const first = this.pickRandomCard();
+    console.log("> mount");
+    if (this.currentCardId == undefined || this.currentCardId == null) {
+      const first = this.pickRandomCard();
 
-    this.currentCardId = first.id;
-    this.currentReversed = Math.random() < 0.5;
+      this.currentCardId = first.id;
+      this.currentReversed = Math.random() < 0.5;
 
-    await this.card.setTextures(first.url, backCardUrl);
+      await this.card.setTextures(first.url, backCardUrl);
+    }
     this.card.setReversed(this.currentReversed);
     this.card.showFront();
 
@@ -129,7 +133,7 @@ export class PlayScene implements Scene {
   }
 
   unmount() {
-    this.container.destroy({ children: true });
+    //this.container.destroy({ children: true });
   }
 
   resize(width: number, height: number) {

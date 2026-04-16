@@ -1,5 +1,5 @@
 import { Application } from "pixi.js";
-import { sound } from "@pixi/sound";
+//import { sound } from "@pixi/sound";
 import { SceneManager } from "./core/SceneManager";
 import { TitleScene } from "./scenes/TitleScene";
 import { PlayScene } from "./scenes/PlayScene";
@@ -19,6 +19,7 @@ export class GameApp {
   private initialized = false;
   private destroyed = false;
   private destroyRequested = false;
+  private playScene: PlayScene| undefined;
 
   constructor(
     private readonly root: HTMLElement,
@@ -104,20 +105,23 @@ export class GameApp {
     if (!this.initialized || this.destroyed || !this.sceneManager) return;
 
     this.currentScene = "play";
+    if(!this.playScene) {
+      this.playScene = new PlayScene(this)
+    }
     this.sceneManager.change(
-      new PlayScene(this),
+      this.playScene,
       this.app.screen.width,
       this.app.screen.height,
     );
   }
 
-  playClick() {
-    try {
-      sound.play("click", { volume: 0.15 });
-    } catch {
-      //
-    }
-  }
+  //playClick() {
+  //  try {
+  //    sound.play("click", { volume: 0.15 });
+  //  } catch {
+  //    //
+  //  }
+  //}
 
   destroy() {
     if (this.destroyed) return;

@@ -26,7 +26,7 @@ export class TitleScene implements Scene {
   });
 
   private readonly startButton = makeButton("", () => {
-    this.game.playClick();
+    //this.game.playClick();
     this.game.showPlayScene();
   });
 
