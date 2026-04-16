@@ -3,6 +3,7 @@ import { useState } from "react";
 import { GameCanvas } from "./game/GameCanvas";
 import type { Lang } from "./game/i18n/messages";
 import { SceneKey } from "./game/GameApp";
+import { ArrowLeft, RefreshCw } from "lucide-react";
 
 export default function App() {
   const [language, setLanguage] = useState<Lang>("ja");
@@ -50,7 +51,7 @@ export default function App() {
               }`}
               onClick={() => setCurrentScene("title")}
             >
-              Back
+              <ArrowLeft className="h-5 w-5" />
             </button>
           </div>
         </div>
@@ -65,7 +66,7 @@ export default function App() {
                   requestAnimationFrame(() => setCurrentScene("play"));
                 }}
               >
-                更新
+                <RefreshCw className="h-5 w-5" />
               </button>
             </div>
           </div>
