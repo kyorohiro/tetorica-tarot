@@ -2,6 +2,8 @@
 
 A lightweight tarot-based idea generator for creators.
 
+https://kyorohiro.github.io/tetorica-tarot/
+
 ## ✨ What is this?
 
 Tetorica Tarot is a simple tool that draws a tarot card and shows its core meanings.
