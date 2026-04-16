@@ -1,4 +1,4 @@
-import { Container, Sprite, Text, TextStyle, Texture } from "pixi.js";
+import { Graphics, Container, Sprite, Text, TextStyle, Texture } from "pixi.js";
 import type { Scene } from "../core/Scene";
 import type { GameApp } from "../GameApp";
 import { makeButton } from "../ui/makeButton";
@@ -49,6 +49,8 @@ export class PlayScene implements Scene {
   private width = 0;
   private height = 0;
 
+  private readonly keywordsBg = new Graphics();
+
   private readonly titleText = new Text({
     text: "",
     style: new TextStyle({
@@ -96,6 +98,7 @@ export class PlayScene implements Scene {
     this.container.addChild(
       this.bg,
       this.card.container,
+      this.keywordsBg,
       this.titleText,
       this.keywordsText,
       this.backButton,
@@ -149,6 +152,14 @@ export class PlayScene implements Scene {
 
     this.keywordsText.x = width * 0.5;
     this.keywordsText.y = height * 0.88;
+    //
+    //
+    this.keywordsBg.x = width * 0.5;
+    this.keywordsBg.y = height * 0.88;
+
+    this.keywordsText.anchor.set(0.5);
+    this.keywordsText.x = width * 0.5;
+    this.keywordsText.y = height * 0.88;
   }
 
 
@@ -194,8 +205,27 @@ export class PlayScene implements Scene {
       return;
     }
 
-    this.titleText.text = `${text.titleJa}`;
     //this.keywordsText.text = text.keywordsJa.join(" / ");
-    this.keywordsText.text = text.keywordsJa.map((v) => `#${v}`).join("  ");
+    if (this.game.getLanguage() == "ja") {
+      this.titleText.text = `${text.titleJa}`;
+      this.keywordsText.text = text.keywordsJa.map((v) => `#${v}`).join("  ");
+    } else {
+      this.titleText.text = `${text.titleEn}`;
+      this.keywordsText.text = text.keywordsEn.map((v) => `#${v}`).join("  ");
+    }
+    this.refreshKeywordsBg();
+  }
+
+  private refreshKeywordsBg() {
+    const paddingX = 16;
+    const paddingY = 10;
+    const radius = 14;
+
+    const w = this.keywordsText.width + paddingX * 2;
+    const h = this.keywordsText.height + paddingY * 2 * 3;
+
+    this.keywordsBg.clear();
+    this.keywordsBg.roundRect(-w / 2, -h / 2, w, h, radius);
+    this.keywordsBg.fill({ color: 0x000000, alpha: 0.45 });
   }
 }

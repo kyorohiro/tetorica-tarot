@@ -74,6 +74,10 @@ export class GameApp {
     return t(this.language, key);
   }
 
+  getLanguage() : Lang{
+    return this.language;
+  }
+
   setLanguage(language: Lang) {
     this.language = language;
     if (!this.initialized || this.destroyed) return;
