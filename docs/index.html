@@ -1,0 +1,411 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Tetorica Tarot</title>
+    <meta
+      name="description"
+      content="Tetorica Tarot is a lightweight tarot-based idea generator for creators."
+    />
+    <meta name="theme-color" content="#0f172a" />
+
+    <style>
+      :root {
+        --bg: #020617;
+        --panel: rgba(15, 23, 42, 0.72);
+        --panel-border: rgba(255, 255, 255, 0.12);
+        --text: #e5e7eb;
+        --muted: #94a3b8;
+        --accent: #60a5fa;
+        --accent-2: #c084fc;
+        --shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        min-height: 100%;
+        background:
+          radial-gradient(circle at top, rgba(96, 165, 250, 0.15), transparent 35%),
+          radial-gradient(circle at 80% 20%, rgba(192, 132, 252, 0.12), transparent 30%),
+          linear-gradient(180deg, #0f172a 0%, var(--bg) 100%);
+        color: var(--text);
+        font-family:
+          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", sans-serif;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      .page {
+        width: min(1120px, calc(100% - 32px));
+        margin: 0 auto;
+        padding: 24px 0 56px;
+      }
+
+      .nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 28px;
+      }
+
+      .brand {
+        font-size: 14px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+
+      .nav-links a {
+        border: 1px solid var(--panel-border);
+        background: rgba(255, 255, 255, 0.04);
+        padding: 10px 14px;
+        border-radius: 999px;
+        font-size: 14px;
+        color: var(--text);
+        transition: 0.2s ease;
+      }
+
+      .nav-links a:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      .hero {
+        display: grid;
+        grid-template-columns: 1.15fr 0.85fr;
+        gap: 24px;
+        align-items: stretch;
+      }
+
+      .panel {
+        background: var(--panel);
+        border: 1px solid var(--panel-border);
+        border-radius: 28px;
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+        box-shadow: var(--shadow);
+      }
+
+      .hero-copy {
+        padding: 40px;
+      }
+
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 12px;
+        border-radius: 999px;
+        background: rgba(96, 165, 250, 0.12);
+        border: 1px solid rgba(96, 165, 250, 0.22);
+        color: #bfdbfe;
+        font-size: 13px;
+        margin-bottom: 18px;
+      }
+
+      h1 {
+        margin: 0 0 14px;
+        font-size: clamp(40px, 7vw, 72px);
+        line-height: 0.98;
+        letter-spacing: -0.04em;
+      }
+
+      .lead {
+        margin: 0;
+        font-size: 18px;
+        line-height: 1.7;
+        color: var(--muted);
+        max-width: 58ch;
+      }
+
+      .actions {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-top: 28px;
+      }
+
+      .button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 48px;
+        padding: 0 18px;
+        border-radius: 16px;
+        font-weight: 700;
+        transition: transform 0.18s ease, background 0.18s ease, border-color 0.18s ease;
+      }
+
+      .button:hover {
+        transform: translateY(-1px);
+      }
+
+      .button.primary {
+        background: linear-gradient(135deg, var(--accent), var(--accent-2));
+        color: white;
+      }
+
+      .button.secondary {
+        border: 1px solid var(--panel-border);
+        background: rgba(255, 255, 255, 0.05);
+        color: var(--text);
+      }
+
+      .hero-card {
+        padding: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .card-stack {
+        position: relative;
+        width: min(100%, 320px);
+        aspect-ratio: 1 / 1.45;
+      }
+
+      .card {
+        position: absolute;
+        inset: 0;
+        border-radius: 24px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        overflow: hidden;
+        box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+      }
+
+      .card.back {
+        transform: rotate(-8deg) translate(-16px, 14px);
+        background:
+          radial-gradient(circle at 30% 25%, rgba(255,255,255,0.12), transparent 20%),
+          linear-gradient(135deg, #334155, #0f172a 70%);
+      }
+
+      .card.front {
+        transform: rotate(6deg) translate(12px, -4px);
+        background:
+          linear-gradient(180deg, rgba(255,255,255,0.06), transparent 24%),
+          linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+      }
+
+      .card::before {
+        content: "";
+        position: absolute;
+        inset: 14px;
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 18px;
+      }
+
+      .card-content {
+        position: relative;
+        padding: 24px;
+        z-index: 1;
+      }
+
+      .card-title {
+        margin: 0 0 8px;
+        font-size: 28px;
+        font-weight: 800;
+      }
+
+      .card-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .tag {
+        padding: 8px 10px;
+        border-radius: 999px;
+        font-size: 13px;
+        background: rgba(0, 0, 0, 0.36);
+        border: 1px solid rgba(255,255,255,0.1);
+      }
+
+      .sections {
+        display: grid;
+        gap: 20px;
+        margin-top: 20px;
+      }
+
+      .grid-3 {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 20px;
+      }
+
+      .section {
+        padding: 26px;
+      }
+
+      h2 {
+        margin: 0 0 12px;
+        font-size: 24px;
+        letter-spacing: -0.02em;
+      }
+
+      p {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.7;
+      }
+
+      ul {
+        margin: 14px 0 0;
+        padding-left: 18px;
+        color: var(--muted);
+        line-height: 1.8;
+      }
+
+      .footer {
+        margin-top: 28px;
+        padding: 22px 0 0;
+        color: var(--muted);
+        font-size: 14px;
+        text-align: center;
+      }
+
+      @media (max-width: 900px) {
+        .hero,
+        .grid-3 {
+          grid-template-columns: 1fr;
+        }
+
+        .hero-copy,
+        .hero-card,
+        .section {
+          padding: 24px;
+        }
+
+        .nav {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        .page {
+          width: min(100% - 20px, 1120px);
+          padding-top: 16px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <header class="nav">
+        <div class="brand">Tetorica Tarot</div>
+        <nav class="nav-links">
+          <a href="#about">About</a>
+          <a href="#features">Features</a>
+          <a href="#links">Links</a>
+        </nav>
+      </header>
+
+      <main>
+        <section class="hero">
+          <div class="panel hero-copy">
+            <div class="eyebrow">Creative support tool</div>
+            <h1>Tetorica Tarot</h1>
+            <p class="lead">
+              A lightweight tarot-based idea generator for creators.
+              Draw a card, read its keywords, and use it as a spark for stories,
+              characters, comics, games, or worldbuilding.
+            </p>
+
+            <div class="actions" id="links">
+              <a class="button primary" href="./app/">Open Web App</a>
+              <a
+                class="button secondary"
+                href="https://github.com/"
+                target="_blank"
+                rel="noreferrer"
+              >
+                View on GitHub
+              </a>
+            </div>
+          </div>
+
+          <div class="panel hero-card">
+            <div class="card-stack" aria-hidden="true">
+              <div class="card back"></div>
+              <div class="card front">
+                <div class="card-content">
+                  <h3 class="card-title">The Fool</h3>
+                  <div class="card-tags">
+                    <span class="tag">#Beginning</span>
+                    <span class="tag">#Impulse</span>
+                    <span class="tag">#Potential</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <div class="sections">
+          <section class="grid-3">
+            <div class="panel section" id="about">
+              <h2>What it is</h2>
+              <p>
+                Tetorica Tarot is not a fortune-telling app.
+                It is a small thinking tool that helps creators turn tarot cards
+                into ideas.
+              </p>
+            </div>
+
+            <div class="panel section" id="features">
+              <h2>What it does</h2>
+              <ul>
+                <li>Draws a random Major Arcana card</li>
+                <li>Supports upright and reversed meanings</li>
+                <li>Shows short keyword-based interpretations</li>
+                <li>Designed for quick idea generation</li>
+              </ul>
+            </div>
+
+            <div class="panel section">
+              <h2>How to use</h2>
+              <ul>
+                <li>Open the app</li>
+                <li>Tap the card to flip it</li>
+                <li>Tap again to draw another card</li>
+                <li>Use the keywords as inspiration</li>
+              </ul>
+            </div>
+          </section>
+
+          <section class="panel section">
+            <h2>Concept</h2>
+            <p>
+              Instead of generating a complete story for you, Tetorica Tarot gives
+              you a small trigger. You interpret the card. You build the story.
+              It is designed as a creative support tool, not a replacement for your process.
+            </p>
+          </section>
+        </div>
+      </main>
+
+      <footer class="footer">
+        Tetorica Tarot — A lightweight tarot-based idea generator for creators.
+      </footer>
+    </div>
+  </body>
+</html>
