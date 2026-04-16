@@ -56,8 +56,8 @@ export class PlayScene implements Scene {
 
     this.cardRoot.eventMode = "static";
     this.cardRoot.cursor = "pointer";
-    this.cardRoot.on("pointertap", () => {
-      this.flipCard();
+    this.cardRoot.on("pointertap", async () => {
+      await this.flipCard();
     });
 
     this.cardRoot.addChild(this.backCard, this.frontCard);
@@ -110,15 +110,15 @@ export class PlayScene implements Scene {
     this.updateFaceVisibility();
     this.applyCardMatrix(0);
   }
+
   async mount() {
-    this.setRandomCard();
     this.backTexture = await Assets.load(backCardUrl);
+    this.backCard.texture = this.backTexture!;
+
+    await this.setRandomCard();
 
     this.isFront = true;
     this.updateFaceVisibility();
-
-    if (this.backTexture) this.backCard.texture = this.backTexture;
-
     this.layoutCard();
   }
 
@@ -162,11 +162,21 @@ export class PlayScene implements Scene {
     this.backCard.visible = !this.isFront;
   }
 
-  private flipCard() {
+  private async flipCard() {
     if (this.isFlipping) return;
+    if (!this.backTexture) return;
 
     this.isFlipping = true;
     this.game.playClick();
+
+    const willShowFront = !this.isFront;
+
+    // 裏 → 表 に行く時は、先に次カードを仕込む
+    if (willShowFront) {
+      await this.setRandomCard();
+      this.isFront = false;
+      this.updateFaceVisibility();
+    }
 
     const duration = 360;
     const start = performance.now();
@@ -179,7 +189,7 @@ export class PlayScene implements Scene {
       this.applyCardMatrix(t);
 
       if (!swapped && t >= 0.5) {
-        this.isFront = !this.isFront;
+        this.isFront = willShowFront;
         this.updateFaceVisibility();
         swapped = true;
       }
