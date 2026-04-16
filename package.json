@@ -9,6 +9,7 @@
     "preview": "vite preview",
     "tauri": "tauri",
     "build-sw": "node scripts/build-sw.mjs",
+    "build:web": "npm run build-sw && tsc && vite build --base=./",
     "build:gh": "npm run build-sw && tsc && vite build --base=/tetorica-tarot/demo/"
   },
   "dependencies": {
