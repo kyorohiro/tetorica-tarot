@@ -24,6 +24,7 @@ export class PlayScene implements Scene {
   private readonly cardRoot = new Container();
   private readonly frontCard = new Sprite();
   private readonly backCard = new Sprite();
+  private baseRotation = 0;
 
   private readonly backButton = makeButton(
     "",
@@ -70,7 +71,7 @@ export class PlayScene implements Scene {
     const sx = Math.max(Math.abs(1 - progress * 2), 0.02);
     const sy = 1 + 0.04 * Math.sin(progress * Math.PI);
     const bend = Math.sin(progress * Math.PI);
-    const angle = 0.01 * bend;
+    const angle = this.baseRotation + 0.01 * bend;
     const skewY = 0.12 * bend;
 
     const scaleMatrix = new Matrix().scale(sx, sy);
@@ -86,7 +87,7 @@ export class PlayScene implements Scene {
     matrix.append(rotateMatrix);
     matrix.append(scaleMatrix);
     matrix.append(skewMatrix);
-    
+
     this.cardRoot.setFromMatrix(matrix);
   }
 
@@ -94,17 +95,28 @@ export class PlayScene implements Scene {
     this.backButton.setLabel(this.game.t("backToTitle"));
   }
 
-  async mount() {
+
+  private async setRandomCard() {
     const randomFrontUrl =
       frontCardUrls[Math.floor(Math.random() * frontCardUrls.length)];
 
     this.frontTexture = await Assets.load(randomFrontUrl);
+    if (this.frontTexture) {
+      this.frontCard.texture = this.frontTexture;
+    }
+
+    this.baseRotation = Math.random() < 0.5 ? 0 : Math.PI;
+    this.isFront = true;
+    this.updateFaceVisibility();
+    this.applyCardMatrix(0);
+  }
+  async mount() {
+    this.setRandomCard();
     this.backTexture = await Assets.load(backCardUrl);
 
     this.isFront = true;
     this.updateFaceVisibility();
 
-    if (this.frontTexture) this.frontCard.texture = this.frontTexture;
     if (this.backTexture) this.backCard.texture = this.backTexture;
 
     this.layoutCard();
