@@ -3,14 +3,23 @@ import type { Scene } from "../core/Scene";
 import type { GameApp } from "../GameApp";
 import { makeButton } from "../ui/makeButton";
 
-import foolCardUrl from "../../assets/00-TheFool.jpg";
 import backCardUrl from "../../assets/CardBacks.jpg";
+
+const cardModules = import.meta.glob("../../assets/*.jpg", {
+  eager: true,
+  import: "default",
+}) as Record<string, string>;
+
+const frontCardUrls = Object.entries(cardModules)
+  .filter(([path]) => {
+    return !path.endsWith("/CardBacks.jpg") && !path.endsWith("/00-TheFool copy.jpg");
+  })
+  .map(([, url]) => url);
 
 export class PlayScene implements Scene {
   container = new Container();
 
   private readonly bg = new Sprite(Texture.WHITE);
-
   private readonly cardRoot = new Container();
   private readonly frontCard = new Sprite();
   private readonly backCard = new Sprite();
@@ -28,6 +37,8 @@ export class PlayScene implements Scene {
   private width = 0;
   private height = 0;
 
+  private frontTexture: Texture | null = null;
+  private backTexture: Texture | null = null;
   private isFront = true;
   private isFlipping = false;
 
@@ -55,11 +66,18 @@ export class PlayScene implements Scene {
   }
 
   async mount() {
-    this.frontCard.texture = await Assets.load(foolCardUrl);
-    this.backCard.texture = await Assets.load(backCardUrl);
+    const randomFrontUrl =
+      frontCardUrls[Math.floor(Math.random() * frontCardUrls.length)];
+
+    this.frontTexture = await Assets.load(randomFrontUrl);
+    this.backTexture = await Assets.load(backCardUrl);
 
     this.isFront = true;
     this.updateFaceVisibility();
+
+    if (this.frontTexture) this.frontCard.texture = this.frontTexture;
+    if (this.backTexture) this.backCard.texture = this.backTexture;
+
     this.layoutCard();
   }
 
@@ -101,6 +119,7 @@ export class PlayScene implements Scene {
   }
 
   private flipCard() {
+    if (!this.frontTexture || !this.backTexture) return;
     if (this.isFlipping) return;
 
     this.isFlipping = true;
@@ -116,7 +135,6 @@ export class PlayScene implements Scene {
 
       const sx = Math.abs(1 - t * 2);
 
-      // 0に近すぎるとチラつきやすいので少し余裕を持たせる
       this.cardRoot.scale.x = Math.max(sx, 0.02);
       this.cardRoot.scale.y = 1 + 0.04 * Math.sin(t * Math.PI);
       this.cardRoot.rotation = 0.02 * Math.sin(t * Math.PI);
