@@ -36,15 +36,15 @@ export class PlayScene implements Scene {
   private currentCardId: string | null = null;
   private currentReversed = false;
 
-  private readonly backButton = makeButton(
-    "",
-    () => {
-      //this.game.playClick();
-      this.game.showTitleScene();
-    },
-    180,
-    52,
-  );
+  //private readonly backButton = makeButton(
+  //  "",
+  //  () => {
+  //    //this.game.playClick();
+  //    this.game.showTitleScene();
+  //  },
+  //  180,
+  //  52,
+  //);
 
   private width = 0;
   private height = 0;
@@ -102,12 +102,12 @@ export class PlayScene implements Scene {
       this.keywordsBg,
       this.titleText,
       this.keywordsText,
-      this.backButton,
+      //this.backButton,
     );
   }
 
   private refreshText() {
-    this.backButton.setLabel(this.game.t("backToTitle"));
+   // this.backButton.setLabel(this.game.t("backToTitle"));
   }
 
 
@@ -143,8 +143,8 @@ export class PlayScene implements Scene {
     this.bg.width = width;
     this.bg.height = height;
 
-    this.backButton.x = 110;
-    this.backButton.y = 42;
+    //this.backButton.x = 110;
+    //this.backButton.y = 42;
 
     this.layoutCard();
 
