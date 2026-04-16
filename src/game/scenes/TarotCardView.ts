@@ -1,4 +1,4 @@
-import { Assets, Container, Matrix, Sprite, Texture } from "pixi.js";
+import { Assets, Container, Matrix, Sprite } from "pixi.js";
 
 export class TarotCardView {
   readonly container = new Container();

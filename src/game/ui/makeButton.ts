@@ -1,4 +1,4 @@
-import { Container, Sprite, Graphics, Text, Texture } from "pixi.js";
+import { Container, Graphics, Text } from "pixi.js";
 
 
 type PixiButton = Container & {

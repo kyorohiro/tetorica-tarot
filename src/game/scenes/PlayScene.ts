@@ -1,7 +1,6 @@
 import { Graphics, Container, Sprite, Text, TextStyle, Texture } from "pixi.js";
 import type { Scene } from "../core/Scene";
 import type { GameApp } from "../GameApp";
-import { makeButton } from "../ui/makeButton";
 import { TarotCardView } from "./TarotCardView";
 
 import backCardUrl from "../../assets/CardBacks.jpg";
