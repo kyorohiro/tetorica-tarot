@@ -44,7 +44,7 @@ export class GameApp {
 
     this.initialized = true;
     this.root.appendChild(this.app.canvas);
-    this.sceneManager = new SceneManager(this.app.stage);
+    this.sceneManager = new SceneManager(this.app, this.app.stage);
 
     this.setupResize();
     this.setupSound();

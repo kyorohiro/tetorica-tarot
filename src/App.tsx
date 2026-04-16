@@ -12,12 +12,6 @@ export default function App() {
 
       <div className="pointer-events-none absolute inset-0">
         <div className="flex items-start justify-between p-4">
-          <div className="pointer-events-auto rounded-2xl border border-white/10 bg-black/30 px-4 py-3 backdrop-blur">
-            <div className="text-lg font-bold">Pixi + Tauri Template</div>
-            <div className="text-sm text-slate-300">
-              React = UI / Pixi = Game Screen
-            </div>
-          </div>
 
           <div className="pointer-events-auto flex gap-2 rounded-2xl border border-white/10 bg-black/30 p-2 backdrop-blur">
             <button
@@ -41,10 +35,6 @@ export default function App() {
               English
             </button>
           </div>
-        </div>
-
-        <div className="pointer-events-none absolute bottom-4 left-4 rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-sm text-slate-300 backdrop-blur">
-          Tauri desktop game starter
         </div>
       </div>
     </div>
