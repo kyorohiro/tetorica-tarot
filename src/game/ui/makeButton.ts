@@ -1,7 +1,8 @@
-import { Container, Sprite, Text, Texture } from "pixi.js";
+import { Container, Sprite, Graphics, Text, Texture } from "pixi.js";
 
-export type PixiButton = Container & {
-  setLabel: (text: string) => void;
+
+type PixiButton = Container & {
+  setLabel: (next: string) => void;
   buttonWidth: number;
   buttonHeight: number;
 };
@@ -14,12 +15,28 @@ export function makeButton(
 ): PixiButton {
   const root = new Container() as PixiButton;
 
-  const bg = new Sprite(Texture.WHITE);
-  bg.width = width;
-  bg.height = height;
-  bg.anchor.set(0.5);
-  bg.tint = 0x2563eb;
-  bg.alpha = 0.95;
+  const bg = new Graphics();
+  const radius = 18;
+
+  const drawBg = (hover: boolean) => {
+    bg.clear();
+
+    bg.roundRect(-width / 2, -height / 2, width, height, radius);
+    bg.fill({
+      color: hover ? 0x475569 : 0x334155, // 少し青みのあるグレー
+      alpha: hover ? 0.72 : 0.6,
+    });
+
+    bg.roundRect(-width / 2, -height / 2, width, height, radius);
+    bg.stroke({
+      color: 0xffffff,
+      alpha: 0.8,
+      width: 2,
+    });
+  };
+
+  drawBg(false);
+
   bg.eventMode = "static";
   bg.cursor = "pointer";
 
@@ -35,13 +52,14 @@ export function makeButton(
 
   bg.on("pointertap", () => onClick());
   bg.on("pointerover", () => {
-    bg.tint = 0x3b82f6;
+    drawBg(true);
   });
   bg.on("pointerout", () => {
-    bg.tint = 0x2563eb;
+    drawBg(false);
   });
 
   root.addChild(bg, text);
+
   root.setLabel = (next: string) => {
     text.text = next;
   };
