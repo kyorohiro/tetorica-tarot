@@ -1,90 +1,66 @@
-import { Container, Sprite, Text, Texture } from "pixi.js";
+import { Container, Sprite, Texture, Assets } from "pixi.js";
 import type { Scene } from "../core/Scene";
 import type { GameApp } from "../GameApp";
 import { makeButton } from "../ui/makeButton";
+
+import foolCardUrl from "../../assets/00-TheFool.jpg";
+import backCardUrl from "../../assets/CardBacks.jpg";
 
 export class PlayScene implements Scene {
   container = new Container();
 
   private readonly bg = new Sprite(Texture.WHITE);
-  private readonly orb = new Sprite(Texture.WHITE);
 
-  private readonly scoreLabel = new Text({
-    text: "",
-    style: {
-      fill: 0xffffff,
-      fontSize: 28,
-      fontWeight: "700",
+  private readonly cardRoot = new Container();
+  private readonly frontCard = new Sprite();
+  private readonly backCard = new Sprite();
+
+  private readonly backButton = makeButton(
+    "",
+    () => {
+      this.game.playClick();
+      this.game.showTitleScene();
     },
-  });
+    180,
+    52,
+  );
 
-  private readonly hintLabel = new Text({
-    text: "",
-    style: {
-      fill: 0xcbd5e1,
-      fontSize: 18,
-    },
-  });
-
-  private readonly backButton = makeButton("", () => {
-    this.game.playClick();
-    this.game.showTitleScene();
-  }, 180, 52);
-
-  private score = 0;
   private width = 0;
   private height = 0;
+
+  private isFront = true;
+  private isFlipping = false;
 
   constructor(private readonly game: GameApp) {
     this.bg.tint = 0x111827;
 
-    this.orb.width = 96;
-    this.orb.height = 96;
-    this.orb.anchor.set(0.5);
-    this.orb.tint = 0xf472b6;
-    this.orb.alpha = 0.95;
-    this.orb.eventMode = "static";
-    this.orb.cursor = "pointer";
+    this.frontCard.anchor.set(0.5);
+    this.backCard.anchor.set(0.5);
 
-    this.scoreLabel.anchor.set(0.5, 0);
-    this.hintLabel.anchor.set(0.5, 0);
-
-    this.orb.on("pointertap", () => {
-      this.score += 1;
-      this.game.playClick();
-      this.refreshText();
-      this.moveOrbRandomly();
+    this.cardRoot.eventMode = "static";
+    this.cardRoot.cursor = "pointer";
+    this.cardRoot.on("pointertap", () => {
+      this.flipCard();
     });
+
+    this.cardRoot.addChild(this.backCard, this.frontCard);
 
     this.refreshText();
 
-    this.container.addChild(
-      this.bg,
-      this.scoreLabel,
-      this.hintLabel,
-      this.orb,
-      this.backButton,
-    );
+    this.container.addChild(this.bg, this.cardRoot, this.backButton);
   }
 
   private refreshText() {
-    this.scoreLabel.text = `${this.game.t("score")}: ${this.score}`;
-    this.hintLabel.text = this.game.t("hitOrb");
     this.backButton.setLabel(this.game.t("backToTitle"));
   }
 
-  private moveOrbRandomly() {
-    const margin = 80;
-    const x = margin + Math.random() * Math.max(1, this.width - margin * 2);
-    const y =
-      180 + Math.random() * Math.max(1, this.height - 180 - margin * 2);
+  async mount() {
+    this.frontCard.texture = await Assets.load(foolCardUrl);
+    this.backCard.texture = await Assets.load(backCardUrl);
 
-    this.orb.x = x;
-    this.orb.y = y;
-  }
-
-  mount() {
-    this.moveOrbRandomly();
+    this.isFront = true;
+    this.updateFaceVisibility();
+    this.layoutCard();
   }
 
   unmount() {
@@ -98,13 +74,68 @@ export class PlayScene implements Scene {
     this.bg.width = width;
     this.bg.height = height;
 
-    this.scoreLabel.x = width / 2;
-    this.scoreLabel.y = 36;
-
-    this.hintLabel.x = width / 2;
-    this.hintLabel.y = 76;
-
     this.backButton.x = 110;
     this.backButton.y = 42;
+
+    this.layoutCard();
+  }
+
+  private layoutCard() {
+    if (!this.width || !this.height) return;
+
+    const cardWidth = Math.min(320, this.width * 0.28);
+    const cardHeight = cardWidth * 1.7;
+
+    this.frontCard.width = cardWidth;
+    this.frontCard.height = cardHeight;
+
+    this.backCard.width = cardWidth;
+    this.backCard.height = cardHeight;
+
+    this.cardRoot.position.set(this.width * 0.5, this.height * 0.55);
+  }
+
+  private updateFaceVisibility() {
+    this.frontCard.visible = this.isFront;
+    this.backCard.visible = !this.isFront;
+  }
+
+  private flipCard() {
+    if (this.isFlipping) return;
+
+    this.isFlipping = true;
+    this.game.playClick();
+
+    const duration = 360;
+    const start = performance.now();
+    let swapped = false;
+
+    const tick = () => {
+      const now = performance.now();
+      const t = Math.min((now - start) / duration, 1);
+
+      const sx = Math.abs(1 - t * 2);
+
+      // 0に近すぎるとチラつきやすいので少し余裕を持たせる
+      this.cardRoot.scale.x = Math.max(sx, 0.02);
+      this.cardRoot.scale.y = 1 + 0.04 * Math.sin(t * Math.PI);
+      this.cardRoot.rotation = 0.02 * Math.sin(t * Math.PI);
+
+      if (!swapped && t >= 0.5) {
+        this.isFront = !this.isFront;
+        this.updateFaceVisibility();
+        swapped = true;
+      }
+
+      if (t < 1) {
+        requestAnimationFrame(tick);
+      } else {
+        this.cardRoot.scale.set(1, 1);
+        this.cardRoot.rotation = 0;
+        this.isFlipping = false;
+      }
+    };
+
+    requestAnimationFrame(tick);
   }
 }

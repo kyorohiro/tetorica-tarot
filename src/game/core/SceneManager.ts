@@ -55,7 +55,7 @@ export class SceneManager {
       scene.mount();
       scene.resize(width, height);
 
-      await fade(scene.container, 0, 1, 2000);
+      await fade(scene.container, 0, 1, 200);
     } finally {
       this.isChanging = false;
     }
