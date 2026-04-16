@@ -83,11 +83,11 @@ It is a **creative thinking tool**.
 ``` 
 % sh deploy_mac.sh
 % ~/bin/butler login
-% ~/bin/butler push src-tauri/target/release/bundle/dmg/tetorica-tarot_0.15.1_aarch64.dmg kyorohiro/tetorica-tarot:mac-apple-silicon --userversion 0.15.1
+% ~/bin/butler push src-tauri/target/release/bundle/dmg/tetorica-tarot_0.1.0_aarch64.dmg kyorohiro/tetorica-tarot:mac-apple-silicon --userversion 0.1.0
 
-% ~/bin/butler push src-tauri/target/x86_64-apple-darwin/release/bundle/dmg/tetorica-tarot_0.15.1_x64.dmg kyorohiro/tetorica-tarot:mac-intel --userversion 0.15.1
+% ~/bin/butler push src-tauri/target/x86_64-apple-darwin/release/bundle/dmg/tetorica-tarot_0.1.0_x64.dmg kyorohiro/tetorica-tarot:mac-intel --userversion 0.1.0
 
-% ~/bin/butler push "tetorica-tarot_0.15.1_x64-setup.exe" kyorohiro/tetorica-tarot:windows --userversion 0.15.1
+% ~/bin/butler push "tetorica-tarot_0.1.0_x64-setup.exe" kyorohiro/tetorica-tarot:windows --userversion 0.1.0
 ```
 
 
@@ -96,7 +96,7 @@ It is a **creative thinking tool**.
 ```
 npm run build:web
 cd dist
-zip -r ../web-build_0.15.1.zip .
+zip -r ../web-build_0.1.0.zip .
 ```
 
 ### For github pages (pwa)
@@ -104,5 +104,5 @@ zip -r ../web-build_0.15.1.zip .
 ```
 npm run build:gh
 cd dist
-zip -r ../web-build_0.15.1_gh.zip .
+zip -r ../web-build_0.1.0_gh.zip .
 ```
