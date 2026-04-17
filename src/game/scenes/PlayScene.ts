@@ -5,7 +5,7 @@ import { TarotCardView } from "./TarotCardView";
 
 import backCardUrl from "../../assets/CardBacks.jpg";
 import { majorArcanaCards } from "../tarot/majorArcana";
-import { shuffleCards, tarotCards } from "./tarotCards";
+import { shuffleCards, sortCards, tarotCards } from "./tarotCards";
 import { createTriangleButton } from "./triangleButton";
 
 type CardLayout = {
@@ -38,6 +38,7 @@ export class PlayScene implements Scene {
   private width = 0;
   private height = 0;
   private isAnimating = false;
+  private game: GameApp;
 
   private readonly keywordsBg = new Graphics();
 
@@ -87,8 +88,15 @@ export class PlayScene implements Scene {
   private hideLoading() {
     this.loadingText.visible = false;
   }
-  constructor(private readonly game: GameApp) {
+  constructor(params:{readonly game: GameApp, isShuffleCards: boolean}) {
+    this.game = params.game;
+    const isShuffleCards = params.isShuffleCards;
     this.bg.tint = 0x111827;
+    if(isShuffleCards) {
+      this.deck = shuffleCards(tarotCards);
+    } else {
+      this.deck = sortCards(tarotCards);
+    }
 
     this.currentCard.onTap(async () => {
       if (this.isAnimating) return;

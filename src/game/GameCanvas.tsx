@@ -1,14 +1,19 @@
-import { useEffect, useRef } from "react";
+import { forwardRef, useEffect, useImperativeHandle, useRef } from "react";
 import { GameApp, SceneKey } from "./GameApp";
 import type { Lang } from "./i18n/messages";
 
 type Props = {
   language: Lang;
   currentScene?: SceneKey;
-  setCurrentScene: (v:SceneKey)=>void;
+  setCurrentScene: (v: SceneKey) => void;
 };
 
-export function GameCanvas({ language, currentScene, setCurrentScene }: Props) {
+export type GameCanvasHandle = {
+  orderCards: ()=>Promise<void>
+  shuffleCards: ()=>Promise<void>
+}
+
+export const GameCanvas = forwardRef<GameCanvasHandle, Props>(function ({ language, currentScene, setCurrentScene }: Props, ref) {
   const hostRef = useRef<HTMLDivElement | null>(null);
   const gameRef = useRef<GameApp | null>(null);
 
@@ -40,12 +45,35 @@ export function GameCanvas({ language, currentScene, setCurrentScene }: Props) {
 
   useEffect(() => {
     console.log("> useEffect currentScene", currentScene);
-    if(currentScene == "title") {
+    if (currentScene == "title") {
       gameRef.current?.showTitleScene();
-    } else if(currentScene == "play") {
-      gameRef.current?.showPlayScene(true);
+    } else if (currentScene == "play") {
+      gameRef.current?.showPlayScene({forceUpdate:true, isShuffleCards: true});
     }
   }, [currentScene]);
 
+  //
+  useImperativeHandle(
+    ref,
+    () => ({
+      orderCards: async () =>{
+        if(gameRef.current) {
+          gameRef.current.showPlayScene({
+            forceUpdate: true,
+            isShuffleCards: false,
+          });
+        }
+      },
+      shuffleCards: async () =>{
+        if(gameRef.current) {
+          gameRef.current.showPlayScene({
+            forceUpdate: true,
+            isShuffleCards: true,
+          });
+        }
+      },
+    }),
+    []
+  );
   return <div ref={hostRef} className="h-full w-full" />;
-}
+});

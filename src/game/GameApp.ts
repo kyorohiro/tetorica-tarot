@@ -91,7 +91,9 @@ export class GameApp {
     if (this.currentScene === "title") {
       this.showTitleScene();
     } else {
-      this.showPlayScene();
+      this.showPlayScene({
+        
+      });
     }
   }
 
@@ -110,14 +112,17 @@ export class GameApp {
     }
   }
 
-  showPlayScene(forceUpdate?:boolean|undefined) {
+  showPlayScene(props:{
+    forceUpdate?:boolean|undefined
+    isShuffleCards?: boolean | undefined
+  }) {
     if (!this.initialized || this.destroyed || !this.sceneManager) return;
 
-    if (forceUpdate || this.currentScene != "play") {
+    if (props.forceUpdate || this.currentScene != "play") {
       //this.currentScene = "play";
       this.setCurrentScene("play");
-      if (forceUpdate || !this.playScene) {
-        this.playScene = new PlayScene(this)
+      if (props.forceUpdate || !this.playScene) {
+        this.playScene = new PlayScene({game:this, isShuffleCards: props.isShuffleCards ?? false})
       }
       this.sceneManager.change(
         this.playScene,

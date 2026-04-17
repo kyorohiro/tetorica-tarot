@@ -27,7 +27,7 @@ export class TitleScene implements Scene {
 
   private readonly startButton = makeButton("", () => {
     //this.game.playClick();
-    this.game.showPlayScene();
+    this.game.showPlayScene({ forceUpdate: true, isShuffleCards: true });
   });
 
   constructor(private readonly game: GameApp) {
@@ -52,7 +52,7 @@ export class TitleScene implements Scene {
     this.startButton.setLabel(this.game.t("start"));
   }
 
-  mount() {}
+  mount() { }
 
   unmount() {
     this.container.destroy({ children: true });
