@@ -1,9 +1,13 @@
+
+type Element = "fire" | "water" | "air" | "earth" | "special";
+
 type TarotMeaning = {
   keywordsJa: string[];
   keywordsEn: string[];
 };
 
 type TarotCard = {
+  element: Element;
   titleJa: string;
   titleEn: string;
   upright: TarotMeaning;
@@ -14,6 +18,7 @@ const majorArcanaCards: Record<string, TarotCard> = {
   "00-TheFool": {
     titleJa: "愚者",
     titleEn: "The Fool",
+    element: "air",
     upright: {
       keywordsJa: ["始まり", "衝動", "可能性"],
       keywordsEn: ["Beginning", "Impulse", "Potential"],
@@ -27,6 +32,7 @@ const majorArcanaCards: Record<string, TarotCard> = {
   "01-TheMagician": {
     titleJa: "魔術師",
     titleEn: "The Magician",
+    element: "special",
     upright: {
       keywordsJa: ["技術", "意志", "創造"],
       keywordsEn: ["Skill", "Will", "Creation"],
@@ -40,6 +46,7 @@ const majorArcanaCards: Record<string, TarotCard> = {
   "02-TheHighPriestess": {
     titleJa: "女教皇",
     titleEn: "The High Priestess",
+    element: "water",
     upright: {
       keywordsJa: ["直感", "秘密", "静けさ"],
       keywordsEn: ["Intuition", "Secrets", "Stillness"],
@@ -53,6 +60,7 @@ const majorArcanaCards: Record<string, TarotCard> = {
   "03-TheEmpress": {
     titleJa: "女帝",
     titleEn: "The Empress",
+    element: "earth",
     upright: {
       keywordsJa: ["豊かさ", "育成", "受容"],
       keywordsEn: ["Abundance", "Nurture", "Acceptance"],
@@ -66,6 +74,7 @@ const majorArcanaCards: Record<string, TarotCard> = {
   "04-TheEmperor": {
     titleJa: "皇帝",
     titleEn: "The Emperor",
+    element: "fire",
     upright: {
       keywordsJa: ["支配", "秩序", "権威"],
       keywordsEn: ["Authority", "Order", "Control"],
@@ -79,6 +88,7 @@ const majorArcanaCards: Record<string, TarotCard> = {
   "05-TheHierophant": {
     titleJa: "法王",
     titleEn: "The Hierophant",
+    element: "earth",
     upright: {
       keywordsJa: ["教え", "伝統", "規範"],
       keywordsEn: ["Teaching", "Tradition", "Rules"],
@@ -92,6 +102,7 @@ const majorArcanaCards: Record<string, TarotCard> = {
   "06-TheLovers": {
     titleJa: "恋人",
     titleEn: "The Lovers",
+    element: "air",
     upright: {
       keywordsJa: ["選択", "結びつき", "調和"],
       keywordsEn: ["Choice", "Bond", "Harmony"],
@@ -105,6 +116,7 @@ const majorArcanaCards: Record<string, TarotCard> = {
   "07-TheChariot": {
     titleJa: "戦車",
     titleEn: "The Chariot",
+    element: "water",
     upright: {
       keywordsJa: ["前進", "勝利", "突破"],
       keywordsEn: ["Advance", "Victory", "Breakthrough"],
@@ -118,6 +130,7 @@ const majorArcanaCards: Record<string, TarotCard> = {
   "08-Strength": {
     titleJa: "力",
     titleEn: "Strength",
+    element: "fire",
     upright: {
       keywordsJa: ["忍耐", "制御", "勇気"],
       keywordsEn: ["Patience", "Control", "Courage"],
@@ -131,6 +144,7 @@ const majorArcanaCards: Record<string, TarotCard> = {
   "09-TheHermit": {
     titleJa: "隠者",
     titleEn: "The Hermit",
+    element: "earth",
     upright: {
       keywordsJa: ["探求", "孤独", "内省"],
       keywordsEn: ["Search", "Solitude", "Reflection"],
@@ -144,6 +158,7 @@ const majorArcanaCards: Record<string, TarotCard> = {
   "10-WheelOfFortune": {
     titleJa: "運命の輪",
     titleEn: "Wheel of Fortune",
+    element: "special",
     upright: {
       keywordsJa: ["転機", "循環", "運命"],
       keywordsEn: ["Turning Point", "Cycle", "Fate"],
@@ -157,6 +172,7 @@ const majorArcanaCards: Record<string, TarotCard> = {
   "11-Justice": {
     titleJa: "正義",
     titleEn: "Justice",
+    element: "air",
     upright: {
       keywordsJa: ["均衡", "判断", "責任"],
       keywordsEn: ["Balance", "Judgment", "Responsibility"],
@@ -170,6 +186,7 @@ const majorArcanaCards: Record<string, TarotCard> = {
   "12-TheHangedMan": {
     titleJa: "吊るされた男",
     titleEn: "The Hanged Man",
+    element: "water",
     upright: {
       keywordsJa: ["停止", "視点転換", "受容"],
       keywordsEn: ["Pause", "New Perspective", "Acceptance"],
@@ -183,6 +200,7 @@ const majorArcanaCards: Record<string, TarotCard> = {
   "13-Death": {
     titleJa: "死神",
     titleEn: "Death",
+    element: "water",
     upright: {
       keywordsJa: ["終わり", "変化", "再出発"],
       keywordsEn: ["Ending", "Transformation", "Restart"],
@@ -196,6 +214,7 @@ const majorArcanaCards: Record<string, TarotCard> = {
   "14-Temperance": {
     titleJa: "節制",
     titleEn: "Temperance",
+    element: "fire",
     upright: {
       keywordsJa: ["調和", "調整", "中庸"],
       keywordsEn: ["Harmony", "Adjustment", "Moderation"],
@@ -209,6 +228,7 @@ const majorArcanaCards: Record<string, TarotCard> = {
   "15-TheDevil": {
     titleJa: "悪魔",
     titleEn: "The Devil",
+    element: "earth",
     upright: {
       keywordsJa: ["執着", "欲望", "束縛"],
       keywordsEn: ["Obsession", "Desire", "Bondage"],
@@ -222,6 +242,7 @@ const majorArcanaCards: Record<string, TarotCard> = {
   "16-TheTower": {
     titleJa: "塔",
     titleEn: "The Tower",
+    element: "fire",
     upright: {
       keywordsJa: ["崩壊", "衝撃", "破綻"],
       keywordsEn: ["Collapse", "Shock", "Breakdown"],
@@ -235,6 +256,7 @@ const majorArcanaCards: Record<string, TarotCard> = {
   "17-TheStar": {
     titleJa: "星",
     titleEn: "The Star",
+    element: "air",
     upright: {
       keywordsJa: ["希望", "癒し", "導き"],
       keywordsEn: ["Hope", "Healing", "Guidance"],
@@ -248,6 +270,7 @@ const majorArcanaCards: Record<string, TarotCard> = {
   "18-TheMoon": {
     titleJa: "月",
     titleEn: "The Moon",
+    element: "water",
     upright: {
       keywordsJa: ["不安", "幻", "曖昧さ"],
       keywordsEn: ["Anxiety", "Illusion", "Ambiguity"],
@@ -261,6 +284,7 @@ const majorArcanaCards: Record<string, TarotCard> = {
   "19-TheSun": {
     titleJa: "太陽",
     titleEn: "The Sun",
+    element: "fire",
     upright: {
       keywordsJa: ["成功", "喜び", "明快さ"],
       keywordsEn: ["Success", "Joy", "Clarity"],
@@ -274,6 +298,7 @@ const majorArcanaCards: Record<string, TarotCard> = {
   "20-Judgement": {
     titleJa: "審判",
     titleEn: "Judgement",
+    element: "fire",
     upright: {
       keywordsJa: ["覚醒", "再生", "決断"],
       keywordsEn: ["Awakening", "Rebirth", "Decision"],
@@ -287,6 +312,7 @@ const majorArcanaCards: Record<string, TarotCard> = {
   "21-TheWorld": {
     titleJa: "世界",
     titleEn: "The World",
+    element: "earth",
     upright: {
       keywordsJa: ["完成", "到達", "統合"],
       keywordsEn: ["Completion", "Achievement", "Integration"],
