@@ -50,10 +50,19 @@ export class PlayScene implements Scene {
     }),
   });
 
-  private readonly keywordsText = new Text({
+  private readonly uprightText = new Text({
     text: "",
     style: new TextStyle({
-      fill: 0xe5e7eb,
+      fill: 0xffffff,
+      fontSize: 12,
+      fontWeight: "bold",
+    }),
+  });
+
+  private readonly reversedText = new Text({
+    text: "",
+    style: new TextStyle({
+      fill: 0x94a3b8,
       fontSize: 11,
     }),
   });
@@ -114,14 +123,16 @@ export class PlayScene implements Scene {
       this.currentCard.container,
       this.keywordsBg,
       this.titleText,
-      this.keywordsText,
+      this.uprightText,
+      this.reversedText,
       this.cardNextButton,
       this.cardBackButton,
       this.loadingText,
     );
 
     this.titleText.resolution = window.devicePixelRatio || 2;
-    this.keywordsText.resolution = window.devicePixelRatio || 2;
+    this.uprightText.resolution = window.devicePixelRatio || 2;
+    this.reversedText.resolution = window.devicePixelRatio || 2;
   }
 
   async mount() {
@@ -166,14 +177,18 @@ export class PlayScene implements Scene {
 
     this.titleText.anchor.set(0.5, 0);
     this.titleText.x = width * 0.5;
-    this.titleText.y = height * 0.78;
+    this.titleText.y = height * 0.80;
 
     this.keywordsBg.x = width * 0.5;
     this.keywordsBg.y = height * 0.84;
 
-    this.keywordsText.anchor.set(0.5, 0);
-    this.keywordsText.x = width * 0.5;
-    this.keywordsText.y = height * 0.84;
+    this.uprightText.anchor.set(0.5, 0);
+    this.uprightText.x = width * 0.5;
+    this.uprightText.y = height * 0.84;
+    this.reversedText.anchor.set(0.5, 0);
+    this.reversedText.x = width * 0.5;
+    this.reversedText.y = height * 0.84 + 16;
+
   }
 
   private async preloadTextures(urls: string[]) {
@@ -453,7 +468,8 @@ export class PlayScene implements Scene {
         }
         this.keywordsBg.zIndex = 4500
         this.titleText.zIndex = 4500
-        this.keywordsText.zIndex = 4500
+        this.uprightText.zIndex = 4500
+        this.reversedText.zIndex = 4500
       };
 
       requestAnimationFrame(tick);
@@ -485,6 +501,8 @@ export class PlayScene implements Scene {
       titleEn: cardText.titleEn,
       keywordsJa: meaning.keywordsJa,
       keywordsEn: meaning.keywordsEn,
+      revered: cardText.reversed,
+      upright: cardText.upright
     };
   }
 
@@ -492,17 +510,46 @@ export class PlayScene implements Scene {
     const text = this.getCurrentCardText();
     if (!text) {
       this.titleText.text = "";
-      this.keywordsText.text = "";
+      this.uprightText.text = "";
+      this.reversedText.text = "";
       this.keywordsBg.clear();
       return;
     }
 
+    if (!this.currentReversed) {
+      this.uprightText.style = new TextStyle({
+        fill: 0xffffff,
+        fontSize: 12,
+        fontWeight: "bold",
+      });
+      this.reversedText.style = new TextStyle({
+        fill: 0xffffff,
+        fontSize: 10,
+      });
+    } else {
+      this.reversedText.style = new TextStyle({
+        fill: 0xffffff,
+        fontSize: 12,
+        fontWeight: "bold",
+      })
+      this.uprightText.style = new TextStyle({
+        fill: 0xffffff,
+        fontSize: 10,
+      })
+    }
     if (this.game.getLanguage() === "ja") {
       this.titleText.text = text.titleJa;
-      this.keywordsText.text = text.keywordsJa.map((v) => `#${v}`).join("  ");
+      this.uprightText.text = "" +
+        text.upright.keywordsJa.map((v) => `#${v}`).join("  ");
+      this.reversedText.text = "" +
+        text.revered.keywordsJa.map((v) => `#${v}`).join("  ")
+      //text.keywordsJa.map((v) => `#${v}`).join("  ");
     } else {
       this.titleText.text = text.titleEn;
-      this.keywordsText.text = text.keywordsEn.map((v) => `#${v}`).join("  ");
+      this.uprightText.text = "" +
+        text.upright.keywordsEn.map((v) => `#${v}`).join("  ");
+      this.reversedText.text = "" +
+        text.revered.keywordsEn.map((v) => `#${v}`).join("  ")
     }
 
     this.refreshKeywordsBg();
@@ -513,9 +560,12 @@ export class PlayScene implements Scene {
     const paddingY = 10;
     const radius = 14;
 
-    const w = this.keywordsText.width + paddingX * 2;
-    const h = this.keywordsText.height + paddingY * 2 * 3;
-
+    const w1 = this.uprightText.width + paddingX * 2;
+    const h1 = this.uprightText.height + paddingY * 2 * 3;
+    const w2 = this.reversedText.width + paddingX * 2;
+    const h2 = this.reversedText.height + paddingY * 2 * 3;
+    const w = Math.max(w1, w2); 
+    const h = Math.max(h1, h2); 
     this.keywordsBg.clear();
     this.keywordsBg.roundRect(-w / 2, -h / 2, w, h, radius);
     this.keywordsBg.fill({ color: 0x000000, alpha: 0.45 });
