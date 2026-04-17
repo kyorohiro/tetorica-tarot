@@ -117,6 +117,7 @@ export class PlayScene implements Scene {
       this.keywordsText,
       this.cardNextButton,
       this.cardBackButton,
+      this.loadingText,
     );
 
     this.titleText.resolution = window.devicePixelRatio || 2;
@@ -125,6 +126,8 @@ export class PlayScene implements Scene {
 
   async mount() {
     this.showLoading("Loading cards...");
+    //const sleep = (ms: number) => new Promise((res) => setTimeout(res, ms));
+    //await sleep(10000);
 
     const prev = this.getCard(-1);
     const current = this.getCard(0);
@@ -366,6 +369,8 @@ export class PlayScene implements Scene {
     this.nextCard.container.alpha = layouts.next.alpha;
 
     this.layoutCardButton();
+    this.loadingText.x = layouts.current.x
+    this.loadingText.y = layouts.current.y
   }
 
   private lerp(a: number, b: number, t: number) {
