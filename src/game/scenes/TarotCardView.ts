@@ -59,10 +59,19 @@ export class TarotCardView {
     this.backCard.height = height;
   }
 
+  getSize() {
+    return {
+      width: this.frontCard.width,
+      heigth: this.frontCard.height
+    }
+  }
   setPosition(x: number, y: number) {
     this.cardCenterX = x;
     this.cardCenterY = y;
     this.applyCardMatrix(0);
+  }
+  getPosition() {
+    return {x: this.cardCenterX, y:this.cardCenterY}
   }
 
   showFront() {

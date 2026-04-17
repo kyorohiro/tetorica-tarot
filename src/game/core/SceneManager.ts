@@ -23,6 +23,7 @@ async function fade(container: Container, from: number, to: number, durationMs: 
     requestAnimationFrame(tick);
   });
 }
+
 export class SceneManager {
   private currentScene: Scene | null = null;
   private isChanging = false;

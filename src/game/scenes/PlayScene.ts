@@ -5,46 +5,21 @@ import { TarotCardView } from "./TarotCardView";
 
 import backCardUrl from "../../assets/CardBacks.jpg";
 import { majorArcanaCards } from "../tarot/majorArcana";
+import { shuffleCards, tarotCards } from "./tarotCards";
+import { createTriangleButton } from "./triangleButton";
 
-const cardModules = import.meta.glob("../../assets/*.jpg", {
-  eager: true,
-  import: "default",
-}) as Record<string, string>;
-
-const frontCards = Object.entries(cardModules)
-  .filter(([path]) => {
-    return (
-      !path.endsWith("/CardBacks.jpg") &&
-      !path.endsWith("/00-TheFool copy.jpg")
-    );
-  })
-  .map(([path, url]) => {
-    const id = path.split("/").pop()?.replace(".jpg", "") ?? "Unknown";
-    return {
-      path,
-      url,
-      id,
-    };
-  });
 
 export class PlayScene implements Scene {
   container = new Container();
 
   private readonly bg = new Sprite(Texture.WHITE);
   private readonly card = new TarotCardView();
+  private readonly cardNextButton = createTriangleButton("right");
+  private readonly cardBackButton = createTriangleButton("left");
   private currentCardId: string | null = null;
   private currentReversed = false;
-
-  //private readonly backButton = makeButton(
-  //  "",
-  //  () => {
-  //    //this.game.playClick();
-  //    this.game.showTitleScene();
-  //  },
-  //  180,
-  //  52,
-  //);
-
+  private deck = shuffleCards(tarotCards);
+  private deckIndex = 0;
   private width = 0;
   private height = 0;
 
@@ -72,24 +47,27 @@ export class PlayScene implements Scene {
     this.bg.tint = 0x111827;
 
     this.card.onTap(async () => {
-      //this.game.playClick();
-
       if (this.card.showingFront) {
         await this.card.flip();
         return;
       }
+      await this.updateCard();
+    });
+    //
+    this.cardNextButton.on("pointertap", async () => {
+      console.log("> next");
+      if (this.deck.length - 1 > this.deckIndex) {
+        this.deckIndex++;
+      }
+      await this.updateCard();
+    });
 
-      //const next = this.pickRandomCard();
-      //const reversed = Math.random() < 0.5;
-      //
-      //this.currentCardId = next.id;
-      //this.currentReversed = reversed;
-      //this.refreshCardText();
-      //
-      //await this.card.setFrontTexture(next.url);
-      //this.card.setReversed(reversed);
-      //this.card.showBack();
-      await this.card.flip();
+    this.cardBackButton.on("pointertap", async () => {
+      console.log("> back");
+      if (1 <= this.deckIndex) {
+        this.deckIndex--;
+      }
+      await this.updateCard()
     });
 
     this.refreshText();
@@ -101,34 +79,42 @@ export class PlayScene implements Scene {
       this.keywordsBg,
       this.titleText,
       this.keywordsText,
+      this.cardNextButton,
+      this.cardBackButton,
       //this.backButton,
     );
   }
 
   private refreshText() {
-   // this.backButton.setLabel(this.game.t("backToTitle"));
+    // this.backButton.setLabel(this.game.t("backToTitle"));
   }
 
 
   private pickRandomCard() {
-    return frontCards[Math.floor(Math.random() * frontCards.length)];
+    shuffleCards(this.deck);
+    this.deckIndex = 0;
+    return this.deck[this.deckIndex];
   }
+  private getCard() {
+    return this.deck[this.deckIndex]
+  }
+  private async updateCard() {
+    const currentCard = this.getCard();
+    if (!currentCard) return;
 
-  async mount() {
-    console.log("> mount");
-    if (this.currentCardId == undefined || this.currentCardId == null) {
-      const first = this.pickRandomCard();
+    this.currentCardId = currentCard.id;
+    this.currentReversed = currentCard.reversed;
 
-      this.currentCardId = first.id;
-      this.currentReversed = Math.random() < 0.3;
-
-      await this.card.setTextures(first.url, backCardUrl);
-    }
+    await this.card.setTextures(currentCard.url, backCardUrl);
     this.card.setReversed(this.currentReversed);
     this.card.showFront();
 
     this.layoutCard();
     this.refreshCardText();
+  }
+  async mount() {
+    console.log("> mount");
+    await this.updateCard();
   }
 
   unmount() {
@@ -165,6 +151,19 @@ export class PlayScene implements Scene {
     this.keywordsText.y = height * 0.88;
   }
 
+  private layoutCardButton() {
+    const gap = 20;
+
+
+    const position = this.card.getPosition();
+    const size = this.card.getSize();
+    this.cardBackButton.x = position.x - size.width / 2 - gap - this.cardBackButton.width / 2;
+    this.cardNextButton.x = position.x + size.width / 2 + gap + this.cardBackButton.width / 2;
+
+    this.cardBackButton.y = position.y;// + size.heigth * 0.05;
+    this.cardNextButton.y = position.y;// + size.heigth * 0.05;
+
+  }
 
   private layoutCard() {
     if (!this.width || !this.height) return;
@@ -180,6 +179,8 @@ export class PlayScene implements Scene {
     }
     this.card.setSize(cardWidth, cardHeight);
     this.card.setPosition(this.width * 0.5, this.height * 0.55);
+    //
+    this.layoutCardButton();
   }
 
   private getCurrentCardText() {
