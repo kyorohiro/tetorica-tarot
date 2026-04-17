@@ -8,20 +8,35 @@ import { majorArcanaCards } from "../tarot/majorArcana";
 import { shuffleCards, tarotCards } from "./tarotCards";
 import { createTriangleButton } from "./triangleButton";
 
+type CardLayout = {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  alpha: number;
+};
 
 export class PlayScene implements Scene {
   container = new Container();
 
   private readonly bg = new Sprite(Texture.WHITE);
-  private readonly card = new TarotCardView();
+
+  private readonly prevCard = new TarotCardView();
+  private readonly currentCard = new TarotCardView();
+  private readonly nextCard = new TarotCardView();
+
   private readonly cardNextButton = createTriangleButton("right");
   private readonly cardBackButton = createTriangleButton("left");
+
   private currentCardId: string | null = null;
   private currentReversed = false;
+
   private deck = shuffleCards(tarotCards);
   private deckIndex = 0;
+
   private width = 0;
   private height = 0;
+  private isAnimating = false;
 
   private readonly keywordsBg = new Graphics();
 
@@ -29,7 +44,7 @@ export class PlayScene implements Scene {
     text: "",
     style: new TextStyle({
       fill: 0xffffff,
-      fontSize: 24,
+      fontSize: 18,
       fontWeight: "bold",
     }),
   });
@@ -38,58 +53,80 @@ export class PlayScene implements Scene {
     text: "",
     style: new TextStyle({
       fill: 0xe5e7eb,
-      fontSize: 18,
+      fontSize: 9,
     }),
   });
 
   constructor(private readonly game: GameApp) {
-    console.log("> constructor");
     this.bg.tint = 0x111827;
 
-    this.card.onTap(async () => {
-      if (this.card.showingFront) {
-        await this.card.flip();
+    this.currentCard.onTap(async () => {
+      if (this.isAnimating) return;
+
+      if (this.currentCard.showingFront) {
+        await this.currentCard.flip();
         return;
       }
-      await this.updateCard();
-      await this.refreshCardButtons();
+
+      await this.refreshVisibleCards();
+      this.refreshCardButtons();
     });
-    //
+
     this.cardNextButton.on("pointertap", async () => {
-      console.log("> next");
-      if (this.deck.length - 1 > this.deckIndex) {
-        this.deckIndex++;
+      if (this.isAnimating) return;
+      if (this.deckIndex < this.deck.length - 1) {
+        await this.slideTo("next");
       }
-      await this.updateCard();
-      await this.refreshCardButtons();
     });
 
     this.cardBackButton.on("pointertap", async () => {
-      console.log("> back");
-      if (1 <= this.deckIndex) {
-        this.deckIndex--;
+      if (this.isAnimating) return;
+      if (this.deckIndex > 0) {
+        await this.slideTo("back");
       }
-      await this.updateCard()
-      await this.refreshCardButtons();
     });
 
-    this.refreshText();
-
-    //this.container.addChild(this.bg, this.card.container, this.backButton);
     this.container.addChild(
       this.bg,
-      this.card.container,
+      this.prevCard.container,
+      this.nextCard.container,
+      this.currentCard.container,
       this.keywordsBg,
       this.titleText,
       this.keywordsText,
       this.cardNextButton,
       this.cardBackButton,
-      //this.backButton,
     );
   }
 
-  private refreshText() {
-    // this.backButton.setLabel(this.game.t("backToTitle"));
+  async mount() {
+    await this.refreshVisibleCards();
+    this.refreshCardButtons();
+  }
+
+  unmount() {
+    // Scene再利用前提なら destroy しない
+  }
+
+  resize(width: number, height: number) {
+    this.width = width;
+    this.height = height;
+
+    this.bg.width = width;
+    this.bg.height = height;
+
+    this.layoutCards();
+
+    this.titleText.anchor.set(0.5, 0);
+    this.titleText.x = width * 0.5;
+    this.titleText.y = height * 0.78;
+
+    this.keywordsBg.x = width * 0.5;
+    this.keywordsBg.y = height * 0.84;
+
+    this.keywordsText.anchor.set(0.5, 0);
+    this.keywordsText.x = width * 0.5;
+    this.keywordsText.y = height * 0.84;
   }
 
   private setButtonEnabled(button: Container, enabled: boolean) {
@@ -106,98 +143,242 @@ export class PlayScene implements Scene {
     this.setButtonEnabled(this.cardBackButton, canGoBack);
     this.setButtonEnabled(this.cardNextButton, canGoNext);
   }
-  //private pickRandomCard() {
-  //  shuffleCards(this.deck);
-  //  this.deckIndex = 0;
-  //  return this.deck[this.deckIndex];
-  //}
-  private getCard() {
-    return this.deck[this.deckIndex]
+
+  private getCard(offset = 0) {
+    return this.deck[this.deckIndex + offset];
   }
-  private async updateCard() {
-    const currentCard = this.getCard();
-    if (!currentCard) return;
 
-    this.currentCardId = currentCard.id;
-    this.currentReversed = currentCard.reversed;
+  private async refreshVisibleCards() {
+    const prev = this.getCard(-1);
+    const current = this.getCard(0);
+    const next = this.getCard(1);
 
-    await this.card.setTextures(currentCard.url, backCardUrl);
-    this.card.setReversed(this.currentReversed);
-    this.card.showFront();
+    if (prev) {
+      await this.prevCard.setTextures(prev.url, backCardUrl);
+      this.prevCard.setReversed(prev.reversed);
+      this.prevCard.showFront();
+      this.prevCard.container.visible = true;
+      this.prevCard.container.alpha = 0.35;
+    } else {
+      this.prevCard.container.visible = false;
+    }
 
-    this.layoutCard();
+    if (current) {
+      this.currentCardId = current.id;
+      this.currentReversed = current.reversed;
+
+      await this.currentCard.setTextures(current.url, backCardUrl);
+      this.currentCard.setReversed(current.reversed);
+      this.currentCard.showFront();
+      this.currentCard.container.visible = true;
+      this.currentCard.container.alpha = 1;
+    } else {
+      this.currentCard.container.visible = false;
+    }
+
+    if (next) {
+      await this.nextCard.setTextures(next.url, backCardUrl);
+      this.nextCard.setReversed(next.reversed);
+      this.nextCard.showFront();
+      this.nextCard.container.visible = true;
+      this.nextCard.container.alpha = 0.35;
+    } else {
+      this.nextCard.container.visible = false;
+    }
+
     this.refreshCardText();
-  }
-  async mount() {
-    console.log("> mount");
-    await this.updateCard();
-    await this.refreshCardButtons();
+    this.layoutCards();
   }
 
-  unmount() {
-    //this.container.destroy({ children: true });
-  }
+  private getCardLayouts() {
+    let centerWidth: number;
+    let centerHeight: number;
 
-  resize(width: number, height: number) {
-    this.width = width;
-    this.height = height;
+    if (this.width * 1.7 > this.height) {
+      centerHeight = this.height * 0.62;
+      centerWidth = centerHeight / 1.7;
+    } else {
+      centerWidth = this.width * 0.46;
+      centerHeight = centerWidth * 1.7;
+    }
 
-    this.bg.width = width;
-    this.bg.height = height;
+    const sideScale = 0.72;
+    const sideWidth = centerWidth * sideScale;
+    const sideHeight = centerHeight * sideScale;
 
-    //this.backButton.x = 110;
-    //this.backButton.y = 42;
+    const centerX = this.width * 0.5;
+    const centerY = this.height * 0.48;
 
-    this.layoutCard();
+    const gap = centerWidth * 0.68;
 
-    this.titleText.anchor.set(0.5, 0);
-    this.keywordsText.anchor.set(0.5, 0);
-
-    this.titleText.x = width * 0.5;
-    this.titleText.y = height * 0.83;
-
-    this.keywordsText.x = width * 0.5;
-    this.keywordsText.y = height * 0.88;
-    //
-    //
-    this.keywordsBg.x = width * 0.5;
-    this.keywordsBg.y = height * 0.88;
-
-    this.keywordsText.anchor.set(0.5);
-    this.keywordsText.x = width * 0.5;
-    this.keywordsText.y = height * 0.88;
+    return {
+      prev: {
+        x: centerX - gap,
+        y: centerY,
+        width: sideWidth,
+        height: sideHeight,
+        alpha: 0.35,
+      },
+      current: {
+        x: centerX,
+        y: centerY,
+        width: centerWidth,
+        height: centerHeight,
+        alpha: 1,
+      },
+      next: {
+        x: centerX + gap,
+        y: centerY,
+        width: sideWidth,
+        height: sideHeight,
+        alpha: 0.35,
+      },
+      offLeft: {
+        x: centerX - gap * 1.55,
+        y: centerY,
+        width: sideWidth * 0.92,
+        height: sideHeight * 0.92,
+        alpha: 0,
+      },
+      offRight: {
+        x: centerX + gap * 1.55,
+        y: centerY,
+        width: sideWidth * 0.92,
+        height: sideHeight * 0.92,
+        alpha: 0,
+      },
+    };
   }
 
   private layoutCardButton() {
     const gap = 20;
+    const position = this.currentCard.getPosition();
+    const size = this.currentCard.getSize();
 
+    this.cardBackButton.x =
+      position.x - size.width / 2 - gap - this.cardBackButton.width / 2;
+    this.cardNextButton.x =
+      position.x + size.width / 2 + gap + this.cardNextButton.width / 2;
 
-    const position = this.card.getPosition();
-    const size = this.card.getSize();
-    this.cardBackButton.x = position.x - size.width / 2 - gap - this.cardBackButton.width / 2;
-    this.cardNextButton.x = position.x + size.width / 2 + gap + this.cardBackButton.width / 2;
-
-    this.cardBackButton.y = position.y;// + size.heigth * 0.05;
-    this.cardNextButton.y = position.y;// + size.heigth * 0.05;
-
+    this.cardBackButton.y = position.y;
+    this.cardNextButton.y = position.y;
   }
 
-  private layoutCard() {
+  private layoutCards() {
     if (!this.width || !this.height) return;
 
-    let cardWidth;
-    let cardHeight;
-    if (this.width * 1.7 > this.height) {
-      cardHeight = this.height * 0.7;
-      cardWidth = cardHeight / 1.7
-    } else {
-      cardWidth = this.width * 0.7;
-      cardHeight = cardWidth * 1.7;
-    }
-    this.card.setSize(cardWidth, cardHeight);
-    this.card.setPosition(this.width * 0.5, this.height * 0.55);
-    //
+    const layouts = this.getCardLayouts();
+
+    this.prevCard.setSize(layouts.prev.width, layouts.prev.height);
+    this.prevCard.setPosition(layouts.prev.x, layouts.prev.y);
+    this.prevCard.container.alpha = layouts.prev.alpha;
+
+    this.currentCard.setSize(layouts.current.width, layouts.current.height);
+    this.currentCard.setPosition(layouts.current.x, layouts.current.y);
+    this.currentCard.container.alpha = layouts.current.alpha;
+
+    this.nextCard.setSize(layouts.next.width, layouts.next.height);
+    this.nextCard.setPosition(layouts.next.x, layouts.next.y);
+    this.nextCard.container.alpha = layouts.next.alpha;
+
     this.layoutCardButton();
+  }
+
+  private lerp(a: number, b: number, t: number) {
+    return a + (b - a) * t;
+  }
+
+  private easeOutCubic(t: number) {
+    return 1 - Math.pow(1 - t, 3);
+  }
+
+  private applyAnimatedLayout(
+    card: TarotCardView,
+    from: CardLayout,
+    to: CardLayout,
+    t: number,
+  ) {
+    const x = this.lerp(from.x, to.x, t);
+    const y = this.lerp(from.y, to.y, t);
+    const width = this.lerp(from.width, to.width, t);
+    const height = this.lerp(from.height, to.height, t);
+    const alpha = this.lerp(from.alpha, to.alpha, t);
+
+    card.setSize(width, height);
+    card.setPosition(x, y);
+    card.container.alpha = alpha;
+    card.container.visible = alpha > 0.01;
+  }
+
+  private async slideTo(direction: "next" | "back") {
+    if (!this.width || !this.height) return;
+    if (this.isAnimating) return;
+
+    this.isAnimating = true;
+
+    const layouts = this.getCardLayouts();
+    const duration = 220;
+
+    const from = {
+      prev: layouts.prev,
+      current: layouts.current,
+      next: layouts.next,
+    };
+
+    const to =
+      direction === "next"
+        ? {
+          prev: layouts.offLeft,
+          current: layouts.prev,
+          next: layouts.current,
+        }
+        : {
+          prev: layouts.current,
+          current: layouts.next,
+          next: layouts.offRight,
+        };
+
+    await new Promise<void>((resolve) => {
+      const start = performance.now();
+
+      const tick = () => {
+        const raw = Math.min((performance.now() - start) / duration, 1);
+        const t = this.easeOutCubic(raw);
+
+        this.applyAnimatedLayout(this.prevCard, from.prev, to.prev, t);
+        this.applyAnimatedLayout(this.currentCard, from.current, to.current, t);
+        this.applyAnimatedLayout(this.nextCard, from.next, to.next, t);
+
+        this.currentCard.container.zIndex = 500;
+        this.prevCard.container.zIndex = 500;
+        this.nextCard.container.zIndex = 1000;
+        this.cardNextButton.zIndex = 3000;
+        this.cardBackButton.zIndex = 3000;
+        if (raw < 1) {
+          requestAnimationFrame(tick);
+        } else {
+          this.currentCard.container.zIndex = 1000;
+          this.prevCard.container.zIndex = 500;
+          this.nextCard.container.zIndex = 500;
+          resolve();
+        }
+        this.keywordsBg.zIndex = 4500
+        this.titleText.zIndex = 4500
+        this.keywordsText.zIndex = 4500
+      };
+
+      requestAnimationFrame(tick);
+    });
+
+    if (direction === "next" && this.deckIndex < this.deck.length - 1) {
+      this.deckIndex++;
+    } else if (direction === "back" && this.deckIndex > 0) {
+      this.deckIndex--;
+    }
+
+    await this.refreshVisibleCards();
+    this.refreshCardButtons();
+    this.isAnimating = false;
   }
 
   private getCurrentCardText() {
@@ -223,17 +404,18 @@ export class PlayScene implements Scene {
     if (!text) {
       this.titleText.text = "";
       this.keywordsText.text = "";
+      this.keywordsBg.clear();
       return;
     }
 
-    //this.keywordsText.text = text.keywordsJa.join(" / ");
-    if (this.game.getLanguage() == "ja") {
-      this.titleText.text = `${text.titleJa}`;
+    if (this.game.getLanguage() === "ja") {
+      this.titleText.text = text.titleJa;
       this.keywordsText.text = text.keywordsJa.map((v) => `#${v}`).join("  ");
     } else {
-      this.titleText.text = `${text.titleEn}`;
+      this.titleText.text = text.titleEn;
       this.keywordsText.text = text.keywordsEn.map((v) => `#${v}`).join("  ");
     }
+
     this.refreshKeywordsBg();
   }
 
