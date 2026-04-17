@@ -52,6 +52,7 @@ export class PlayScene implements Scene {
         return;
       }
       await this.updateCard();
+      await this.refreshCardButtons();
     });
     //
     this.cardNextButton.on("pointertap", async () => {
@@ -60,6 +61,7 @@ export class PlayScene implements Scene {
         this.deckIndex++;
       }
       await this.updateCard();
+      await this.refreshCardButtons();
     });
 
     this.cardBackButton.on("pointertap", async () => {
@@ -68,6 +70,7 @@ export class PlayScene implements Scene {
         this.deckIndex--;
       }
       await this.updateCard()
+      await this.refreshCardButtons();
     });
 
     this.refreshText();
@@ -89,12 +92,25 @@ export class PlayScene implements Scene {
     // this.backButton.setLabel(this.game.t("backToTitle"));
   }
 
-
-  private pickRandomCard() {
-    shuffleCards(this.deck);
-    this.deckIndex = 0;
-    return this.deck[this.deckIndex];
+  private setButtonEnabled(button: Container, enabled: boolean) {
+    button.visible = true;
+    button.alpha = enabled ? 1 : 0.05;
+    button.eventMode = enabled ? "static" : "none";
+    button.cursor = enabled ? "pointer" : "default";
   }
+
+  private refreshCardButtons() {
+    const canGoBack = this.deckIndex > 0;
+    const canGoNext = this.deckIndex < this.deck.length - 1;
+
+    this.setButtonEnabled(this.cardBackButton, canGoBack);
+    this.setButtonEnabled(this.cardNextButton, canGoNext);
+  }
+  //private pickRandomCard() {
+  //  shuffleCards(this.deck);
+  //  this.deckIndex = 0;
+  //  return this.deck[this.deckIndex];
+  //}
   private getCard() {
     return this.deck[this.deckIndex]
   }
@@ -115,6 +131,7 @@ export class PlayScene implements Scene {
   async mount() {
     console.log("> mount");
     await this.updateCard();
+    await this.refreshCardButtons();
   }
 
   unmount() {
