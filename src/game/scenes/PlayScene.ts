@@ -53,7 +53,7 @@ export class PlayScene implements Scene {
     text: "",
     style: new TextStyle({
       fill: 0xe5e7eb,
-      fontSize: 9,
+      fontSize: 11,
     }),
   });
 
@@ -97,6 +97,9 @@ export class PlayScene implements Scene {
       this.cardNextButton,
       this.cardBackButton,
     );
+
+    this.titleText.resolution = window.devicePixelRatio || 2;
+    this.keywordsText.resolution = window.devicePixelRatio || 2;
   }
 
   async mount() {
