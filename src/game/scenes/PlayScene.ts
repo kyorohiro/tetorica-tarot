@@ -58,6 +58,26 @@ export class PlayScene implements Scene {
     }),
   });
 
+  private readonly loadingText = new Text({
+    text: "",
+    style: new TextStyle({
+      fill: 0xffffff,
+      fontSize: 20,
+      fontWeight: "bold",
+    }),
+  });
+
+  private showLoading(message: string) {
+    this.loadingText.text = message;
+    this.loadingText.anchor.set(0.5);
+    this.loadingText.x = Math.round(this.width * 0.5);
+    this.loadingText.y = Math.round(this.height * 0.5);
+    this.loadingText.visible = true;
+  }
+
+  private hideLoading() {
+    this.loadingText.visible = false;
+  }
   constructor(private readonly game: GameApp) {
     this.bg.tint = 0x111827;
 
@@ -104,9 +124,28 @@ export class PlayScene implements Scene {
   }
 
   async mount() {
-    await this.preloadTextures();
+    this.showLoading("Loading cards...");
+
+    const prev = this.getCard(-1);
+    const current = this.getCard(0);
+    const next = this.getCard(1);
+
+    const urls = [
+      backCardUrl,
+      prev?.url,
+      current?.url,
+      next?.url,
+    ].filter(Boolean) as string[];
+
+    await this.preloadTextures(urls);
+
     await this.refreshVisibleCards();
     this.refreshCardButtons();
+
+    this.hideLoading();
+
+    // 残りは裏で読む
+    void this.preloadRemainingTextures();
   }
 
   unmount() {
@@ -134,19 +173,28 @@ export class PlayScene implements Scene {
     this.keywordsText.y = height * 0.84;
   }
 
-  private async preloadTextures() {
-    const urls = Array.from(
-      new Set([
-        backCardUrl,
-        ...tarotCards.map((card) => card.url),
-      ]),
-    );
+  private async preloadTextures(urls: string[]) {
+    const uniqueUrls = Array.from(new Set(urls));
 
-    for (const url of urls) {
+    for (const url of uniqueUrls) {
+      if (this.textureCache.has(url)) continue;
       const texture = await Assets.load(url);
       this.textureCache.set(url, texture);
     }
   }
+
+  private async preloadRemainingTextures() {
+    const urls = Array.from(new Set(tarotCards.map((c) => c.url)));
+
+    await Promise.allSettled(
+      urls.map(async (url) => {
+        if (this.textureCache.has(url)) return;
+        const texture = await Assets.load(url);
+        this.textureCache.set(url, texture);
+      }),
+    );
+  }
+
   private getTexture(url: string) {
     const texture = this.textureCache.get(url);
     if (!texture) {
@@ -178,7 +226,6 @@ export class PlayScene implements Scene {
     const current = this.getCard(0);
     const next = this.getCard(1);
 
-
     const backTexture = this.getTexture(backCardUrl);
 
     if (prev) {
@@ -186,9 +233,6 @@ export class PlayScene implements Scene {
         this.getTexture(prev.url),
         backTexture,
       );
-    }
-    if (prev) {
-      await this.prevCard.setTextures(prev.url, backCardUrl);
       this.prevCard.setReversed(prev.reversed);
       this.prevCard.showFront();
       this.prevCard.container.visible = true;
@@ -201,7 +245,10 @@ export class PlayScene implements Scene {
       this.currentCardId = current.id;
       this.currentReversed = current.reversed;
 
-      await this.currentCard.setTextures(current.url, backCardUrl);
+      this.currentCard.setTexturesFromTexture(
+        this.getTexture(current.url),
+        backTexture,
+      );
       this.currentCard.setReversed(current.reversed);
       this.currentCard.showFront();
       this.currentCard.container.visible = true;
@@ -211,7 +258,10 @@ export class PlayScene implements Scene {
     }
 
     if (next) {
-      await this.nextCard.setTextures(next.url, backCardUrl);
+      this.nextCard.setTexturesFromTexture(
+        this.getTexture(next.url),
+        backTexture,
+      );
       this.nextCard.setReversed(next.reversed);
       this.nextCard.showFront();
       this.nextCard.container.visible = true;
