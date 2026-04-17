@@ -7,6 +7,7 @@ import backCardUrl from "../../assets/CardBacks.jpg";
 import { majorArcanaCards } from "../tarot/majorArcana";
 import { shuffleCards, sortCards, tarotCards } from "./tarotCards";
 import { createTriangleButton } from "./triangleButton";
+import { drawElementMark } from "./TarotElementView";
 
 type CardLayout = {
   x: number;
@@ -41,6 +42,7 @@ export class PlayScene implements Scene {
   private game: GameApp;
 
   private readonly keywordsBg = new Graphics();
+  private readonly elementMark = new Graphics();
 
   private readonly titleText = new Text({
     text: "",
@@ -131,6 +133,7 @@ export class PlayScene implements Scene {
       this.currentCard.container,
       this.keywordsBg,
       this.titleText,
+      this.elementMark,
       this.uprightText,
       this.reversedText,
       this.cardNextButton,
@@ -183,12 +186,18 @@ export class PlayScene implements Scene {
 
     this.layoutCards();
 
+
     this.titleText.anchor.set(0.5, 0);
     this.titleText.x = width * 0.5;
     this.titleText.y = height * 0.80;
 
+            const layouts = this.getCardLayouts();
+
     this.keywordsBg.x = width * 0.5;
     this.keywordsBg.y = height * 0.84;
+
+    this.elementMark.x = layouts.current.x - layouts.current.width/2 + 20;
+    this.elementMark.y = this.keywordsBg.y -10;//layouts.current.y + layouts.current.height/2 + 20;
 
     this.uprightText.anchor.set(0.5, 0);
     this.uprightText.x = width * 0.5;
@@ -474,7 +483,7 @@ export class PlayScene implements Scene {
           this.nextCard.container.zIndex = 500;
           resolve();
         }
-        this.keywordsBg.zIndex = 4500
+        //this.keywordsBg.zIndex = 4500
         this.titleText.zIndex = 4500
         this.uprightText.zIndex = 4500
         this.reversedText.zIndex = 4500
@@ -510,7 +519,8 @@ export class PlayScene implements Scene {
       keywordsJa: meaning.keywordsJa,
       keywordsEn: meaning.keywordsEn,
       revered: cardText.reversed,
-      upright: cardText.upright
+      upright: cardText.upright,
+      element: cardText.element,
     };
   }
 
@@ -524,6 +534,8 @@ export class PlayScene implements Scene {
       return;
     }
 
+    drawElementMark({elementMark: this.elementMark, element: text.element});
+ 
     if (!this.currentReversed) {
       this.uprightText.style = new TextStyle({
         fill: 0xffffff,
@@ -564,6 +576,7 @@ export class PlayScene implements Scene {
   }
 
   private refreshKeywordsBg() {
+    const layout = this.getCardLayouts();
     const paddingX = 16;
     const paddingY = 10;
     const radius = 14;
@@ -572,7 +585,7 @@ export class PlayScene implements Scene {
     const h1 = this.uprightText.height + paddingY * 2 * 3;
     const w2 = this.reversedText.width + paddingX * 2;
     const h2 = this.reversedText.height + paddingY * 2 * 3;
-    const w = Math.max(w1, w2); 
+    const w = Math.max(w1, w2, layout.current.width); 
     const h = Math.max(h1, h2); 
     this.keywordsBg.clear();
     this.keywordsBg.roundRect(-w / 2, -h / 2, w, h, radius);

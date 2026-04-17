@@ -1,5 +1,5 @@
 
-type Element = "fire" | "water" | "air" | "earth" | "special";
+export type TarotElement = "fire" | "water" | "air" | "earth" | "special";
 
 type TarotMeaning = {
   keywordsJa: string[];
@@ -7,7 +7,7 @@ type TarotMeaning = {
 };
 
 type TarotCard = {
-  element: Element;
+  element: TarotElement;
   titleJa: string;
   titleEn: string;
   upright: TarotMeaning;
