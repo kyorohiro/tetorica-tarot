@@ -1,4 +1,4 @@
-import { Graphics, Container, Sprite, Text, TextStyle, Texture } from "pixi.js";
+import { Graphics, Container, Sprite, Text, TextStyle, Texture, Assets } from "pixi.js";
 import type { Scene } from "../core/Scene";
 import type { GameApp } from "../GameApp";
 import { TarotCardView } from "./TarotCardView";
@@ -19,6 +19,7 @@ type CardLayout = {
 export class PlayScene implements Scene {
   container = new Container();
 
+  private textureCache = new Map<string, Texture>();
   private readonly bg = new Sprite(Texture.WHITE);
 
   private readonly prevCard = new TarotCardView();
@@ -103,6 +104,7 @@ export class PlayScene implements Scene {
   }
 
   async mount() {
+    await this.preloadTextures();
     await this.refreshVisibleCards();
     this.refreshCardButtons();
   }
@@ -132,6 +134,26 @@ export class PlayScene implements Scene {
     this.keywordsText.y = height * 0.84;
   }
 
+  private async preloadTextures() {
+    const urls = Array.from(
+      new Set([
+        backCardUrl,
+        ...tarotCards.map((card) => card.url),
+      ]),
+    );
+
+    for (const url of urls) {
+      const texture = await Assets.load(url);
+      this.textureCache.set(url, texture);
+    }
+  }
+  private getTexture(url: string) {
+    const texture = this.textureCache.get(url);
+    if (!texture) {
+      throw new Error(`Texture not loaded: ${url}`);
+    }
+    return texture;
+  }
   private setButtonEnabled(button: Container, enabled: boolean) {
     button.visible = true;
     button.alpha = enabled ? 1 : 0.05;
@@ -156,6 +178,15 @@ export class PlayScene implements Scene {
     const current = this.getCard(0);
     const next = this.getCard(1);
 
+
+    const backTexture = this.getTexture(backCardUrl);
+
+    if (prev) {
+      this.prevCard.setTexturesFromTexture(
+        this.getTexture(prev.url),
+        backTexture,
+      );
+    }
     if (prev) {
       await this.prevCard.setTextures(prev.url, backCardUrl);
       this.prevCard.setReversed(prev.reversed);

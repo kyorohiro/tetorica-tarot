@@ -1,4 +1,4 @@
-import { Assets, Container, Matrix, Sprite } from "pixi.js";
+import { Assets, Container, Matrix, Sprite, Texture } from "pixi.js";
 
 export class TarotCardView {
   readonly container = new Container();
@@ -26,6 +26,15 @@ export class TarotCardView {
     this.container.addChild(this.backCard, this.frontCard);
   }
 
+  setTexturesFromTexture(frontTexture: Texture, backTexture: Texture) {
+    //this.frontTexture = frontTexture;
+    //this.backTexture = backTexture;
+
+    this.frontCard.texture = frontTexture;
+    this.backCard.texture = backTexture;
+
+    this.updateFaceVisibility();
+  }
   async setTextures(frontUrl: string, backUrl: string) {
     const [frontTexture, backTexture] = await Promise.all([
       Assets.load(frontUrl),
