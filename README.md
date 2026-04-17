@@ -98,7 +98,7 @@ It is a **creative thinking tool**.
 ```
 npm run build:web
 cd dist
-zip -r ../web-build_0.1.6.zip .
+zip -r ../web-build_0.2.1.zip .
 ```
 
 ### For github pages (pwa)
@@ -106,5 +106,5 @@ zip -r ../web-build_0.1.6.zip .
 ```
 npm run build:gh
 cd dist
-zip -r ../web-build_0.1.6_gh.zip .
+zip -r ../web-build_0.2.1_gh.zip .
 ```
