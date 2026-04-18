@@ -55,9 +55,9 @@ You build the story.
 
 ## 📦 License
 
-Card images are based on public domain tarot decks (Rider–Waite–Smith).
-
-This project may include CC-licensed assets.
+Card images are based on public domain tarot decks (Rider–Waite–Smith).   
+Some assets are under CC licenses.    
+Everything else is released under the MIT License.
 
 ## ⚠️ Notes
 
