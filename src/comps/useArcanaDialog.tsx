@@ -83,7 +83,7 @@ export function useArcanaDialog() {
                             <div className="flex flex-wrap gap-2">
                                 {card.elements.map((keyword) => (
                                     <span
-                                        key={`up-${lang}-${keyword.type}`}
+                                        key={`el-${lang}-${keyword.type}`}
                                         className="rounded-full border border-emerald-700 bg-emerald-950/40 px-2.5 py-1 text-xs text-emerald-200"
                                         style={{color: cssColorFromElement(keyword.type)}}
                                     >

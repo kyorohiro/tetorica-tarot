@@ -64,7 +64,24 @@ const elementRelations: Record<
   },
 };
 
-
+const elementsTag = {
+  "fire": {
+   keywordsJa: ["行動", "情熱", "衝動"],
+   keywordsEn: ["Action", "Passion", "Impulse"],
+  },
+  "water": {
+    keywordsJa: ["感情", "共感", "受容"], //["感情", "愛", "共感"]
+    keywordsEn: ["Emotion", "Empathy", "Acceptance"],
+  },
+  "air": {
+    keywordsJa: ["思考", "判断", "言葉"],
+    keywordsEn: ["Thought", "Judgment", "Words"],
+  },
+  "earth": {
+    keywordsJa: ["現実", "身体", "成果"], //["現実", "お金", "身体", "成果"]
+    keywordsEn: ["Reality", "Body", "Outcome"],
+  }  
+}
 const majorArcanaCards: Record<string, TarotCard> = {
   "00-TheFool": {
     id: 0,
