@@ -2,6 +2,7 @@ import React from "react";
 import { useDialog } from "./useDialog";
 import { majorArcanaCards } from "../game/tarot/majorArcana";
 import { majorArcanaSpecialRelations } from "../game/tarot/majorArcana";
+import { Lang } from "../game/i18n/messages";
 
 type MajorArcanaKey = keyof typeof majorArcanaCards;
 
@@ -35,7 +36,8 @@ export function useArcanaDialog() {
     const { showDialog } = useDialog();
 
     const showArcanaDialog = React.useCallback(
-        async (cardId: string) => {
+        async (cardId: string, lang: Lang) => {
+            const isJa = lang === "ja";
             const safeCardId = cardId as MajorArcanaKey;
             const card = majorArcanaCards[safeCardId];
 
@@ -54,8 +56,7 @@ export function useArcanaDialog() {
                                 <div className="text-xs text-slate-400">
                                     {String(card.id).padStart(2, "0")} / {card.element}
                                 </div>
-                                <h2 className="text-xl font-semibold">{card.titleJa}</h2>
-                                <div className="text-sm text-slate-300">{card.titleEn}</div>
+                                <h2 className="text-xl font-semibold">{isJa? card.titleJa: card.titleEn}</h2>
                             </div>
 
                             <button
@@ -63,7 +64,7 @@ export function useArcanaDialog() {
                                 onClick={close}
                                 className="rounded-lg border border-slate-600 px-3 py-1.5 text-sm text-slate-300 hover:bg-slate-800"
                             >
-                                閉じる
+                               {isJa ? "閉じる" : "Close"}
                             </button>
                         </div>
                     </div>
@@ -71,23 +72,21 @@ export function useArcanaDialog() {
                     <div className="space-y-5 px-5 py-4 max-h-[80vh] overflow-y-auto">
                         <section>
                             <h3 className="mb-2 text-sm font-semibold text-slate-200">
+                                Element
+                            </h3>
+                            <div className="flex flex-wrap gap-2">
+                                {(isJa? card.element: card.element)}
+                            </div>
+                        </section>
+                        <section>
+                            <h3 className="mb-2 text-sm font-semibold text-slate-200">
                                 Upright
                             </h3>
                             <div className="flex flex-wrap gap-2">
-                                {card.upright.keywordsJa.map((keyword) => (
+                                {(isJa?card.upright.keywordsJa:card.upright.keywordsEn).map((keyword) => (
                                     <span
                                         key={`up-ja-${keyword}`}
                                         className="rounded-full border border-emerald-700 bg-emerald-950/40 px-2.5 py-1 text-xs text-emerald-200"
-                                    >
-                                        {keyword}
-                                    </span>
-                                ))}
-                            </div>
-                            <div className="mt-2 flex flex-wrap gap-2">
-                                {card.upright.keywordsEn.map((keyword) => (
-                                    <span
-                                        key={`up-en-${keyword}`}
-                                        className="rounded-full border border-slate-700 bg-slate-800 px-2.5 py-1 text-xs text-slate-300"
                                     >
                                         {keyword}
                                     </span>
@@ -100,7 +99,7 @@ export function useArcanaDialog() {
                                 Reversed
                             </h3>
                             <div className="flex flex-wrap gap-2">
-                                {card.reversed.keywordsJa.map((keyword) => (
+                                {(isJa?card.reversed.keywordsJa:card.reversed.keywordsEn).map((keyword) => (
                                     <span
                                         key={`rev-ja-${keyword}`}
                                         className="rounded-full border border-rose-700 bg-rose-950/40 px-2.5 py-1 text-xs text-rose-200"
@@ -109,26 +108,17 @@ export function useArcanaDialog() {
                                     </span>
                                 ))}
                             </div>
-                            <div className="mt-2 flex flex-wrap gap-2">
-                                {card.reversed.keywordsEn.map((keyword) => (
-                                    <span
-                                        key={`rev-en-${keyword}`}
-                                        className="rounded-full border border-slate-700 bg-slate-800 px-2.5 py-1 text-xs text-slate-300"
-                                    >
-                                        {keyword}
-                                    </span>
-                                ))}
-                            </div>
+                            
                         </section>
 
                         <section>
                             <h3 className="mb-3 text-sm font-semibold text-slate-200">
-                                関係性
+                                {isJa ? "関係性" :"Relations"}
                             </h3>
 
                             {relations.length === 0 ? (
                                 <div className="rounded-xl border border-slate-700 bg-slate-800/50 px-4 py-3 text-sm text-slate-400">
-                                    関係性データはまだありません
+                                    {isJa ? "関係性データはまだありません" :"..."}
                                 </div>
                             ) : (
                                 <div className="space-y-3">
@@ -142,28 +132,19 @@ export function useArcanaDialog() {
                                                 <div className="flex items-start justify-between gap-3">
                                                     <div>
                                                         <div className="text-sm font-medium text-slate-100">
-                                                            {toCard.titleJa}
-                                                        </div>
-                                                        <div className="text-xs text-slate-400">
-                                                            {toCard.titleEn}
+                                                            {isJa ? toCard.titleJa: toCard.titleEn}
                                                         </div>
                                                     </div>
 
                                                     <div className="text-right">
                                                         <div className="text-xs text-amber-300">
-                                                            {relationTypeLabelJa(rel.type)}
-                                                        </div>
-                                                        <div className="text-[11px] text-slate-500">
-                                                            {relationTypeLabelEn(rel.type)}
+                                                            {isJa ? relationTypeLabelJa(rel.type): relationTypeLabelEn(rel.type)}
                                                         </div>
                                                     </div>
                                                 </div>
 
                                                 <div className="mt-3 text-sm text-slate-200">
-                                                    {rel.labelJa}
-                                                </div>
-                                                <div className="mt-1 text-xs text-slate-400">
-                                                    {rel.labelEn}
+                                                    {isJa ? rel.labelJa: rel.labelEn}
                                                 </div>
                                             </div>
                                         );
