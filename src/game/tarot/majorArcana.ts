@@ -1,3 +1,4 @@
+import { Lang } from "../i18n/messages";
 
 export type TarotElement = "fire" | "water" | "air" | "earth" | "special";
 export type TarotElementItem = { type: TarotElement, weight: number };
@@ -66,8 +67,8 @@ const elementRelations: Record<
 
 const elementsTag = {
   "fire": {
-   keywordsJa: ["行動", "情熱", "衝動"],
-   keywordsEn: ["Action", "Passion", "Impulse"],
+    keywordsJa: ["行動", "情熱", "衝動"],
+    keywordsEn: ["Action", "Passion", "Impulse"],
   },
   "water": {
     keywordsJa: ["感情", "共感", "受容"], //["感情", "愛", "共感"]
@@ -80,7 +81,7 @@ const elementsTag = {
   "earth": {
     keywordsJa: ["現実", "身体", "成果"], //["現実", "お金", "身体", "成果"]
     keywordsEn: ["Reality", "Body", "Outcome"],
-  }  
+  }
 }
 const majorArcanaCards: Record<string, TarotCard> = {
   "00-TheFool": {
@@ -191,7 +192,7 @@ const majorArcanaCards: Record<string, TarotCard> = {
     titleJa: "恋人",
     titleEn: "The Lovers",
     element: "air",
-    elements:[{ type: "water", weight: 1.0 }, { type: "air", weight: 0.7 }],
+    elements: [{ type: "water", weight: 1.0 }, { type: "air", weight: 0.7 }],
     upright: {
       keywordsJa: ["選択", "結びつき", "調和"],
       keywordsEn: ["Choice", "Bond", "Harmony"],
@@ -202,7 +203,7 @@ const majorArcanaCards: Record<string, TarotCard> = {
     },
   },
 
-  "07-TheChariot": { 
+  "07-TheChariot": {
     id: 7,
     uid: "07-TheChariot",
     titleJa: "戦車",
@@ -931,5 +932,82 @@ function elementLabelEn(element: string) {
       return element;
   }
 }
-export { majorArcanaCards, majorArcanaSpecialRelations, elementRelations, elementLabelEn, elementLabelJa, colorFromElement, cssColorFromElement };
+
+function getTagFromElements(elements: TarotElement[], lang: Lang) {
+  let tags: { element: TarotElement, keyword: string }[] = [];
+  for (var i = 0; i < elements.length; i++) {
+    if (elements[i] == "air") {
+      if (lang == "ja") {
+        tags = [...tags, ...elementsTag.air.keywordsJa.map((k) => {
+          return {
+            element: elements[i], //
+            keyword: k //
+          }
+        })];
+      } else {
+        tags = [...tags, ...elementsTag.air.keywordsEn.map((k) => {
+          return {
+            element: elements[i], //
+            keyword: k //
+          }
+        })];
+      }
+    }
+    else if (elements[i] == "water") {
+      if (lang == "ja") {
+        tags = [...tags, ...elementsTag.water.keywordsJa.map((k) => {
+          return {
+            element: elements[i], //
+            keyword: k //
+          }
+        })];
+      } else {
+        tags = [...tags, ...elementsTag.water.keywordsEn.map((k) => {
+          return {
+            element: elements[i], //
+            keyword: k //
+          }
+        })];
+      }
+    }
+    else if (elements[i] == "earth") {
+      if (lang == "ja") {
+        tags = [...tags, ...elementsTag.earth.keywordsJa.map((k) => {
+          return {
+            element: elements[i], //
+            keyword: k //
+          }
+        })];
+      } else {
+        tags = [...tags, ...elementsTag.earth.keywordsEn.map((k) => {
+          return {
+            element: elements[i], //
+            keyword: k //
+          }
+        })];
+      }
+    }
+    else if (elements[i] == "fire") {
+      if (lang == "ja") {
+        tags = [...tags, ...elementsTag.fire.keywordsJa.map((k) => {
+          return {
+            element: elements[i], //
+            keyword: k //
+          }
+        })];
+      } else {
+        tags = [...tags, ...elementsTag.fire.keywordsEn.map((k) => {
+          return {
+            element: elements[i], //
+            keyword: k //
+          }
+        })];
+      }
+    }
+
+  }
+  return tags;
+}
+
+export { majorArcanaCards, majorArcanaSpecialRelations, elementRelations, elementLabelEn, elementLabelJa, colorFromElement, cssColorFromElement, elementsTag, getTagFromElements };
 export type { TarotCard, TarotMeaning };

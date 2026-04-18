@@ -1,6 +1,6 @@
 import React from "react";
 import { useDialog } from "./useDialog";
-import { colorFromElement, cssColorFromElement, majorArcanaCards } from "../game/tarot/majorArcana";
+import { colorFromElement, cssColorFromElement, getTagFromElements, majorArcanaCards } from "../game/tarot/majorArcana";
 import { majorArcanaSpecialRelations } from "../game/tarot/majorArcana";
 import { Lang } from "../game/i18n/messages";
 import { LoadingImage } from "./LoadingImageProps";
@@ -52,25 +52,25 @@ export function useArcanaDialog() {
             return await showDialog<void>(({ close }) => (
                 <div className={"w-full max-w-2xl rounded-2xl border border-slate-700 bg-slate-900 text-slate-100 shadow-xl"}>
                     <div className="relative border-b border-slate-700 px-5 py-4" >
-                        <div className="absolute bottom-0 h-2 w-[70%]" style={{backgroundColor:`${cssColorFromElement(card.element)}`}} ></div>
+                        <div className="absolute bottom-0 h-2 w-[70%]" style={{ backgroundColor: `${cssColorFromElement(card.element)}` }} ></div>
                         <div className="flex items-start justify-between gap-4">
                             <div>
                                 <div className="text-xs text-slate-400">
                                     {String(card.id).padStart(2, "0")} / {card.element}
                                 </div>
-                                <h2 className="text-xl font-semibold">{isJa? card.titleJa: card.titleEn}</h2>
-                                <div style={{width: 300/5, height:527/5}}>
-                                    <LoadingImage src={`./assets/${card.uid}.jpg`}/>
+                                <h2 className="text-xl font-semibold">{isJa ? card.titleJa : card.titleEn}</h2>
+                                <div style={{ width: 300 / 5, height: 527 / 5 }}>
+                                    <LoadingImage src={`./assets/${card.uid}.jpg`} />
                                 </div>
                             </div>
 
                             <button
                                 type="button"
                                 onClick={close}
-                                style={{backgroundColor:`${cssColorFromElement(card.element)}`, color:"#666666"}}
+                                style={{ backgroundColor: `${cssColorFromElement(card.element)}`, color: "#666666" }}
                                 className="rounded-lg border border-slate-600 px-3 py-1.5 text-sm text-slate-300 hover:bg-slate-800"
                             >
-                               {isJa ? "閉じる" : "Close"}
+                                {isJa ? "閉じる" : "Close"}
                             </button>
                         </div>
                     </div>
@@ -85,11 +85,30 @@ export function useArcanaDialog() {
                                     <span
                                         key={`el-${lang}-${keyword.type}`}
                                         className="rounded-full border border-emerald-700 bg-emerald-950/40 px-2.5 py-1 text-xs text-emerald-200"
-                                        style={{color: cssColorFromElement(keyword.type)}}
+                                        style={{
+                                            color: cssColorFromElement(keyword.type),
+                                            borderColor: cssColorFromElement(keyword.type),
+                                        }}
                                     >
                                         {keyword.type}
                                     </span>
                                 ))}
+                            </div>
+                            <div className="flex flex-wrap gap-2">
+                                {
+                                    getTagFromElements(card.elements.map((v) => v.type), lang).map((keyword) => (
+                                        <span
+                                            key={`eltag-${lang}-${keyword}`}
+                                            className="rounded-full border border-gray-100 border-0.5 px-0.5 py-0.5 my-1 text-xs text-mist-200"
+                                            style={{
+                                                color: cssColorFromElement(keyword.element),
+                                                borderColor: cssColorFromElement(keyword.element),
+                                            }}
+                                        >
+                                            {keyword.keyword}
+                                        </span>
+                                    ))
+                                }
                             </div>
                         </section>
                         <section>
@@ -97,7 +116,7 @@ export function useArcanaDialog() {
                                 {isJa ? "正位置" : "Upright"}
                             </h3>
                             <div className="flex flex-wrap gap-2">
-                                {(isJa?card.upright.keywordsJa:card.upright.keywordsEn).map((keyword) => (
+                                {(isJa ? card.upright.keywordsJa : card.upright.keywordsEn).map((keyword) => (
                                     <span
                                         key={`up-${lang}-${keyword}`}
                                         className="rounded-full border border-emerald-700 bg-emerald-950/40 px-2.5 py-1 text-xs text-emerald-200"
@@ -113,7 +132,7 @@ export function useArcanaDialog() {
                                 {isJa ? "逆位置" : "Reversed"}
                             </h3>
                             <div className="flex flex-wrap gap-2">
-                                {(isJa?card.reversed.keywordsJa:card.reversed.keywordsEn).map((keyword) => (
+                                {(isJa ? card.reversed.keywordsJa : card.reversed.keywordsEn).map((keyword) => (
                                     <span
                                         key={`rev-${lang}-${keyword}`}
                                         className="rounded-full border border-rose-700 bg-rose-950/40 px-2.5 py-1 text-xs text-rose-200"
@@ -122,12 +141,12 @@ export function useArcanaDialog() {
                                     </span>
                                 ))}
                             </div>
-                            
+
                         </section>
 
                         <section>
                             <h3 className="mb-3 text-sm font-semibold text-slate-200">
-                                {isJa ? "関係性" :"Relations"}
+                                {isJa ? "関係性" : "Relations"}
                             </h3>
 
                             {relations.length === 0 ? (
@@ -142,31 +161,31 @@ export function useArcanaDialog() {
                                             <div
                                                 key={`${safeCardId}-${rel.to}-${rel.type}`}
                                                 className="relative rounded-xl border border-slate-700 bg-slate-800/50 px-4 py-3"
-                                                 onClick={()=>{
+                                                onClick={() => {
                                                     console.log("click")
                                                     showArcanaDialog(toCard.uid, lang);
                                                 }}
                                             >
-                                                    <div className="absolute top-0, left-3" style={{ width: 300 / 10, height: 527 / 10 }}>
-                                                        <LoadingImage src={`./assets/${toCard.uid}.jpg`} />
-                                                    </div>
+                                                <div className="absolute top-0, left-3" style={{ width: 300 / 10, height: 527 / 10 }}>
+                                                    <LoadingImage src={`./assets/${toCard.uid}.jpg`} />
+                                                </div>
                                                 <div className="relative flex items-start justify-between gap-3">
 
                                                     <div>
                                                         <div className="relative left-10 text-sm font-medium text-slate-100">
-                                                            {isJa ? toCard.titleJa: toCard.titleEn}
+                                                            {isJa ? toCard.titleJa : toCard.titleEn}
                                                         </div>
                                                     </div>
 
                                                     <div className="text-right">
                                                         <div className="text-xs text-amber-300">
-                                                            {isJa ? relationTypeLabelJa(rel.type): relationTypeLabelEn(rel.type)}
+                                                            {isJa ? relationTypeLabelJa(rel.type) : relationTypeLabelEn(rel.type)}
                                                         </div>
                                                     </div>
                                                 </div>
 
                                                 <div className="relative left-10 mt-3 text-sm text-slate-200">
-                                                    {isJa ? rel.labelJa: rel.labelEn}
+                                                    {isJa ? rel.labelJa : rel.labelEn}
                                                 </div>
                                             </div>
                                         );
