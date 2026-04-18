@@ -1,6 +1,6 @@
 
 export type TarotElement = "fire" | "water" | "air" | "earth" | "special";
-
+export type TarotElementItem = { type: TarotElement, weight: number };
 type TarotMeaning = {
   keywordsJa: string[];
   keywordsEn: string[];
@@ -10,6 +10,7 @@ type TarotCard = {
   id: number;
   uid: string;
   element: TarotElement;
+  elements: TarotElementItem[];
   titleJa: string;
   titleEn: string;
   upright: TarotMeaning;
@@ -71,6 +72,7 @@ const majorArcanaCards: Record<string, TarotCard> = {
     titleJa: "愚者",
     titleEn: "The Fool",
     element: "air",
+    elements: [{ type: "air", weight: 1.0 }, { type: "fire", weight: 0.6 }],
     upright: {
       keywordsJa: ["始まり", "衝動", "可能性"],
       keywordsEn: ["Beginning", "Impulse", "Potential"],
@@ -87,6 +89,7 @@ const majorArcanaCards: Record<string, TarotCard> = {
     titleJa: "魔術師",
     titleEn: "The Magician",
     element: "special",
+    elements: [{ type: "air", weight: 1.0 }, { type: "fire", weight: 0.6 }],
     upright: {
       keywordsJa: ["技術", "意志", "創造"],
       keywordsEn: ["Skill", "Will", "Creation"],
@@ -103,6 +106,7 @@ const majorArcanaCards: Record<string, TarotCard> = {
     titleJa: "女教皇",
     titleEn: "The High Priestess",
     element: "water",
+    elements: [{ type: "water", weight: 1.0 }],
     upright: {
       keywordsJa: ["直感", "秘密", "静けさ"],
       keywordsEn: ["Intuition", "Secrets", "Stillness"],
@@ -119,6 +123,7 @@ const majorArcanaCards: Record<string, TarotCard> = {
     titleJa: "女帝",
     titleEn: "The Empress",
     element: "earth",
+    elements: [{ type: "earth", weight: 1.0 }, { type: "water", weight: 0.6 }],
     upright: {
       keywordsJa: ["豊かさ", "育成", "受容"],
       keywordsEn: ["Abundance", "Nurture", "Acceptance"],
@@ -135,6 +140,7 @@ const majorArcanaCards: Record<string, TarotCard> = {
     titleJa: "皇帝",
     titleEn: "The Emperor",
     element: "fire",
+    elements: [{ type: "earth", weight: 1.0 }, { type: "fire", weight: 0.6 }],
     upright: {
       keywordsJa: ["支配", "秩序", "権威"],
       keywordsEn: ["Authority", "Order", "Control"],
@@ -151,6 +157,7 @@ const majorArcanaCards: Record<string, TarotCard> = {
     titleJa: "法王",
     titleEn: "The Hierophant",
     element: "earth",
+    elements: [{ type: "earth", weight: 1.0 }, { type: "air", weight: 0.5 }],
     upright: {
       keywordsJa: ["教え", "伝統", "規範"],
       keywordsEn: ["Teaching", "Tradition", "Rules"],
@@ -167,6 +174,7 @@ const majorArcanaCards: Record<string, TarotCard> = {
     titleJa: "恋人",
     titleEn: "The Lovers",
     element: "air",
+    elements:[{ type: "water", weight: 1.0 }, { type: "air", weight: 0.7 }],
     upright: {
       keywordsJa: ["選択", "結びつき", "調和"],
       keywordsEn: ["Choice", "Bond", "Harmony"],
@@ -183,6 +191,7 @@ const majorArcanaCards: Record<string, TarotCard> = {
     titleJa: "戦車",
     titleEn: "The Chariot",
     element: "water",
+    elements: [{ type: "fire", weight: 1.0 }, { type: "earth", weight: 0.6 }],
     upright: {
       keywordsJa: ["前進", "勝利", "突破"],
       keywordsEn: ["Advance", "Victory", "Breakthrough"],
@@ -199,6 +208,7 @@ const majorArcanaCards: Record<string, TarotCard> = {
     titleJa: "力",
     titleEn: "Strength",
     element: "fire",
+    elements: [{ type: "fire", weight: 1.0 }, { type: "water", weight: 0.6 }],
     upright: {
       keywordsJa: ["忍耐", "制御", "勇気"],
       keywordsEn: ["Patience", "Control", "Courage"],
@@ -215,6 +225,7 @@ const majorArcanaCards: Record<string, TarotCard> = {
     titleJa: "隠者",
     titleEn: "The Hermit",
     element: "earth",
+    elements: [{ type: "earth", weight: 1.0 }, { type: "air", weight: 0.6 }],
     upright: {
       keywordsJa: ["探求", "孤独", "内省"],
       keywordsEn: ["Search", "Solitude", "Reflection"],
@@ -231,6 +242,7 @@ const majorArcanaCards: Record<string, TarotCard> = {
     titleJa: "運命の輪",
     titleEn: "Wheel of Fortune",
     element: "special",
+    elements: [{ type: "fire", weight: 0.8 }, { type: "air", weight: 0.8 }],
     upright: {
       keywordsJa: ["転機", "循環", "運命"],
       keywordsEn: ["Turning Point", "Cycle", "Fate"],
@@ -247,6 +259,7 @@ const majorArcanaCards: Record<string, TarotCard> = {
     titleJa: "正義",
     titleEn: "Justice",
     element: "air",
+    elements: [{ type: "air", weight: 1.0 }, { type: "earth", weight: 0.6 }],
     upright: {
       keywordsJa: ["均衡", "判断", "責任"],
       keywordsEn: ["Balance", "Judgment", "Responsibility"],
@@ -263,6 +276,7 @@ const majorArcanaCards: Record<string, TarotCard> = {
     titleJa: "吊るされた男",
     titleEn: "The Hanged Man",
     element: "water",
+    elements: [{ type: "water", weight: 1.0 }, { type: "air", weight: 0.5 }],
     upright: {
       keywordsJa: ["停止", "視点転換", "受容"],
       keywordsEn: ["Pause", "New Perspective", "Acceptance"],
@@ -279,6 +293,7 @@ const majorArcanaCards: Record<string, TarotCard> = {
     titleJa: "死神",
     titleEn: "Death",
     element: "water",
+    elements: [{ type: "water", weight: 1.0 }, { type: "earth", weight: 0.7 }],
     upright: {
       keywordsJa: ["終わり", "変化", "再出発"],
       keywordsEn: ["Ending", "Transformation", "Restart"],
@@ -295,6 +310,7 @@ const majorArcanaCards: Record<string, TarotCard> = {
     titleJa: "節制",
     titleEn: "Temperance",
     element: "fire",
+    elements: [{ type: "water", weight: 1.0 }, { type: "air", weight: 0.6 }],
     upright: {
       keywordsJa: ["調和", "調整", "中庸"],
       keywordsEn: ["Harmony", "Adjustment", "Moderation"],
@@ -311,6 +327,7 @@ const majorArcanaCards: Record<string, TarotCard> = {
     titleJa: "悪魔",
     titleEn: "The Devil",
     element: "earth",
+    elements: [{ type: "earth", weight: 1.0 }, { type: "fire", weight: 0.6 }],
     upright: {
       keywordsJa: ["執着", "欲望", "束縛"],
       keywordsEn: ["Obsession", "Desire", "Bondage"],
@@ -327,6 +344,7 @@ const majorArcanaCards: Record<string, TarotCard> = {
     titleJa: "塔",
     titleEn: "The Tower",
     element: "fire",
+    elements: [{ type: "fire", weight: 1.0 }, { type: "air", weight: 0.7 }],
     upright: {
       keywordsJa: ["崩壊", "衝撃", "破綻"],
       keywordsEn: ["Collapse", "Shock", "Breakdown"],
@@ -343,6 +361,7 @@ const majorArcanaCards: Record<string, TarotCard> = {
     titleJa: "星",
     titleEn: "The Star",
     element: "air",
+    elements: [{ type: "water", weight: 1.0 }],
     upright: {
       keywordsJa: ["希望", "癒し", "導き"],
       keywordsEn: ["Hope", "Healing", "Guidance"],
@@ -359,6 +378,7 @@ const majorArcanaCards: Record<string, TarotCard> = {
     titleJa: "月",
     titleEn: "The Moon",
     element: "water",
+    elements: [{ type: "water", weight: 1.0 }, { type: "air", weight: 0.5 }],
     upright: {
       keywordsJa: ["不安", "幻", "曖昧さ"],
       keywordsEn: ["Anxiety", "Illusion", "Ambiguity"],
@@ -375,6 +395,7 @@ const majorArcanaCards: Record<string, TarotCard> = {
     titleJa: "太陽",
     titleEn: "The Sun",
     element: "fire",
+    elements: [{ type: "fire", weight: 1.0 }],
     upright: {
       keywordsJa: ["成功", "喜び", "明快さ"],
       keywordsEn: ["Success", "Joy", "Clarity"],
@@ -391,6 +412,7 @@ const majorArcanaCards: Record<string, TarotCard> = {
     titleJa: "審判",
     titleEn: "Judgement",
     element: "fire",
+    elements: [{ type: "water", weight: 1.0 }],
     upright: {
       keywordsJa: ["覚醒", "再生", "決断"],
       keywordsEn: ["Awakening", "Rebirth", "Decision"],
@@ -407,6 +429,7 @@ const majorArcanaCards: Record<string, TarotCard> = {
     titleJa: "世界",
     titleEn: "The World",
     element: "earth",
+    elements: [{ type: "earth", weight: 1.0 }, { type: "water", weight: 0.6 }],
     upright: {
       keywordsJa: ["完成", "到達", "統合"],
       keywordsEn: ["Completion", "Achievement", "Integration"],
