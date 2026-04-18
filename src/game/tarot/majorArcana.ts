@@ -83,13 +83,13 @@ const majorArcanaCards: Record<string, TarotCard> = {
     },
   },
 
-  "01-TheMagician": {
+  "01-TheMagician": { //TODO
     id: 1,
     uid: "01-TheMagician",
     titleJa: "魔術師",
     titleEn: "The Magician",
     element: "special",
-    elements: [{ type: "air", weight: 1.0 }, { type: "fire", weight: 0.6 }],
+    elements: [{ type: "air", weight: 1.0 }, { type: "fire", weight: 0.6 }, { type: "earth", weight: 0.2 }, { type: "water", weight: 0.2 }],
     upright: {
       keywordsJa: ["技術", "意志", "創造"],
       keywordsEn: ["Skill", "Will", "Creation"],
@@ -134,7 +134,7 @@ const majorArcanaCards: Record<string, TarotCard> = {
     },
   },
 
-  "04-TheEmperor": {
+  "04-TheEmperor": { //TODO
     id: 4,
     uid: "04-TheEmperor",
     titleJa: "皇帝",
@@ -185,7 +185,7 @@ const majorArcanaCards: Record<string, TarotCard> = {
     },
   },
 
-  "07-TheChariot": {
+  "07-TheChariot": { // todo
     id: 7,
     uid: "07-TheChariot",
     titleJa: "戦車",
@@ -304,7 +304,7 @@ const majorArcanaCards: Record<string, TarotCard> = {
     },
   },
 
-  "14-Temperance": {
+  "14-Temperance": {// todo
     id: 14,
     uid: "14-Temperance",
     titleJa: "節制",
@@ -412,7 +412,7 @@ const majorArcanaCards: Record<string, TarotCard> = {
     titleJa: "審判",
     titleEn: "Judgement",
     element: "fire",
-    elements: [{ type: "water", weight: 1.0 }],
+    elements: [{ type: "fire", weight: 1.0 }, { type: "air", weight: 0.6 }],
     upright: {
       keywordsJa: ["覚醒", "再生", "決断"],
       keywordsEn: ["Awakening", "Rebirth", "Decision"],
