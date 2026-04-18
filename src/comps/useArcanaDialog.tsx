@@ -1,6 +1,6 @@
 import React from "react";
 import { useDialog } from "./useDialog";
-import { colorFromElement, cssColorFromElement, elementLabelEn, elementLabelJa, majorArcanaCards } from "../game/tarot/majorArcana";
+import { cssColorFromElement, majorArcanaCards } from "../game/tarot/majorArcana";
 import { majorArcanaSpecialRelations } from "../game/tarot/majorArcana";
 import { Lang } from "../game/i18n/messages";
 import { LoadingImage } from "./LoadingImageProps";
