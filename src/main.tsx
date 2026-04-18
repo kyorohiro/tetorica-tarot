@@ -4,6 +4,7 @@ import App from "./App";
 
 import { isTauri } from './natives/native';
 import { isPwaDistributionLocation } from './natives/pwa';
+import { DialogProvider } from "./comps/useDialog";
 
 if ("serviceWorker" in navigator && !isTauri() && isPwaDistributionLocation()) {
   window.addEventListener("load", async () => {
@@ -20,6 +21,8 @@ if ("serviceWorker" in navigator && !isTauri() && isPwaDistributionLocation()) {
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
-    <App />
+    <DialogProvider>
+      <App />
+    </DialogProvider>
   </React.StrictMode>,
 );

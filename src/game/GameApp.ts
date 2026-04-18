@@ -4,6 +4,7 @@ import { SceneManager } from "./core/SceneManager";
 import { TitleScene } from "./scenes/TitleScene";
 import { PlayScene } from "./scenes/PlayScene";
 import { t, type Lang, type MessageKey } from "./i18n/messages";
+import { UseArcanaDialogReturn } from "../comps/useArcanaDialog";
 
 export type SceneKey = "title" | "play";
 
@@ -21,16 +22,19 @@ export class GameApp {
   private destroyRequested = false;
   private playScene: PlayScene | undefined;
   private setCurrentScene: (v: SceneKey) => void;
+  private arcanaDialog: UseArcanaDialogReturn;
 
   constructor(
     private readonly root: HTMLElement,
     language: Lang,
     currentScene: SceneKey| undefined,
     setCurrentScene: (v: SceneKey) => void,
+    arcanaDialog: UseArcanaDialogReturn,
   ) {
     this.language = language;
     this.currentScene = currentScene;
     this.setCurrentScene = setCurrentScene;
+    this.arcanaDialog = arcanaDialog;
   }
 
   async init() {
@@ -95,6 +99,10 @@ export class GameApp {
         
       });
     }
+  }
+
+  async showArcanaDialog(cardId:string)  {
+    await this.arcanaDialog.showArcanaDialog(cardId)
   }
 
   showTitleScene() {

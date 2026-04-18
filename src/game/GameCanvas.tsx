@@ -1,11 +1,13 @@
 import { forwardRef, useEffect, useImperativeHandle, useRef } from "react";
 import { GameApp, SceneKey } from "./GameApp";
 import type { Lang } from "./i18n/messages";
+import { UseArcanaDialogReturn } from "../comps/useArcanaDialog";
 
 type Props = {
   language: Lang;
   currentScene?: SceneKey;
   setCurrentScene: (v: SceneKey) => void;
+  arcanaDialog: UseArcanaDialogReturn;
 };
 
 export type GameCanvasHandle = {
@@ -13,7 +15,7 @@ export type GameCanvasHandle = {
   shuffleCards: ()=>Promise<void>
 }
 
-export const GameCanvas = forwardRef<GameCanvasHandle, Props>(function ({ language, currentScene, setCurrentScene }: Props, ref) {
+export const GameCanvas = forwardRef<GameCanvasHandle, Props>(function ({ language, currentScene, setCurrentScene, arcanaDialog }: Props, ref) {
   const hostRef = useRef<HTMLDivElement | null>(null);
   const gameRef = useRef<GameApp | null>(null);
 
@@ -22,7 +24,7 @@ export const GameCanvas = forwardRef<GameCanvasHandle, Props>(function ({ langua
     if (!host) return;
 
     let disposed = false;
-    const game = new GameApp(host, language, currentScene, setCurrentScene);
+    const game = new GameApp(host, language, currentScene, setCurrentScene, arcanaDialog);
     gameRef.current = game;
 
     void game.init().then(() => {

@@ -101,15 +101,18 @@ export class PlayScene implements Scene {
     }
 
     this.currentCard.onTap(async () => {
-      if (this.isAnimating) return;
-
-      if (this.currentCard.showingFront) {
-        await this.currentCard.flip();
-        return;
+      if(this.currentCardId) {
+        this.game.showArcanaDialog(this.currentCardId)
       }
-
-      await this.refreshVisibleCards();
-      this.refreshCardButtons();
+      //if (this.isAnimating) return;
+      //
+      //if (this.currentCard.showingFront) {
+      //  await this.currentCard.flip();
+      //  return;
+      //}
+      //
+      //await this.refreshVisibleCards();
+      //this.refreshCardButtons();
     });
 
     this.cardNextButton.on("pointertap", async () => {

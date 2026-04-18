@@ -4,11 +4,13 @@ import { GameCanvas, GameCanvasHandle } from "./game/GameCanvas";
 import type { Lang } from "./game/i18n/messages";
 import { SceneKey } from "./game/GameApp";
 import { ArrowLeft, RefreshCw, ListOrdered } from "lucide-react";
+import { useArcanaDialog, UseArcanaDialogReturn } from "./comps/useArcanaDialog";
 
 export default function App() {
   const [language, setLanguage] = useState<Lang>("ja");
   const [currentScene, setCurrentScene] = useState<SceneKey>();
   const gameCanvas = useRef<GameCanvasHandle>(null);
+  const arcanaDialog: UseArcanaDialogReturn = useArcanaDialog();
 
   return (
     <div className="relative h-screen w-screen overflow-hidden bg-slate-950 text-white">
@@ -17,6 +19,7 @@ export default function App() {
         language={language}
         currentScene={currentScene}
         setCurrentScene={setCurrentScene}
+        arcanaDialog={arcanaDialog}
       />
 
       <div className="pointer-events-none absolute inset-0">
