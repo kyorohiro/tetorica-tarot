@@ -1,3 +1,5 @@
+import { majorArcanaCards } from "../tarot/majorArcana";
+
 export type TarotCard = {
   path: string;
   url: string;
@@ -5,23 +7,17 @@ export type TarotCard = {
   reversed: boolean,
 };
 
-const cardModules = import.meta.glob("../../assets/*.jpg", {
-  eager: true,
-  import: "default",
-}) as Record<string, string>;
+type MajorArcanaKey = keyof typeof majorArcanaCards;
 
-const tarotCards: TarotCard[] = Object.entries(cardModules)
-  .filter(([path]) => !path.endsWith("/CardBacks.jpg"))
-  .map(([path, url]) => {
-    const id = path.split("/").pop()?.replace(".jpg", "") ?? "Unknown";
-    return {
-      path,
-      url,
-      id,
-      reversed: Math.random() < 0.45
-    };
-  });
 
+const tarotCards: TarotCard[] = Object.entries(majorArcanaCards).map(
+  ([id, _]) => ({
+    id: id as MajorArcanaKey,
+    path: id,
+    url: `./assets/${id}.jpg`,
+    reversed: Math.random() < 0.45
+  })
+);
 function sortCards(cards: TarotCard[]): TarotCard[] {
   return [...cards].sort((a, b) =>
     a.id.localeCompare(b.id, undefined, { numeric: true })
