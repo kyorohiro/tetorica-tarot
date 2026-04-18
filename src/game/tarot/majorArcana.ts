@@ -191,7 +191,7 @@ const majorArcanaCards: Record<string, TarotCard> = {
     uid: "06-TheLovers",
     titleJa: "恋人",
     titleEn: "The Lovers",
-    element: "air",
+    element: "water",
     elements: [{ type: "water", weight: 1.0 }, { type: "air", weight: 0.7 }],
     upright: {
       keywordsJa: ["選択", "結びつき", "調和"],

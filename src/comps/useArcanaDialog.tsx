@@ -70,7 +70,7 @@ export function useArcanaDialog() {
                         </div>
                     </div>
 
-                    <div className="relative space-y-5 px-5 py-4 max-h-[80vh] overflow-y-auto">
+                    <div className="relative space-y-5 px-5 py-4 max-h-[80vh] overflow-y-auto overflow-x-hidden">
                         <div className="absolute top-0 h-2 w-[70%]" style={{ backgroundColor: `${cssColorFromElement(card.element)}` }} ></div>
 
                         <div style={{ width: 300 / 5, height: 527 / 5 }}>
@@ -160,32 +160,34 @@ export function useArcanaDialog() {
                                         return (
                                             <div
                                                 key={`${safeCardId}-${rel.to}-${rel.type}`}
-                                                className="relative rounded-xl border border-slate-700 bg-slate-800/50 px-4 py-3"
+                                                className="rounded-xl border border-slate-700 bg-slate-800/50 px-4 py-3 cursor-pointer overflow-hidden"
                                                 onClick={() => {
-                                                    console.log("click")
                                                     showArcanaDialog(toCard.uid, lang);
                                                 }}
                                             >
-                                                <div className="absolute top-0, left-3" style={{ width: 300 / 10, height: 527 / 10 }}>
-                                                    <LoadingImage src={`./assets/${toCard.uid}.jpg`} />
-                                                </div>
-                                                <div className="relative flex items-start justify-between gap-3">
-
-                                                    <div>
-                                                        <div className="relative left-10 text-sm font-medium text-slate-100">
-                                                            {isJa ? toCard.titleJa : toCard.titleEn}
-                                                        </div>
+                                                <div className="flex items-start gap-3 min-w-0">
+                                                    <div
+                                                        className="shrink-0"
+                                                        style={{ width: 300 / 10, height: 527 / 10 }}
+                                                    >
+                                                        <LoadingImage src={`./assets/${toCard.uid}.jpg`} />
                                                     </div>
 
-                                                    <div className="text-right">
-                                                        <div className="text-xs text-amber-300">
-                                                            {isJa ? relationTypeLabelJa(rel.type) : relationTypeLabelEn(rel.type)}
+                                                    <div className="min-w-0 flex-1">
+                                                        <div className="flex items-start justify-between gap-3">
+                                                            <div className="text-sm font-medium text-slate-100 break-words">
+                                                                {isJa ? toCard.titleJa : toCard.titleEn}
+                                                            </div>
+
+                                                            <div className="shrink-0 text-right text-xs text-amber-300">
+                                                                {isJa ? relationTypeLabelJa(rel.type) : relationTypeLabelEn(rel.type)}
+                                                            </div>
+                                                        </div>
+
+                                                        <div className="mt-2 text-sm text-slate-200 break-words">
+                                                            {isJa ? rel.labelJa : rel.labelEn}
                                                         </div>
                                                     </div>
-                                                </div>
-
-                                                <div className="relative left-10 mt-3 text-sm text-slate-200">
-                                                    {isJa ? rel.labelJa : rel.labelEn}
                                                 </div>
                                             </div>
                                         );
