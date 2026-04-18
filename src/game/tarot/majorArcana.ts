@@ -8,6 +8,7 @@ type TarotMeaning = {
 
 type TarotCard = {
   id: number;
+  uid: string;
   element: TarotElement;
   titleJa: string;
   titleEn: string;
@@ -66,6 +67,7 @@ const elementRelations: Record<
 const majorArcanaCards: Record<string, TarotCard> = {
   "00-TheFool": {
     id: 0,
+    uid: "00-TheFool",
     titleJa: "愚者",
     titleEn: "The Fool",
     element: "air",
@@ -81,6 +83,7 @@ const majorArcanaCards: Record<string, TarotCard> = {
 
   "01-TheMagician": {
     id: 1,
+    uid: "01-TheMagician",
     titleJa: "魔術師",
     titleEn: "The Magician",
     element: "special",
@@ -96,6 +99,7 @@ const majorArcanaCards: Record<string, TarotCard> = {
 
   "02-TheHighPriestess": {
     id: 2,
+    uid: "02-TheHighPriestess",
     titleJa: "女教皇",
     titleEn: "The High Priestess",
     element: "water",
@@ -111,6 +115,7 @@ const majorArcanaCards: Record<string, TarotCard> = {
 
   "03-TheEmpress": {
     id: 3,
+    uid: "03-TheEmpress",
     titleJa: "女帝",
     titleEn: "The Empress",
     element: "earth",
@@ -126,6 +131,7 @@ const majorArcanaCards: Record<string, TarotCard> = {
 
   "04-TheEmperor": {
     id: 4,
+    uid: "04-TheEmperor",
     titleJa: "皇帝",
     titleEn: "The Emperor",
     element: "fire",
@@ -141,6 +147,7 @@ const majorArcanaCards: Record<string, TarotCard> = {
 
   "05-TheHierophant": {
     id: 5,
+    uid: "05-TheHierophant",
     titleJa: "法王",
     titleEn: "The Hierophant",
     element: "earth",
@@ -156,6 +163,7 @@ const majorArcanaCards: Record<string, TarotCard> = {
 
   "06-TheLovers": {
     id: 6,
+    uid: "06-TheLovers",
     titleJa: "恋人",
     titleEn: "The Lovers",
     element: "air",
@@ -171,6 +179,7 @@ const majorArcanaCards: Record<string, TarotCard> = {
 
   "07-TheChariot": {
     id: 7,
+    uid: "07-TheChariot",
     titleJa: "戦車",
     titleEn: "The Chariot",
     element: "water",
@@ -186,6 +195,7 @@ const majorArcanaCards: Record<string, TarotCard> = {
 
   "08-Strength": {
     id: 8,
+    uid: "08-Strength",
     titleJa: "力",
     titleEn: "Strength",
     element: "fire",
@@ -201,6 +211,7 @@ const majorArcanaCards: Record<string, TarotCard> = {
 
   "09-TheHermit": {
     id: 9,
+    uid: "09-TheHermit",
     titleJa: "隠者",
     titleEn: "The Hermit",
     element: "earth",
@@ -216,6 +227,7 @@ const majorArcanaCards: Record<string, TarotCard> = {
 
   "10-WheelOfFortune": {
     id: 10,
+    uid: "10-WheelOfFortune",
     titleJa: "運命の輪",
     titleEn: "Wheel of Fortune",
     element: "special",
@@ -231,6 +243,7 @@ const majorArcanaCards: Record<string, TarotCard> = {
 
   "11-Justice": {
     id: 11,
+    uid: "11-Justice",
     titleJa: "正義",
     titleEn: "Justice",
     element: "air",
@@ -246,6 +259,7 @@ const majorArcanaCards: Record<string, TarotCard> = {
 
   "12-TheHangedMan": {
     id: 12,
+    uid: "12-TheHangedMan",
     titleJa: "吊るされた男",
     titleEn: "The Hanged Man",
     element: "water",
@@ -261,6 +275,7 @@ const majorArcanaCards: Record<string, TarotCard> = {
 
   "13-Death": {
     id: 13,
+    uid: "13-Death",
     titleJa: "死神",
     titleEn: "Death",
     element: "water",
@@ -276,6 +291,7 @@ const majorArcanaCards: Record<string, TarotCard> = {
 
   "14-Temperance": {
     id: 14,
+    uid: "14-Temperance",
     titleJa: "節制",
     titleEn: "Temperance",
     element: "fire",
@@ -291,6 +307,7 @@ const majorArcanaCards: Record<string, TarotCard> = {
 
   "15-TheDevil": {
     id: 15,
+    uid: "15-TheDevil",
     titleJa: "悪魔",
     titleEn: "The Devil",
     element: "earth",
@@ -306,6 +323,7 @@ const majorArcanaCards: Record<string, TarotCard> = {
 
   "16-TheTower": {
     id: 16,
+    uid: "16-TheTower",
     titleJa: "塔",
     titleEn: "The Tower",
     element: "fire",
@@ -321,6 +339,7 @@ const majorArcanaCards: Record<string, TarotCard> = {
 
   "17-TheStar": {
     id: 17,
+    uid: "17-TheStar",
     titleJa: "星",
     titleEn: "The Star",
     element: "air",
@@ -336,6 +355,7 @@ const majorArcanaCards: Record<string, TarotCard> = {
 
   "18-TheMoon": {
     id: 18,
+    uid: "18-TheMoon",
     titleJa: "月",
     titleEn: "The Moon",
     element: "water",
@@ -351,6 +371,7 @@ const majorArcanaCards: Record<string, TarotCard> = {
 
   "19-TheSun": {
     id: 19,
+    uid: "19-TheSun",
     titleJa: "太陽",
     titleEn: "The Sun",
     element: "fire",
@@ -366,6 +387,7 @@ const majorArcanaCards: Record<string, TarotCard> = {
 
   "20-Judgement": {
     id: 20,
+    uid: "20-Judgement",
     titleJa: "審判",
     titleEn: "Judgement",
     element: "fire",
@@ -381,6 +403,7 @@ const majorArcanaCards: Record<string, TarotCard> = {
 
   "21-TheWorld": {
     id: 21,
+    uid: "21-TheWorld",
     titleJa: "世界",
     titleEn: "The World",
     element: "earth",
@@ -801,6 +824,40 @@ const majorArcanaSpecialRelations: TarotRelations = {
   ],
 };
 
+
+function colorFromElement(element: string) {
+  switch (element) {
+    case "fire":
+      return 0xff8888;
+    case "water":
+      return 0x8888ff;
+    case "air":
+      return 0xc9d8ff;
+    case "earth":
+      return 0x66aa44;
+    case "special":
+      return 0xFFD700;
+    default:
+      return element;
+  }
+}
+
+function cssColorFromElement(element: string) {
+  switch (element) {
+    case "fire":
+      return "#ff8888";
+    case "water":
+      return "#8888ff";
+    case "air":
+      return "#c9d8ff";
+    case "earth":
+      return "#66aa44";
+    case "special":
+      return "#ffd700";
+    default:
+      return "#64748b";
+  }
+}
 function elementLabelJa(element: string) {
   switch (element) {
     case "fire":
@@ -834,5 +891,5 @@ function elementLabelEn(element: string) {
       return element;
   }
 }
-export { majorArcanaCards, majorArcanaSpecialRelations, elementRelations, elementLabelEn, elementLabelJa };
+export { majorArcanaCards, majorArcanaSpecialRelations, elementRelations, elementLabelEn, elementLabelJa, colorFromElement, cssColorFromElement };
 export type { TarotCard, TarotMeaning };

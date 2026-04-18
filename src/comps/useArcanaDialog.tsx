@@ -1,8 +1,9 @@
 import React from "react";
 import { useDialog } from "./useDialog";
-import { elementLabelEn, elementLabelJa, majorArcanaCards } from "../game/tarot/majorArcana";
+import { colorFromElement, cssColorFromElement, elementLabelEn, elementLabelJa, majorArcanaCards } from "../game/tarot/majorArcana";
 import { majorArcanaSpecialRelations } from "../game/tarot/majorArcana";
 import { Lang } from "../game/i18n/messages";
+import { LoadingImage } from "./LoadingImageProps";
 
 type MajorArcanaKey = keyof typeof majorArcanaCards;
 
@@ -49,19 +50,24 @@ export function useArcanaDialog() {
             const relations = majorArcanaSpecialRelations[safeCardId] ?? [];
 
             return await showDialog<void>(({ close }) => (
-                <div className="w-full max-w-2xl rounded-2xl border border-slate-700 bg-slate-900 text-slate-100 shadow-xl">
-                    <div className="border-b border-slate-700 px-5 py-4">
+                <div className={"w-full max-w-2xl rounded-2xl border border-slate-700 bg-slate-900 text-slate-100 shadow-xl"}>
+                    <div className="relative border-b border-slate-700 px-5 py-4" >
+                        <div className="absolute bottom-0 h-2 w-[70%]" style={{backgroundColor:`${cssColorFromElement(card.element)}`}} ></div>
                         <div className="flex items-start justify-between gap-4">
                             <div>
                                 <div className="text-xs text-slate-400">
                                     {String(card.id).padStart(2, "0")} / {card.element}
                                 </div>
                                 <h2 className="text-xl font-semibold">{isJa? card.titleJa: card.titleEn}</h2>
+                                <div style={{width: 300/5, height:527/5}}>
+                                    <LoadingImage src={`./assets/${card.uid}.jpg`}/>
+                                </div>
                             </div>
 
                             <button
                                 type="button"
                                 onClick={close}
+                                style={{backgroundColor:`${cssColorFromElement(card.element)}`, color:"#666666"}}
                                 className="rounded-lg border border-slate-600 px-3 py-1.5 text-sm text-slate-300 hover:bg-slate-800"
                             >
                                {isJa ? "閉じる" : "Close"}
@@ -70,14 +76,6 @@ export function useArcanaDialog() {
                     </div>
 
                     <div className="space-y-5 px-5 py-4 max-h-[80vh] overflow-y-auto">
-                        <section>
-                            <h3 className="mb-2 text-sm font-semibold text-slate-200">
-                                {isJa ? "属性" : "Element"}
-                            </h3>
-                            <div className="flex flex-wrap gap-2">
-                                {(isJa? elementLabelJa(card.element): elementLabelEn(card.element))}
-                            </div>
-                        </section>
                         <section>
                             <h3 className="mb-2 text-sm font-semibold text-slate-200">
                                 {isJa ? "正位置" : "Upright"}
@@ -127,11 +125,19 @@ export function useArcanaDialog() {
                                         return (
                                             <div
                                                 key={`${safeCardId}-${rel.to}-${rel.type}`}
-                                                className="rounded-xl border border-slate-700 bg-slate-800/50 px-4 py-3"
+                                                className="relative rounded-xl border border-slate-700 bg-slate-800/50 px-4 py-3"
+                                                 onClick={()=>{
+                                                    console.log("click")
+                                                    showArcanaDialog(toCard.uid, lang);
+                                                }}
                                             >
-                                                <div className="flex items-start justify-between gap-3">
+                                                    <div className="absolute top-0, left-3" style={{ width: 300 / 10, height: 527 / 10 }}>
+                                                        <LoadingImage src={`./assets/${toCard.uid}.jpg`} />
+                                                    </div>
+                                                <div className="relative flex items-start justify-between gap-3">
+
                                                     <div>
-                                                        <div className="text-sm font-medium text-slate-100">
+                                                        <div className="relative left-10 text-sm font-medium text-slate-100">
                                                             {isJa ? toCard.titleJa: toCard.titleEn}
                                                         </div>
                                                     </div>
@@ -143,7 +149,7 @@ export function useArcanaDialog() {
                                                     </div>
                                                 </div>
 
-                                                <div className="mt-3 text-sm text-slate-200">
+                                                <div className="relative left-10 mt-3 text-sm text-slate-200">
                                                     {isJa ? rel.labelJa: rel.labelEn}
                                                 </div>
                                             </div>
