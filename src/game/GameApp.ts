@@ -102,7 +102,7 @@ export class GameApp {
   }
 
   async showArcanaDialog(cardId:string)  {
-    await this.arcanaDialog.showArcanaDialog(cardId)
+    await this.arcanaDialog.showArcanaDialog(cardId, this.language)
   }
 
   showTitleScene() {

@@ -800,5 +800,39 @@ const majorArcanaSpecialRelations: TarotRelations = {
     },
   ],
 };
-export { majorArcanaCards, majorArcanaSpecialRelations, elementRelations };
+
+function elementLabelJa(element: string) {
+  switch (element) {
+    case "fire":
+      return "火";
+    case "water":
+      return "水";
+    case "air":
+      return "風";
+    case "earth":
+      return "地";
+    case "special":
+      return "特別";
+    default:
+      return element;
+  }
+}
+
+function elementLabelEn(element: string) {
+  switch (element) {
+    case "fire":
+      return "Fire";
+    case "water":
+      return "Water";
+    case "air":
+      return "Air";
+    case "earth":
+      return "Earth";
+    case "special":
+      return "Special";
+    default:
+      return element;
+  }
+}
+export { majorArcanaCards, majorArcanaSpecialRelations, elementRelations, elementLabelEn, elementLabelJa };
 export type { TarotCard, TarotMeaning };

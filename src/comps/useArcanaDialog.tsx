@@ -1,6 +1,6 @@
 import React from "react";
 import { useDialog } from "./useDialog";
-import { majorArcanaCards } from "../game/tarot/majorArcana";
+import { elementLabelEn, elementLabelJa, majorArcanaCards } from "../game/tarot/majorArcana";
 import { majorArcanaSpecialRelations } from "../game/tarot/majorArcana";
 import { Lang } from "../game/i18n/messages";
 
@@ -36,7 +36,7 @@ export function useArcanaDialog() {
     const { showDialog } = useDialog();
 
     const showArcanaDialog = React.useCallback(
-        async (cardId: string, lang: Lang) => {
+        async (cardId: MajorArcanaKey, lang: Lang) => {
             const isJa = lang === "ja";
             const safeCardId = cardId as MajorArcanaKey;
             const card = majorArcanaCards[safeCardId];
@@ -72,20 +72,20 @@ export function useArcanaDialog() {
                     <div className="space-y-5 px-5 py-4 max-h-[80vh] overflow-y-auto">
                         <section>
                             <h3 className="mb-2 text-sm font-semibold text-slate-200">
-                                Element
+                                {isJa ? "属性" : "Element"}
                             </h3>
                             <div className="flex flex-wrap gap-2">
-                                {(isJa? card.element: card.element)}
+                                {(isJa? elementLabelJa(card.element): elementLabelEn(card.element))}
                             </div>
                         </section>
                         <section>
                             <h3 className="mb-2 text-sm font-semibold text-slate-200">
-                                Upright
+                                {isJa ? "正位置" : "Upright"}
                             </h3>
                             <div className="flex flex-wrap gap-2">
                                 {(isJa?card.upright.keywordsJa:card.upright.keywordsEn).map((keyword) => (
                                     <span
-                                        key={`up-ja-${keyword}`}
+                                        key={`up-${lang}-${keyword}`}
                                         className="rounded-full border border-emerald-700 bg-emerald-950/40 px-2.5 py-1 text-xs text-emerald-200"
                                     >
                                         {keyword}
@@ -96,12 +96,12 @@ export function useArcanaDialog() {
 
                         <section>
                             <h3 className="mb-2 text-sm font-semibold text-slate-200">
-                                Reversed
+                                {isJa ? "逆位置" : "Reversed"}
                             </h3>
                             <div className="flex flex-wrap gap-2">
                                 {(isJa?card.reversed.keywordsJa:card.reversed.keywordsEn).map((keyword) => (
                                     <span
-                                        key={`rev-ja-${keyword}`}
+                                        key={`rev-${lang}-${keyword}`}
                                         className="rounded-full border border-rose-700 bg-rose-950/40 px-2.5 py-1 text-xs text-rose-200"
                                     >
                                         {keyword}
@@ -118,7 +118,7 @@ export function useArcanaDialog() {
 
                             {relations.length === 0 ? (
                                 <div className="rounded-xl border border-slate-700 bg-slate-800/50 px-4 py-3 text-sm text-slate-400">
-                                    {isJa ? "関係性データはまだありません" :"..."}
+                                    {isJa ? "関係性データはまだありません" : "No relation data yet"}
                                 </div>
                             ) : (
                                 <div className="space-y-3">
