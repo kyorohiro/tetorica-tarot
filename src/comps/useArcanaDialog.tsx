@@ -52,18 +52,13 @@ export function useArcanaDialog() {
             return await showDialog<void>(({ close }) => (
                 <div className={"w-full max-w-2xl rounded-2xl border border-slate-700 bg-slate-900 text-slate-100 shadow-xl"}>
                     <div className="relative border-b border-slate-700 px-5 py-4" >
-                        <div className="absolute bottom-0 h-2 w-[70%]" style={{ backgroundColor: `${cssColorFromElement(card.element)}` }} ></div>
                         <div className="flex items-start justify-between gap-4">
                             <div>
                                 <div className="text-xs text-slate-400">
                                     {String(card.id).padStart(2, "0")} / {card.element}
                                 </div>
                                 <h2 className="text-xl font-semibold">{isJa ? card.titleJa : card.titleEn}</h2>
-                                <div style={{ width: 300 / 5, height: 527 / 5 }}>
-                                    <LoadingImage src={`./assets/${card.uid}.jpg`} />
-                                </div>
                             </div>
-
                             <button
                                 type="button"
                                 onClick={close}
@@ -75,7 +70,12 @@ export function useArcanaDialog() {
                         </div>
                     </div>
 
-                    <div className="space-y-5 px-5 py-4 max-h-[80vh] overflow-y-auto">
+                    <div className="relative space-y-5 px-5 py-4 max-h-[80vh] overflow-y-auto">
+                        <div className="absolute top-0 h-2 w-[70%]" style={{ backgroundColor: `${cssColorFromElement(card.element)}` }} ></div>
+
+                        <div style={{ width: 300 / 5, height: 527 / 5 }}>
+                            <LoadingImage src={`./assets/${card.uid}.jpg`} />
+                        </div>
                         <section>
                             <h3 className="mb-2 text-sm font-semibold text-slate-200">
                                 {isJa ? "属性" : "Elements"}
