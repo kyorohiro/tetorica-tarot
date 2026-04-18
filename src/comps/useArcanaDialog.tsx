@@ -1,6 +1,6 @@
 import React from "react";
 import { useDialog } from "./useDialog";
-import { cssColorFromElement, majorArcanaCards } from "../game/tarot/majorArcana";
+import { colorFromElement, cssColorFromElement, majorArcanaCards } from "../game/tarot/majorArcana";
 import { majorArcanaSpecialRelations } from "../game/tarot/majorArcana";
 import { Lang } from "../game/i18n/messages";
 import { LoadingImage } from "./LoadingImageProps";
@@ -76,6 +76,22 @@ export function useArcanaDialog() {
                     </div>
 
                     <div className="space-y-5 px-5 py-4 max-h-[80vh] overflow-y-auto">
+                        <section>
+                            <h3 className="mb-2 text-sm font-semibold text-slate-200">
+                                {isJa ? "属性" : "Elements"}
+                            </h3>
+                            <div className="flex flex-wrap gap-2">
+                                {card.elements.map((keyword) => (
+                                    <span
+                                        key={`up-${lang}-${keyword.type}`}
+                                        className="rounded-full border border-emerald-700 bg-emerald-950/40 px-2.5 py-1 text-xs text-emerald-200"
+                                        style={{color: cssColorFromElement(keyword.type)}}
+                                    >
+                                        {keyword.type}
+                                    </span>
+                                ))}
+                            </div>
+                        </section>
                         <section>
                             <h3 className="mb-2 text-sm font-semibold text-slate-200">
                                 {isJa ? "正位置" : "Upright"}
