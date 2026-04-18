@@ -1,4 +1,4 @@
-const APP_VERSION = "0.3.2";
+const APP_VERSION = "0.3.3";
 const CACHE_PREFIX = "tetorica-tarot-";
 const CACHE_NAME = `${CACHE_PREFIX}${APP_VERSION}`;
 
