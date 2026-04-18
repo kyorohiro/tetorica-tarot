@@ -83,7 +83,7 @@ const majorArcanaCards: Record<string, TarotCard> = {
     },
   },
 
-  "01-TheMagician": { //TODO
+  "01-TheMagician": {
     id: 1,
     uid: "01-TheMagician",
     titleJa: "魔術師",
@@ -134,13 +134,13 @@ const majorArcanaCards: Record<string, TarotCard> = {
     },
   },
 
-  "04-TheEmperor": { //TODO
+  "04-TheEmperor": {
     id: 4,
     uid: "04-TheEmperor",
     titleJa: "皇帝",
     titleEn: "The Emperor",
-    element: "fire",
-    elements: [{ type: "earth", weight: 1.0 }, { type: "fire", weight: 0.6 }],
+    element: "earth",
+    elements: [{ type: "earth", weight: 1.0 }, { type: "fire", weight: 0.8 }],
     upright: {
       keywordsJa: ["支配", "秩序", "権威"],
       keywordsEn: ["Authority", "Order", "Control"],
@@ -185,13 +185,13 @@ const majorArcanaCards: Record<string, TarotCard> = {
     },
   },
 
-  "07-TheChariot": { // todo
+  "07-TheChariot": { 
     id: 7,
     uid: "07-TheChariot",
     titleJa: "戦車",
     titleEn: "The Chariot",
-    element: "water",
-    elements: [{ type: "fire", weight: 1.0 }, { type: "earth", weight: 0.6 }],
+    element: "fire",
+    elements: [{ type: "fire", weight: 1.0 }, { type: "earth", weight: 0.6 }, { type: "water", weight: 0.2 }],
     upright: {
       keywordsJa: ["前進", "勝利", "突破"],
       keywordsEn: ["Advance", "Victory", "Breakthrough"],
@@ -304,12 +304,12 @@ const majorArcanaCards: Record<string, TarotCard> = {
     },
   },
 
-  "14-Temperance": {// todo
+  "14-Temperance": {
     id: 14,
     uid: "14-Temperance",
     titleJa: "節制",
     titleEn: "Temperance",
-    element: "fire",
+    element: "water",
     elements: [{ type: "water", weight: 1.0 }, { type: "air", weight: 0.6 }],
     upright: {
       keywordsJa: ["調和", "調整", "中庸"],
