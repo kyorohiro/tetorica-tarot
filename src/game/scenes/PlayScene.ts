@@ -139,21 +139,7 @@ export class PlayScene implements Scene {
 
   async mount() {
     this.showLoading("Loading cards...");
-    const current = this.getCard(0);
-    const next = this.getCard(1);
-    const next2 = this.getCard(2);
 
-    if(current && current.index != null && current.index != undefined) {
-      this.cards[current.index].setFrontTexture(current.url);
-    }
-
-    if(next && next.index != null && next.index != undefined) {
-      this.cards[next.index].setFrontTexture(next.url);
-    }
-
-    if(next2 && next2.index != null && next2.index != undefined) {
-      this.cards[next2.index].setFrontTexture(next2.url);
-    }
 
     await this.refreshVisibleCards();
     this.refreshCardButtons();
@@ -233,6 +219,25 @@ export class PlayScene implements Scene {
   }
 
   private async refreshVisibleCards() {
+
+    {
+    const current = this.getCard(0);
+    const next = this.getCard(1);
+    const next2 = this.getCard(2);
+
+    if(current && current.index != null && current.index != undefined) {
+      console.log(">> >> ", current.url)
+      this.cards[current.index].setFrontTexture(current.url);
+    }
+
+    if(next && next.index != null && next.index != undefined) {
+      this.cards[next.index].setFrontTexture(next.url);
+    }
+
+    if(next2 && next2.index != null && next2.index != undefined) {
+      this.cards[next2.index].setFrontTexture(next2.url);
+    }
+  }
     const prev = this.getCard(-1);
     const current = this.getCard(0);
     const next = this.getCard(1);
@@ -362,6 +367,7 @@ export class PlayScene implements Scene {
 
   private layoutCards() {
     if (!this.width || !this.height) return;
+    console.log(">> layoutCard", this.nextCardIndex, this.currentCardIndex, this.prevCardIndex);
 
     const layouts = this.getCardLayouts();
     const prevCardView = this.getPrevCardView();
@@ -445,6 +451,7 @@ export class PlayScene implements Scene {
           next: layouts.offRight,
         };
 
+    
     await new Promise<void>((resolve) => {
       const start = performance.now();
 
