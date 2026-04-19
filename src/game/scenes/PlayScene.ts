@@ -49,6 +49,7 @@ export class PlayScene implements Scene {
   private swipeVelocityX = 0;
   private swipePointerId: number | null = null;
   private swipeMoved = false;
+  private swipeTapCancelled = false;
   private suppressTapUntil = 0;
 
   private readonly keywordsBg = new Graphics();
@@ -90,6 +91,7 @@ export class PlayScene implements Scene {
   });
 
   constructor(params: { readonly game: GameApp; isShuffleCards: boolean }) {
+    console.log(this.swipeVelocityX);
     this.game = params.game;
     this.bg.tint = 0x111827;
     this.bg.eventMode = "static";
@@ -103,6 +105,7 @@ export class PlayScene implements Scene {
       if (!cardView) continue;
       this.bindSwipeTarget(cardView.container);
       cardView.onTap(async () => {
+        if (this.swipePointerId !== null) return;
         if (performance.now() < this.suppressTapUntil) return;
         await this.game.showArcanaDialog(card.id);
       });
@@ -181,6 +184,7 @@ export class PlayScene implements Scene {
       this.swipeLastAt = performance.now();
       this.swipeVelocityX = 0;
       this.swipeMoved = false;
+      this.swipeTapCancelled = false;
     });
 
     target.on("pointermove", (event) => {
@@ -199,6 +203,9 @@ export class PlayScene implements Scene {
 
       if (Math.abs(dx) > 12 || Math.abs(dy) > 12) {
         this.swipeMoved = true;
+      }
+      if (Math.abs(dx) > 6 || Math.abs(dy) > 6) {
+        this.swipeTapCancelled = true;
       }
 
       if (!this.swipeMoved) return;
@@ -219,13 +226,8 @@ export class PlayScene implements Scene {
         return;
       }
 
-      const dx = event.global.x - this.swipeStartX;
-      const dy = event.global.y - this.swipeStartY;
-      const absDx = Math.abs(dx);
-      const absDy = Math.abs(dy);
-
-      if (this.swipeMoved) {
-        this.suppressTapUntil = performance.now() + 220;
+      if (this.swipeTapCancelled || this.swipeMoved) {
+        this.suppressTapUntil = performance.now() + 360;
       }
 
       if (this.isAnimating) {
@@ -233,15 +235,10 @@ export class PlayScene implements Scene {
         return;
       }
 
-      if (!this.swipeMoved || absDx <= absDy * 1.2) {
-        await this.animateToScrollPosition(Math.round(this.scrollPosition));
-        this.resetSwipeState();
-        return;
-      }
-
-      const target = this.decideSnapTarget(dx, this.swipeVelocityX);
-      await this.animateToScrollPosition(target);
+      const roundedIndex = Math.round(this.scrollPosition);
+      await this.animateToScrollPosition(roundedIndex);
       this.resetSwipeState();
+      
     };
 
     target.on("pointerup", (event) => {
@@ -264,15 +261,7 @@ export class PlayScene implements Scene {
     this.swipeVelocityX = 0;
     this.swipePointerId = null;
     this.swipeMoved = false;
-  }
-
-  private decideSnapTarget(dx: number, velocityX: number) {
-    const directionalVelocity = -velocityX;
-    const flingScore = Math.abs(dx) + Math.abs(directionalVelocity) * 220;
-    const step = flingScore > 420 ? 2 : flingScore > 70 ? 1 : 0;
-    const direction = dx < 0 ? 1 : -1;
-    const baseIndex = Math.round(this.scrollPosition);
-    return this.clampScrollPosition(baseIndex + direction * step);
+    this.swipeTapCancelled = false;
   }
 
   private async slideTo(direction: "next" | "back") {
@@ -421,13 +410,14 @@ export class PlayScene implements Scene {
       height: layouts.offLeft.height,
       alpha: 0,
     };
-    const farRight = {
-      x: layouts.offRight.x + layouts.current.width * 0.12,
-      y: layouts.offRight.y,
-      width: layouts.offRight.width,
-      height: layouts.offRight.height,
-      alpha: 0,
-    };
+    //const farRight = {
+    //  x: layouts.offRight.x + layouts.current.width * 0.12,
+    //  y: layouts.offRight.y,
+    //  width: layouts.offRight.width,
+    //  height: layouts.offRight.height,
+    //  alpha: 0,
+    //};
+    //console.log(farRight);
 
     if (delta <= -2 || delta >= 2) return null;
     if (delta < -1) return this.interpolateLayout(farLeft, layouts.offLeft, delta + 2);
