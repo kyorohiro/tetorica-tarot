@@ -5,6 +5,7 @@ A lightweight tarot-based idea generator for creators.
 https://kyorohiro.github.io/tetorica-tarot/
 
 ![デモ画像](./docs/demo02.png)
+![デモ画像](./docs/demo03.gif)
 
 ## ✨ What is this?
 
