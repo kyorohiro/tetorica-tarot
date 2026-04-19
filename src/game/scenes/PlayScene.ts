@@ -23,9 +23,10 @@ export class PlayScene implements Scene {
   private textureCache = new Map<string, Texture>();
   private readonly bg = new Sprite(Texture.WHITE);
 
-  private readonly prevCard = new TarotCardView();
-  private readonly currentCard = new TarotCardView();
-  private readonly nextCard = new TarotCardView();
+  private cards = Array.from({ length: 22 }, () => new TarotCardView());
+  private prevCardIndex:number|undefined|null = 0;
+  private currentCardIndex:number|undefined|null = 1;
+  private nextCardIndex:number|undefined|null = 2;
 
   private readonly cardNextButton = createTriangleButton("right");
   private readonly cardBackButton = createTriangleButton("left");
@@ -100,7 +101,7 @@ export class PlayScene implements Scene {
       this.deck = sortCards(tarotCards);
     }
 
-    this.currentCard.onTap(async () => {
+    this.getCurrentCardView()?.onTap(async () => {
       if(this.currentCardId) {
         this.game.showArcanaDialog(this.currentCardId)
       }
@@ -131,9 +132,7 @@ export class PlayScene implements Scene {
 
     this.container.addChild(
       this.bg,
-      this.prevCard.container,
-      this.nextCard.container,
-      this.currentCard.container,
+      ...this.getVisibleCardViews().map((card) => card.container),
       this.keywordsBg,
       this.titleText,
       this.elementMark,
@@ -259,53 +258,79 @@ export class PlayScene implements Scene {
     return this.deck[this.deckIndex + offset];
   }
 
+  private getCardView(index: number | undefined | null) {
+    if (index == null) return null;
+    return this.cards[index] ?? null;
+  }
+
+  private getPrevCardView() {
+    return this.getCardView(this.prevCardIndex);
+  }
+
+  private getCurrentCardView() {
+    return this.getCardView(this.currentCardIndex);
+  }
+
+  private getNextCardView() {
+    return this.getCardView(this.nextCardIndex);
+  }
+
+  private getVisibleCardViews() {
+    return [this.getPrevCardView(), this.getNextCardView(), this.getCurrentCardView()].filter(
+      (card): card is TarotCardView => card !== null,
+    );
+  }
+
   private async refreshVisibleCards() {
     const prev = this.getCard(-1);
     const current = this.getCard(0);
     const next = this.getCard(1);
 
     const backTexture = this.getTexture(backCardUrl);
+    const prevCardView = this.getPrevCardView();
+    const currentCardView = this.getCurrentCardView();
+    const nextCardView = this.getNextCardView();
 
-    if (prev) {
-      this.prevCard.setTexturesFromTexture(
+    if (prev && prevCardView) {
+      prevCardView.setTexturesFromTexture(
         this.getTexture(prev.url),
         backTexture,
       );
-      this.prevCard.setReversed(prev.reversed);
-      this.prevCard.showFront();
-      this.prevCard.container.visible = true;
-      this.prevCard.container.alpha = 0.35;
-    } else {
-      this.prevCard.container.visible = false;
+      prevCardView.setReversed(prev.reversed);
+      prevCardView.showFront();
+      prevCardView.container.visible = true;
+      prevCardView.container.alpha = 0.35;
+    } else if (prevCardView) {
+      prevCardView.container.visible = false;
     }
 
-    if (current) {
+    if (current && currentCardView) {
       this.currentCardId = current.id;
       this.currentReversed = current.reversed;
 
-      this.currentCard.setTexturesFromTexture(
+      currentCardView.setTexturesFromTexture(
         this.getTexture(current.url),
         backTexture,
       );
-      this.currentCard.setReversed(current.reversed);
-      this.currentCard.showFront();
-      this.currentCard.container.visible = true;
-      this.currentCard.container.alpha = 1;
-    } else {
-      this.currentCard.container.visible = false;
+      currentCardView.setReversed(current.reversed);
+      currentCardView.showFront();
+      currentCardView.container.visible = true;
+      currentCardView.container.alpha = 1;
+    } else if (currentCardView) {
+      currentCardView.container.visible = false;
     }
 
-    if (next) {
-      this.nextCard.setTexturesFromTexture(
+    if (next && nextCardView) {
+      nextCardView.setTexturesFromTexture(
         this.getTexture(next.url),
         backTexture,
       );
-      this.nextCard.setReversed(next.reversed);
-      this.nextCard.showFront();
-      this.nextCard.container.visible = true;
-      this.nextCard.container.alpha = 0.35;
-    } else {
-      this.nextCard.container.visible = false;
+      nextCardView.setReversed(next.reversed);
+      nextCardView.showFront();
+      nextCardView.container.visible = true;
+      nextCardView.container.alpha = 0.35;
+    } else if (nextCardView) {
+      nextCardView.container.visible = false;
     }
 
     this.refreshCardText();
@@ -374,8 +399,10 @@ export class PlayScene implements Scene {
 
   private layoutCardButton() {
     const gap = 20;
-    const position = this.currentCard.getPosition();
-    const size = this.currentCard.getSize();
+    const currentCardView = this.getCurrentCardView();
+    if (!currentCardView) return;
+    const position = currentCardView.getPosition();
+    const size = currentCardView.getSize();
 
     this.cardBackButton.x =
       position.x - size.width / 2 - gap - this.cardBackButton.width / 2;
@@ -390,18 +417,27 @@ export class PlayScene implements Scene {
     if (!this.width || !this.height) return;
 
     const layouts = this.getCardLayouts();
+    const prevCardView = this.getPrevCardView();
+    const currentCardView = this.getCurrentCardView();
+    const nextCardView = this.getNextCardView();
 
-    this.prevCard.setSize(layouts.prev.width, layouts.prev.height);
-    this.prevCard.setPosition(layouts.prev.x, layouts.prev.y);
-    this.prevCard.container.alpha = layouts.prev.alpha;
+    if (prevCardView) {
+      prevCardView.setSize(layouts.prev.width, layouts.prev.height);
+      prevCardView.setPosition(layouts.prev.x, layouts.prev.y);
+      prevCardView.container.alpha = layouts.prev.alpha;
+    }
 
-    this.currentCard.setSize(layouts.current.width, layouts.current.height);
-    this.currentCard.setPosition(layouts.current.x, layouts.current.y);
-    this.currentCard.container.alpha = layouts.current.alpha;
+    if (currentCardView) {
+      currentCardView.setSize(layouts.current.width, layouts.current.height);
+      currentCardView.setPosition(layouts.current.x, layouts.current.y);
+      currentCardView.container.alpha = layouts.current.alpha;
+    }
 
-    this.nextCard.setSize(layouts.next.width, layouts.next.height);
-    this.nextCard.setPosition(layouts.next.x, layouts.next.y);
-    this.nextCard.container.alpha = layouts.next.alpha;
+    if (nextCardView) {
+      nextCardView.setSize(layouts.next.width, layouts.next.height);
+      nextCardView.setPosition(layouts.next.x, layouts.next.y);
+      nextCardView.container.alpha = layouts.next.alpha;
+    }
 
     this.layoutCardButton();
     this.loadingText.x = layouts.current.x
@@ -466,26 +502,29 @@ export class PlayScene implements Scene {
       const start = performance.now();
 
       const tick = () => {
-        const raw = Math.min((performance.now() - start) / duration, 1);
-        const t = this.easeOutCubic(raw);
+      const raw = Math.min((performance.now() - start) / duration, 1);
+      const t = this.easeOutCubic(raw);
+      const prevCardView = this.getPrevCardView();
+      const currentCardView = this.getCurrentCardView();
+      const nextCardView = this.getNextCardView();
 
-        this.applyAnimatedLayout(this.prevCard, from.prev, to.prev, t);
-        this.applyAnimatedLayout(this.currentCard, from.current, to.current, t);
-        this.applyAnimatedLayout(this.nextCard, from.next, to.next, t);
+      if (prevCardView) this.applyAnimatedLayout(prevCardView, from.prev, to.prev, t);
+      if (currentCardView) this.applyAnimatedLayout(currentCardView, from.current, to.current, t);
+      if (nextCardView) this.applyAnimatedLayout(nextCardView, from.next, to.next, t);
 
-        this.currentCard.container.zIndex = 500;
-        this.prevCard.container.zIndex = 500;
-        this.nextCard.container.zIndex = 1000;
-        this.cardNextButton.zIndex = 3000;
-        this.cardBackButton.zIndex = 3000;
-        if (raw < 1) {
-          requestAnimationFrame(tick);
-        } else {
-          this.currentCard.container.zIndex = 1000;
-          this.prevCard.container.zIndex = 500;
-          this.nextCard.container.zIndex = 500;
-          resolve();
-        }
+      if (currentCardView) currentCardView.container.zIndex = 500;
+      if (prevCardView) prevCardView.container.zIndex = 500;
+      if (nextCardView) nextCardView.container.zIndex = 1000;
+      this.cardNextButton.zIndex = 3000;
+      this.cardBackButton.zIndex = 3000;
+      if (raw < 1) {
+        requestAnimationFrame(tick);
+      } else {
+        if (currentCardView) currentCardView.container.zIndex = 1000;
+        if (prevCardView) prevCardView.container.zIndex = 500;
+        if (nextCardView) nextCardView.container.zIndex = 500;
+        resolve();
+      }
         //this.keywordsBg.zIndex = 4500
         this.titleText.zIndex = 4500
         this.uprightText.zIndex = 4500
