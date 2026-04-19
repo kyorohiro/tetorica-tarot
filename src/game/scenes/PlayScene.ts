@@ -1,9 +1,8 @@
-import { Graphics, Container, Sprite, Text, TextStyle, Texture, Assets } from "pixi.js";
+import { Graphics, Container, Sprite, Text, TextStyle, Texture } from "pixi.js";
 import type { Scene } from "../core/Scene";
 import type { GameApp } from "../GameApp";
 import { TarotCardView } from "./TarotCardView";
 
-import backCardUrl from "../../assets/CardBacks.jpg";
 import { majorArcanaCards } from "../tarot/majorArcana";
 import { shuffleCards, sortCards, tarotCards } from "./tarotCards";
 import { createTriangleButton } from "./triangleButton";
@@ -100,11 +99,11 @@ export class PlayScene implements Scene {
       this.deck = sortCards(tarotCards);
     }
 
-    this.getCurrentCardView()?.onTap(async () => {
-      if(this.currentCardId) {
-        this.game.showArcanaDialog(this.currentCardId)
-      }
-    });
+    for (const card of tarotCards) {
+      this.cards[card.index]?.onTap(async () => {
+        await this.game.showArcanaDialog(card.id);
+      });
+    }
 
     this.cardNextButton.on("pointertap", async () => {
       if (this.isAnimating) return;
@@ -122,7 +121,7 @@ export class PlayScene implements Scene {
 
     this.container.addChild(
       this.bg,
-      ...this.getVisibleCardViews().map((card) => card.container),
+      ...this.cards.map((card) => card.container),
       this.keywordsBg,
       this.titleText,
       this.elementMark,
@@ -140,9 +139,6 @@ export class PlayScene implements Scene {
 
   async mount() {
     this.showLoading("Loading cards...");
-    //const sleep = (ms: number) => new Promise((res) => setTimeout(res, ms));
-    //await sleep(10000);
-
     const current = this.getCard(0);
     const next = this.getCard(1);
     const next2 = this.getCard(2);
@@ -236,27 +232,25 @@ export class PlayScene implements Scene {
     return this.getCardView(this.nextCardIndex);
   }
 
-  private getVisibleCardViews() {
-    return [this.getPrevCardView(), this.getNextCardView(), this.getCurrentCardView()].filter(
-      (card): card is TarotCardView => card !== null,
-    );
-  }
-
   private async refreshVisibleCards() {
     const prev = this.getCard(-1);
     const current = this.getCard(0);
     const next = this.getCard(1);
 
-    //const backTexture = this.getTexture(backCardUrl);
+    this.prevCardIndex = prev?.index ?? null;
+    this.currentCardIndex = current?.index ?? null;
+    this.nextCardIndex = next?.index ?? null;
+
     const prevCardView = this.getPrevCardView();
     const currentCardView = this.getCurrentCardView();
     const nextCardView = this.getNextCardView();
 
+    for (const cardView of this.cards) {
+      cardView.container.visible = false;
+      cardView.container.alpha = 0;
+    }
+
     if (prev && prevCardView) {
-      //prevCardView.setTexturesFromTexture(
-      //  this.getTexture(prev.url),
-      //  backTexture,
-      //);
       prevCardView.setReversed(prev.reversed);
       prevCardView.showFront();
       prevCardView.container.visible = true;
@@ -269,10 +263,6 @@ export class PlayScene implements Scene {
       this.currentCardId = current.id;
       this.currentReversed = current.reversed;
 
-      //currentCardView.setTexturesFromTexture(
-      //  this.getTexture(current.url),
-      //  backTexture,
-      //);
       currentCardView.setReversed(current.reversed);
       currentCardView.showFront();
       currentCardView.container.visible = true;
@@ -282,10 +272,6 @@ export class PlayScene implements Scene {
     }
 
     if (next && nextCardView) {
-      //nextCardView.setTexturesFromTexture(
-      //  this.getTexture(next.url),
-      //  backTexture,
-      //);
       nextCardView.setReversed(next.reversed);
       nextCardView.showFront();
       nextCardView.container.visible = true;
