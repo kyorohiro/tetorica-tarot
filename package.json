@@ -1,7 +1,7 @@
 {
   "name": "tetorica-tarot",
   "private": true,
-  "version": "0.4.2",
+  "version": "0.4.3",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -10,7 +10,8 @@
     "tauri": "tauri",
     "build-sw": "node scripts/build-sw.mjs",
     "build:web": "npm run build-sw && tsc && vite build --base=./",
-    "build:gh": "npm run build-sw && tsc && vite build --base=/tetorica-tarot/demo/"
+    "build:gh": "npm run build-sw && tsc && vite build --base=/tetorica-tarot/demo/",
+    "build:gh2": "npm run build-sw && tsc && vite build --base=/tetorica-tarot/demo2/"
   },
   "dependencies": {
     "@pixi/sound": "^6.0.1",
