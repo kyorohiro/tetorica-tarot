@@ -104,15 +104,6 @@ export class PlayScene implements Scene {
       if(this.currentCardId) {
         this.game.showArcanaDialog(this.currentCardId)
       }
-      //if (this.isAnimating) return;
-      //
-      //if (this.currentCard.showingFront) {
-      //  await this.currentCard.flip();
-      //  return;
-      //}
-      //
-      //await this.refreshVisibleCards();
-      //this.refreshCardButtons();
     });
 
     this.cardNextButton.on("pointertap", async () => {
@@ -152,17 +143,21 @@ export class PlayScene implements Scene {
     //const sleep = (ms: number) => new Promise((res) => setTimeout(res, ms));
     //await sleep(10000);
 
-    const prev = this.getCard(-1);
     const current = this.getCard(0);
     const next = this.getCard(1);
+    const next2 = this.getCard(2);
 
-    const urls = [
-      backCardUrl,
-      prev?.url,
-      current?.url,
-      next?.url,
-    ].filter(Boolean) as string[];
+    if(current && current.index != null && current.index != undefined) {
+      this.cards[current.index].setFrontTexture(current.url);
+    }
 
+    if(next && next.index != null && next.index != undefined) {
+      this.cards[next.index].setFrontTexture(next.url);
+    }
+
+    if(next2 && next2.index != null && next2.index != undefined) {
+      this.cards[next2.index].setFrontTexture(next2.url);
+    }
 
     await this.refreshVisibleCards();
     this.refreshCardButtons();

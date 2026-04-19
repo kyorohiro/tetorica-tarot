@@ -20,14 +20,7 @@ export class TarotCardView {
   private readonly loadingLayer = new Container();
   private readonly loadingBg = new Graphics();
   private readonly loadingSpinner = new Graphics();
-  private readonly loadingText = new Text({
-    text: "Loading...",
-    style: new TextStyle({
-      fill: 0xffffff,
-      fontSize: 14,
-      fontWeight: "bold",
-    }),
-  });
+
   private readonly errorLayer = new Container();
   private readonly errorBg = new Graphics();
   private readonly errorText = new Text({
@@ -55,13 +48,11 @@ export class TarotCardView {
   constructor() {
     this.frontCard.anchor.set(0.5);
     this.backCard.anchor.set(0.5);
-    this.loadingText.anchor.set(0.5);
     this.errorText.anchor.set(0.5);
 
     this.loadingLayer.addChild(
       this.loadingBg,
       this.loadingSpinner,
-      this.loadingText,
     );
     this.errorLayer.addChild(this.errorBg, this.errorText);
 
@@ -301,8 +292,6 @@ export class TarotCardView {
     this.loadingSpinner.arc(0, 0, spinnerRadius, -Math.PI * 0.35, Math.PI * 1.15);
     this.loadingSpinner.stroke({ color: 0xffffff, width: 5, alpha: 0.95 });
     this.loadingSpinner.y = -14;
-    this.loadingText.style.fontSize = Math.max(12, Math.round(this.cardWidth * 0.11));
-    this.loadingText.y = 24;
 
     this.errorBg.clear();
     this.errorBg.roundRect(

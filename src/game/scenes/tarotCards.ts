@@ -2,6 +2,7 @@ import { majorArcanaCards } from "../tarot/majorArcana";
 import { assetUrl } from "../../lib/assetUrl";
 
 export type TarotCard = {
+  index: number;
   path: string;
   url: string;
   id: string;
@@ -12,7 +13,8 @@ type MajorArcanaKey = keyof typeof majorArcanaCards;
 
 
 const tarotCards: TarotCard[] = Object.entries(majorArcanaCards).map(
-  ([id, _]) => ({
+  ([id, arcana]) => ({
+    index: arcana.id,
     id: id as MajorArcanaKey,
     path: id,
     url: assetUrl(`assets/${id}.jpg`),
