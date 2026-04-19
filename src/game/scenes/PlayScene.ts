@@ -106,7 +106,6 @@ export class PlayScene implements Scene {
       if (!cardView) continue;
       this.bindSwipeTarget(cardView.container);
       cardView.onTap(async () => {
-        if (this.swipePointerId !== null) return;
         if (performance.now() < this.suppressTapUntil) return;
         await this.game.showArcanaDialog(card.id);
       });
