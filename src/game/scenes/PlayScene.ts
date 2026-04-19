@@ -35,12 +35,14 @@ export class PlayScene implements Scene {
   private scrollPosition = 0;
   private targetScrollPosition = 0;
   private animationFrame: number | null = null;
+  private momentumVelocity = 0;
 
   private width = 0;
   private height = 0;
   private isAnimating = false;
   private readonly game: GameApp;
 
+  private isDragging = false;
   private swipeStartX: number | null = null;
   private swipeStartY: number | null = null;
   private swipeStartScrollPosition = 0;
@@ -91,7 +93,6 @@ export class PlayScene implements Scene {
   });
 
   constructor(params: { readonly game: GameApp; isShuffleCards: boolean }) {
-    console.log(this.swipeVelocityX);
     this.game = params.game;
     this.bg.tint = 0x111827;
     this.bg.eventMode = "static";
@@ -175,7 +176,8 @@ export class PlayScene implements Scene {
 
   private bindSwipeTarget(target: Container) {
     target.on("pointerdown", (event) => {
-      if (this.isAnimating) return;
+      this.isDragging = true;
+      this.stopAnimation();
       this.swipePointerId = event.pointerId;
       this.swipeStartX = event.global.x;
       this.swipeStartY = event.global.y;
@@ -188,6 +190,9 @@ export class PlayScene implements Scene {
     });
 
     target.on("pointermove", (event) => {
+      if(!this.isDragging) {
+        return;
+      }
       if (this.swipePointerId !== event.pointerId) return;
       if (this.swipeStartX == null || this.swipeStartY == null) return;
 
@@ -220,6 +225,7 @@ export class PlayScene implements Scene {
     });
 
     const handleEnd = async (event: { pointerId: number; global: { x: number; y: number } }) => {
+      this.isDragging = false;
       if (this.swipePointerId !== event.pointerId) return;
       if (this.swipeStartX == null || this.swipeStartY == null) {
         this.resetSwipeState();
@@ -230,13 +236,15 @@ export class PlayScene implements Scene {
         this.suppressTapUntil = performance.now() + 360;
       }
 
-      if (this.isAnimating) {
+      if (!this.swipeMoved) {
+        await this.animateToScrollPosition(Math.round(this.scrollPosition));
         this.resetSwipeState();
         return;
       }
 
-      const roundedIndex = Math.round(this.scrollPosition);
-      await this.animateToScrollPosition(roundedIndex);
+      const spacing = this.getCardLayouts().current.width * 0.68;
+      const scrollVelocity = (-this.swipeVelocityX / Math.max(spacing, 1)) * 1.15;
+      await this.startMomentum(scrollVelocity);
       this.resetSwipeState();
       
     };
@@ -265,7 +273,6 @@ export class PlayScene implements Scene {
   }
 
   private async slideTo(direction: "next" | "back") {
-    console.log("> slideTo", direction)
     const delta = direction === "next" ? 1 : -1;
     const target = this.clampScrollPosition(Math.round(this.scrollPosition) + delta);
     await this.animateToScrollPosition(target);
@@ -286,6 +293,7 @@ export class PlayScene implements Scene {
     }
 
     this.isAnimating = true;
+    this.momentumVelocity = 0;
     this.targetScrollPosition = target;
     const duration = Math.max(140, 220 * Math.min(Math.abs(delta), 1.8));
 
@@ -321,6 +329,52 @@ export class PlayScene implements Scene {
     cancelAnimationFrame(this.animationFrame);
     this.animationFrame = null;
     this.isAnimating = false;
+    this.momentumVelocity = 0;
+  }
+
+  private async startMomentum(initialVelocity: number) {
+    this.stopAnimation();
+    this.isAnimating = true;
+    this.momentumVelocity = initialVelocity;
+    this.targetScrollPosition = this.scrollPosition;
+
+    await new Promise<void>((resolve) => {
+      let lastAt = performance.now();
+
+      const tick = () => {
+        const now = performance.now();
+        const dt = Math.max(now - lastAt, 1);
+        lastAt = now;
+
+        this.scrollPosition = this.clampScrollPosition(
+          this.scrollPosition + this.momentumVelocity * dt,
+        );
+
+        const friction = Math.pow(0.92, dt / 16.67);
+        this.momentumVelocity *= friction;
+
+        const atStart = this.scrollPosition <= 0.0001;
+        const atEnd = this.scrollPosition >= this.deck.length - 1 - 0.0001;
+        if (atStart || atEnd) {
+          this.momentumVelocity = 0;
+        }
+
+        this.ensureVisibleTextures();
+        this.renderScene();
+        this.refreshCardButtons();
+
+        if (Math.abs(this.momentumVelocity) < 0.002) {
+          this.animationFrame = null;
+          this.isAnimating = false;
+          void this.animateToScrollPosition(Math.round(this.scrollPosition)).then(resolve);
+          return;
+        }
+
+        this.animationFrame = requestAnimationFrame(tick);
+      };
+
+      this.animationFrame = requestAnimationFrame(tick);
+    });
   }
 
   private refreshCardButtons() {
