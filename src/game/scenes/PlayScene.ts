@@ -39,6 +39,11 @@ export class PlayScene implements Scene {
   private height = 0;
   private isAnimating = false;
   private game: GameApp;
+  private swipeStartX: number | null = null;
+  private swipeStartY: number | null = null;
+  private swipePointerId: number | null = null;
+  private swipeMoved = false;
+  private suppressTapUntil = 0;
 
   private readonly keywordsBg = new Graphics();
   private readonly elementMark = new Graphics();
@@ -93,14 +98,20 @@ export class PlayScene implements Scene {
     this.game = params.game;
     const isShuffleCards = params.isShuffleCards;
     this.bg.tint = 0x111827;
+    this.bg.eventMode = "static";
     if(isShuffleCards) {
       this.deck = shuffleCards(tarotCards);
     } else {
       this.deck = sortCards(tarotCards);
     }
 
+    this.bindSwipeTarget(this.bg);
     for (const card of tarotCards) {
-      this.cards[card.index]?.onTap(async () => {
+      const cardView = this.cards[card.index];
+      if (!cardView) continue;
+      this.bindSwipeTarget(cardView.container);
+      cardView.onTap(async () => {
+        if (performance.now() < this.suppressTapUntil) return;
         await this.game.showArcanaDialog(card.id);
       });
     }
@@ -216,6 +227,73 @@ export class PlayScene implements Scene {
 
   private getNextCardView() {
     return this.getCardView(this.nextCardIndex);
+  }
+
+  private bindSwipeTarget(target: Container) {
+    target.on("pointerdown", (event) => {
+      if (this.isAnimating) return;
+      this.swipePointerId = event.pointerId;
+      this.swipeStartX = event.global.x;
+      this.swipeStartY = event.global.y;
+      this.swipeMoved = false;
+    });
+
+    target.on("pointermove", (event) => {
+      if (this.swipePointerId !== event.pointerId) return;
+      if (this.swipeStartX == null || this.swipeStartY == null) return;
+
+      const dx = event.global.x - this.swipeStartX;
+      const dy = event.global.y - this.swipeStartY;
+      if (Math.abs(dx) > 12 || Math.abs(dy) > 12) {
+        this.swipeMoved = true;
+      }
+    });
+
+    const handleEnd = async (event: { pointerId: number; global: { x: number; y: number } }) => {
+      if (this.swipePointerId !== event.pointerId) return;
+      if (this.swipeStartX == null || this.swipeStartY == null) {
+        this.resetSwipeState();
+        return;
+      }
+
+      const dx = event.global.x - this.swipeStartX;
+      const dy = event.global.y - this.swipeStartY;
+      const absDx = Math.abs(dx);
+      const absDy = Math.abs(dy);
+
+      if (this.swipeMoved) {
+        this.suppressTapUntil = performance.now() + 220;
+      }
+
+      this.resetSwipeState();
+
+      if (this.isAnimating) return;
+      if (absDx < 48) return;
+      if (absDx <= absDy * 1.2) return;
+
+      if (dx < 0 && this.deckIndex < this.deck.length - 1) {
+        await this.slideTo("next");
+      } else if (dx > 0 && this.deckIndex > 0) {
+        await this.slideTo("back");
+      }
+    };
+
+    target.on("pointerup", (event) => {
+      void handleEnd(event);
+    });
+    target.on("pointerupoutside", (event) => {
+      void handleEnd(event);
+    });
+    target.on("pointercancel", () => {
+      this.resetSwipeState();
+    });
+  }
+
+  private resetSwipeState() {
+    this.swipeStartX = null;
+    this.swipeStartY = null;
+    this.swipePointerId = null;
+    this.swipeMoved = false;
   }
 
   private async refreshVisibleCards() {
