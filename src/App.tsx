@@ -5,9 +5,11 @@ import type { Lang } from "./game/i18n/messages";
 import { SceneKey } from "./game/GameApp";
 import { ArrowLeft, RefreshCw, ListOrdered } from "lucide-react";
 import { useArcanaDialog, UseArcanaDialogReturn } from "./comps/useArcanaDialog";
+import { isTauri } from "./natives/native";
+import { isPwaDistributionLocation, PWA_URL } from "./natives/pwa";
 
 export default function App() {
-  const [language, setLanguage] = useState<Lang>("ja");
+  const [language, setLanguage] = useState<Lang>("en");
   const [currentScene, setCurrentScene] = useState<SceneKey>();
   const gameCanvas = useRef<GameCanvasHandle>(null);
   const arcanaDialog: UseArcanaDialogReturn = useArcanaDialog();
@@ -75,15 +77,53 @@ export default function App() {
                   gameCanvas.current?.shuffleCards();
                 }}
               >
-                {
-                  // Shuffle
-                }
                 <RefreshCw className="h-5 w-5" />
               </button>
             </div>
           </div>
         )}
 
+        {currentScene === "play" && (
+          <div className="absolute right-0 bottom-0 p-4">
+            <div className="pointer-events-auto flex gap-2 rounded-2xl border border-white/10 bg-black/30 p-2 backdrop-blur">
+              <button
+                className="rounded-xl px-3 py-2 text-sm bg-white/10 text-slate-200 hover:bg-white/20"
+                onClick={() => {
+                  gameCanvas.current?.orderCards();
+                }}
+              >
+                <ListOrdered className="h-5 w-5" />
+              </button>
+              <button
+                className="rounded-xl px-3 py-2 text-sm bg-white/10 text-slate-200 hover:bg-white/20"
+                onClick={() => {
+                  gameCanvas.current?.shuffleCards();
+                }}
+              >
+                <RefreshCw className="h-5 w-5" />
+              </button>
+            </div>
+          </div>
+        )}
+        {
+          //
+          //
+          //
+        }
+        {!isTauri() && !isPwaDistributionLocation() && currentScene === "title" && (
+          <div className="absolute left-0 bottom-0 p-4">
+            <div className="pointer-events-auto flex gap-2 rounded-2xl border border-white/10 bg-black/30 p-2 backdrop-blur">
+              <button
+                className="rounded-xl px-3 py-2 text-sm bg-white/10 text-slate-200 hover:bg-white/20"
+                onClick={() => {
+                  window.open(PWA_URL, "_blank", "noopener,noreferrer");
+                }}
+              >
+                <div className="h-5 w-auto">Open PWA PAGE</div>
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
