@@ -1,4 +1,5 @@
 import { majorArcanaCards } from "../tarot/majorArcana";
+import { assetUrl } from "../../lib/assetUrl";
 
 export type TarotCard = {
   path: string;
@@ -14,7 +15,7 @@ const tarotCards: TarotCard[] = Object.entries(majorArcanaCards).map(
   ([id, _]) => ({
     id: id as MajorArcanaKey,
     path: id,
-    url: `./assets/${id}.jpg`,
+    url: assetUrl(`assets/${id}.jpg`),
     reversed: Math.random() < 0.45
   })
 );

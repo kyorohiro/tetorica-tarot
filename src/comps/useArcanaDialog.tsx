@@ -4,6 +4,7 @@ import { cssColorFromElement, getTagFromElements, majorArcanaCards } from "../ga
 import { majorArcanaSpecialRelations } from "../game/tarot/majorArcana";
 import { Lang } from "../game/i18n/messages";
 import { LoadingImage } from "./LoadingImageProps";
+import { assetUrl } from "../lib/assetUrl";
 
 type MajorArcanaKey = keyof typeof majorArcanaCards;
 
@@ -74,7 +75,7 @@ export function useArcanaDialog() {
                         <div className="absolute top-0 h-2 w-[70%]" style={{ backgroundColor: `${cssColorFromElement(card.element)}` }} ></div>
 
                         <div style={{ width: 300 / 5, height: 527 / 5 }}>
-                            <LoadingImage src={`./assets/${card.uid}.jpg`} />
+                            <LoadingImage src={assetUrl(`assets/${card.uid}.jpg`)} />
                         </div>
                         <section>
                             <h3 className="mb-2 text-sm font-semibold text-slate-200">
@@ -170,7 +171,7 @@ export function useArcanaDialog() {
                                                         className="shrink-0"
                                                         style={{ width: 300 / 10, height: 527 / 10 }}
                                                     >
-                                                        <LoadingImage src={`./assets/${toCard.uid}.jpg`} />
+                                                        <LoadingImage src={assetUrl(`assets/${toCard.uid}.jpg`)} />
                                                     </div>
 
                                                     <div className="min-w-0 flex-1">
