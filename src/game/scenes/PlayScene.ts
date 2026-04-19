@@ -20,7 +20,6 @@ type CardLayout = {
 export class PlayScene implements Scene {
   container = new Container();
 
-  private textureCache = new Map<string, Texture>();
   private readonly bg = new Sprite(Texture.WHITE);
 
   private cards = Array.from({ length: 22 }, () => new TarotCardView());
@@ -164,15 +163,11 @@ export class PlayScene implements Scene {
       next?.url,
     ].filter(Boolean) as string[];
 
-    await this.preloadTextures(urls);
 
     await this.refreshVisibleCards();
     this.refreshCardButtons();
 
     this.hideLoading();
-
-    // 残りは裏で読む
-    void this.preloadRemainingTextures();
   }
 
   unmount() {
@@ -210,35 +205,6 @@ export class PlayScene implements Scene {
 
   }
 
-  private async preloadTextures(urls: string[]) {
-    const uniqueUrls = Array.from(new Set(urls));
-
-    for (const url of uniqueUrls) {
-      if (this.textureCache.has(url)) continue;
-      const texture = await Assets.load(url);
-      this.textureCache.set(url, texture);
-    }
-  }
-
-  private async preloadRemainingTextures() {
-    const urls = Array.from(new Set(tarotCards.map((c) => c.url)));
-
-    await Promise.allSettled(
-      urls.map(async (url) => {
-        if (this.textureCache.has(url)) return;
-        const texture = await Assets.load(url);
-        this.textureCache.set(url, texture);
-      }),
-    );
-  }
-
-  private getTexture(url: string) {
-    const texture = this.textureCache.get(url);
-    if (!texture) {
-      throw new Error(`Texture not loaded: ${url}`);
-    }
-    return texture;
-  }
   private setButtonEnabled(button: Container, enabled: boolean) {
     button.visible = true;
     button.alpha = enabled ? 1 : 0.05;
@@ -286,16 +252,16 @@ export class PlayScene implements Scene {
     const current = this.getCard(0);
     const next = this.getCard(1);
 
-    const backTexture = this.getTexture(backCardUrl);
+    //const backTexture = this.getTexture(backCardUrl);
     const prevCardView = this.getPrevCardView();
     const currentCardView = this.getCurrentCardView();
     const nextCardView = this.getNextCardView();
 
     if (prev && prevCardView) {
-      prevCardView.setTexturesFromTexture(
-        this.getTexture(prev.url),
-        backTexture,
-      );
+      //prevCardView.setTexturesFromTexture(
+      //  this.getTexture(prev.url),
+      //  backTexture,
+      //);
       prevCardView.setReversed(prev.reversed);
       prevCardView.showFront();
       prevCardView.container.visible = true;
@@ -308,10 +274,10 @@ export class PlayScene implements Scene {
       this.currentCardId = current.id;
       this.currentReversed = current.reversed;
 
-      currentCardView.setTexturesFromTexture(
-        this.getTexture(current.url),
-        backTexture,
-      );
+      //currentCardView.setTexturesFromTexture(
+      //  this.getTexture(current.url),
+      //  backTexture,
+      //);
       currentCardView.setReversed(current.reversed);
       currentCardView.showFront();
       currentCardView.container.visible = true;
@@ -321,10 +287,10 @@ export class PlayScene implements Scene {
     }
 
     if (next && nextCardView) {
-      nextCardView.setTexturesFromTexture(
-        this.getTexture(next.url),
-        backTexture,
-      );
+      //nextCardView.setTexturesFromTexture(
+      //  this.getTexture(next.url),
+      //  backTexture,
+      //);
       nextCardView.setReversed(next.reversed);
       nextCardView.showFront();
       nextCardView.container.visible = true;

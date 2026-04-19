@@ -7,6 +7,7 @@ import {
   Text,
   TextStyle,
   Texture,
+  Ticker,
 } from "pixi.js";
 
 type CardLoadState = "idle" | "loading" | "ready" | "error";
@@ -44,7 +45,7 @@ export class TarotCardView {
   private baseRotation = 0;
   private loadState: CardLoadState = "idle";
   private loadRequestId = 0;
-  private loadingAnimationFrame: number | null = null;
+  private isLoadingAnimationAttached = false;
 
   private cardCenterX = 0;
   private cardCenterY = 0;
@@ -190,11 +191,14 @@ export class TarotCardView {
   }
 
   update(now = performance.now()) {
-    if (this.loadState !== "loading") return;
+    if (this.loadState !== "loading" && this.loadState !== "idle") return;
 
     const t = now / 1000;
-    this.loadingSpinner.rotation = t * 3;
-    this.loadingLayer.alpha = 0.8 + Math.sin(t * 5) * 0.1;
+    this.loadingSpinner.rotation = t * 6;
+    const pulse = 0.82 + Math.sin(t * 8) * 0.18;
+    this.loadingLayer.alpha = pulse;
+    const spinnerScale = 1 + Math.sin(t * 8) * 0.08;
+    this.loadingSpinner.scale.set(spinnerScale);
   }
 
   onTap(handler: () => void | Promise<void>) {
@@ -247,10 +251,11 @@ export class TarotCardView {
 
   private refreshOverlays() {
     this.updateFaceVisibility();
-    this.loadingLayer.visible = this.loadState === "loading";
+    this.loadingLayer.visible =
+      this.loadState === "loading" || this.loadState === "idle";
     this.errorLayer.visible = this.loadState === "error";
 
-    if (this.loadState === "loading") {
+    if (this.loadState === "loading" || this.loadState === "idle") {
       this.ensureLoadingAnimation();
     } else {
       this.stopLoadingAnimation();
@@ -259,26 +264,20 @@ export class TarotCardView {
   }
 
   private ensureLoadingAnimation() {
-    if (this.loadingAnimationFrame !== null) return;
-
-    const tick = () => {
-      if (this.loadState !== "loading") {
-        this.loadingAnimationFrame = null;
-        return;
-      }
-
-      this.update();
-      this.loadingAnimationFrame = requestAnimationFrame(tick);
-    };
-
-    this.loadingAnimationFrame = requestAnimationFrame(tick);
+    if (this.isLoadingAnimationAttached) return;
+    Ticker.shared.add(this.tickLoading);
+    this.isLoadingAnimationAttached = true;
   }
 
   private stopLoadingAnimation() {
-    if (this.loadingAnimationFrame === null) return;
-    cancelAnimationFrame(this.loadingAnimationFrame);
-    this.loadingAnimationFrame = null;
+    if (!this.isLoadingAnimationAttached) return;
+    Ticker.shared.remove(this.tickLoading);
+    this.isLoadingAnimationAttached = false;
   }
+
+  private tickLoading = () => {
+    this.update();
+  };
 
   private layoutOverlay() {
     if (!this.cardWidth || !this.cardHeight) return;
@@ -298,11 +297,12 @@ export class TarotCardView {
 
     this.loadingSpinner.clear();
     this.loadingSpinner.circle(0, 0, spinnerRadius);
-    this.loadingSpinner.stroke({ color: 0xffffff, width: 3, alpha: 0.18 });
-    this.loadingSpinner.arc(0, 0, spinnerRadius, 0, Math.PI * 1.4);
-    this.loadingSpinner.stroke({ color: 0xffffff, width: 3 });
-    this.loadingSpinner.y = -12;
-    this.loadingText.y = 20;
+    this.loadingSpinner.stroke({ color: 0xffffff, width: 4, alpha: 0.14 });
+    this.loadingSpinner.arc(0, 0, spinnerRadius, -Math.PI * 0.35, Math.PI * 1.15);
+    this.loadingSpinner.stroke({ color: 0xffffff, width: 5, alpha: 0.95 });
+    this.loadingSpinner.y = -14;
+    this.loadingText.style.fontSize = Math.max(12, Math.round(this.cardWidth * 0.11));
+    this.loadingText.y = 24;
 
     this.errorBg.clear();
     this.errorBg.roundRect(
