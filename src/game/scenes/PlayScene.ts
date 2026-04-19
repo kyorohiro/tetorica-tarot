@@ -527,25 +527,33 @@ export class PlayScene implements Scene {
     const prevCardView = this.getPrevCardView();
     const currentCardView = this.getCurrentCardView();
     const nextCardView = this.getNextCardView();
-    if (!prevCardView || !currentCardView || !nextCardView) return;
+    if (!currentCardView) return;
 
     const layouts = this.getCardLayouts();
     const amount = Math.min(Math.abs(progress), 1);
 
     if (progress < 0) {
-      this.applyAnimatedLayout(prevCardView, layouts.prev, layouts.offLeft, amount);
+      if (prevCardView) {
+        this.applyAnimatedLayout(prevCardView, layouts.prev, layouts.offLeft, amount);
+        prevCardView.container.zIndex = 500;
+      }
       this.applyAnimatedLayout(currentCardView, layouts.current, layouts.prev, amount);
-      this.applyAnimatedLayout(nextCardView, layouts.next, layouts.current, amount);
-      nextCardView.container.zIndex = 1000;
+      if (nextCardView) {
+        this.applyAnimatedLayout(nextCardView, layouts.next, layouts.current, amount);
+        nextCardView.container.zIndex = 1000;
+      }
       currentCardView.container.zIndex = 700;
-      prevCardView.container.zIndex = 500;
     } else if (progress > 0) {
-      this.applyAnimatedLayout(prevCardView, layouts.prev, layouts.current, amount);
+      if (prevCardView) {
+        this.applyAnimatedLayout(prevCardView, layouts.prev, layouts.current, amount);
+        prevCardView.container.zIndex = 1000;
+      }
       this.applyAnimatedLayout(currentCardView, layouts.current, layouts.next, amount);
-      this.applyAnimatedLayout(nextCardView, layouts.next, layouts.offRight, amount);
-      prevCardView.container.zIndex = 1000;
+      if (nextCardView) {
+        this.applyAnimatedLayout(nextCardView, layouts.next, layouts.offRight, amount);
+        nextCardView.container.zIndex = 500;
+      }
       currentCardView.container.zIndex = 700;
-      nextCardView.container.zIndex = 500;
     } else {
       this.layoutCards();
       return;
