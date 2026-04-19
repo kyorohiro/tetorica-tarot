@@ -41,8 +41,12 @@ export class PlayScene implements Scene {
   private game: GameApp;
   private swipeStartX: number | null = null;
   private swipeStartY: number | null = null;
+  private swipeLastX: number | null = null;
+  private swipeLastAt = 0;
+  private swipeVelocityX = 0;
   private swipePointerId: number | null = null;
   private swipeMoved = false;
+  private dragProgress = 0;
   private suppressTapUntil = 0;
 
   private readonly keywordsBg = new Graphics();
@@ -235,7 +239,11 @@ export class PlayScene implements Scene {
       this.swipePointerId = event.pointerId;
       this.swipeStartX = event.global.x;
       this.swipeStartY = event.global.y;
+      this.swipeLastX = event.global.x;
+      this.swipeLastAt = performance.now();
+      this.swipeVelocityX = 0;
       this.swipeMoved = false;
+      this.dragProgress = 0;
     });
 
     target.on("pointermove", (event) => {
@@ -244,9 +252,25 @@ export class PlayScene implements Scene {
 
       const dx = event.global.x - this.swipeStartX;
       const dy = event.global.y - this.swipeStartY;
+      const now = performance.now();
+      if (this.swipeLastX != null && this.swipeLastAt > 0) {
+        const dt = Math.max(now - this.swipeLastAt, 1);
+        this.swipeVelocityX = (event.global.x - this.swipeLastX) / dt;
+      }
+      this.swipeLastX = event.global.x;
+      this.swipeLastAt = now;
       if (Math.abs(dx) > 12 || Math.abs(dy) > 12) {
         this.swipeMoved = true;
       }
+
+      if (!this.swipeMoved) return;
+      if (Math.abs(dx) <= Math.abs(dy) * 1.1) return;
+
+      const layouts = this.getCardLayouts();
+      const denominator = Math.max(layouts.current.width * 0.68, 1);
+      const rawProgress = dx / denominator;
+      this.dragProgress = Math.max(-1.25, Math.min(1.25, rawProgress));
+      this.renderSwipeProgress(this.dragProgress);
     });
 
     const handleEnd = async (event: { pointerId: number; global: { x: number; y: number } }) => {
@@ -260,22 +284,43 @@ export class PlayScene implements Scene {
       const dy = event.global.y - this.swipeStartY;
       const absDx = Math.abs(dx);
       const absDy = Math.abs(dy);
+      const velocityX = this.swipeVelocityX;
 
       if (this.swipeMoved) {
         this.suppressTapUntil = performance.now() + 220;
       }
 
-      this.resetSwipeState();
-
-      if (this.isAnimating) return;
-      if (absDx < 48) return;
-      if (absDx <= absDy * 1.2) return;
-
-      if (dx < 0 && this.deckIndex < this.deck.length - 1) {
-        await this.slideTo("next");
-      } else if (dx > 0 && this.deckIndex > 0) {
-        await this.slideTo("back");
+      if (this.isAnimating) {
+        this.resetSwipeState();
+        return;
       }
+      if (!this.swipeMoved || absDx <= absDy * 1.2) {
+        await this.animateDragRelease(0);
+        this.resetSwipeState();
+        return;
+      }
+
+      const canGoNext = dx < 0 && this.deckIndex < this.deck.length - 1;
+      const canGoBack = dx > 0 && this.deckIndex > 0;
+      if (!canGoNext && !canGoBack) {
+        await this.animateDragRelease(0);
+        this.resetSwipeState();
+        return;
+      }
+
+      const flingScore = absDx + Math.abs(velocityX) * 180;
+      const skipCount = flingScore > 360 ? 2 : absDx > 48 ? 1 : 0;
+      const direction: "next" | "back" | null =
+        dx < 0 ? (canGoNext ? "next" : null) : canGoBack ? "back" : null;
+
+      if (!direction || skipCount === 0) {
+        await this.animateDragRelease(0);
+        this.resetSwipeState();
+        return;
+      }
+
+      await this.finishSwipe(direction, skipCount);
+      this.resetSwipeState();
     };
 
     target.on("pointerup", (event) => {
@@ -292,8 +337,12 @@ export class PlayScene implements Scene {
   private resetSwipeState() {
     this.swipeStartX = null;
     this.swipeStartY = null;
+    this.swipeLastX = null;
+    this.swipeLastAt = 0;
+    this.swipeVelocityX = 0;
     this.swipePointerId = null;
     this.swipeMoved = false;
+    this.dragProgress = 0;
   }
 
   private async refreshVisibleCards() {
@@ -304,16 +353,15 @@ export class PlayScene implements Scene {
     const next2 = this.getCard(2);
 
     if(current && current.index != null && current.index != undefined) {
-      console.log(">> >> ", current.url)
-      this.cards[current.index].setFrontTexture(current.url);
+      void this.cards[current.index].setFrontTexture(current.url);
     }
 
     if(next && next.index != null && next.index != undefined) {
-      this.cards[next.index].setFrontTexture(next.url);
+      void this.cards[next.index].setFrontTexture(next.url);
     }
 
     if(next2 && next2.index != null && next2.index != undefined) {
-      this.cards[next2.index].setFrontTexture(next2.url);
+      void this.cards[next2.index].setFrontTexture(next2.url);
     }
   }
     const prev = this.getCard(-1);
@@ -475,6 +523,98 @@ export class PlayScene implements Scene {
     this.loadingText.y = layouts.current.y
   }
 
+  private renderSwipeProgress(progress: number) {
+    const prevCardView = this.getPrevCardView();
+    const currentCardView = this.getCurrentCardView();
+    const nextCardView = this.getNextCardView();
+    if (!prevCardView || !currentCardView || !nextCardView) return;
+
+    const layouts = this.getCardLayouts();
+    const amount = Math.min(Math.abs(progress), 1);
+
+    if (progress < 0) {
+      this.applyAnimatedLayout(prevCardView, layouts.prev, layouts.offLeft, amount);
+      this.applyAnimatedLayout(currentCardView, layouts.current, layouts.prev, amount);
+      this.applyAnimatedLayout(nextCardView, layouts.next, layouts.current, amount);
+      nextCardView.container.zIndex = 1000;
+      currentCardView.container.zIndex = 700;
+      prevCardView.container.zIndex = 500;
+    } else if (progress > 0) {
+      this.applyAnimatedLayout(prevCardView, layouts.prev, layouts.current, amount);
+      this.applyAnimatedLayout(currentCardView, layouts.current, layouts.next, amount);
+      this.applyAnimatedLayout(nextCardView, layouts.next, layouts.offRight, amount);
+      prevCardView.container.zIndex = 1000;
+      currentCardView.container.zIndex = 700;
+      nextCardView.container.zIndex = 500;
+    } else {
+      this.layoutCards();
+      return;
+    }
+
+    this.cardNextButton.zIndex = 3000;
+    this.cardBackButton.zIndex = 3000;
+    this.titleText.zIndex = 4500;
+    this.uprightText.zIndex = 4500;
+    this.reversedText.zIndex = 4500;
+  }
+
+  private async animateDragRelease(target: number) {
+    const start = this.dragProgress;
+    const delta = target - start;
+    if (Math.abs(delta) < 0.001) {
+      this.dragProgress = target;
+      this.renderSwipeProgress(target);
+      return;
+    }
+
+    const duration = Math.max(120, 220 * Math.min(Math.abs(delta), 1));
+    await new Promise<void>((resolve) => {
+      const startedAt = performance.now();
+      const tick = () => {
+        const raw = Math.min((performance.now() - startedAt) / duration, 1);
+        const eased = this.easeOutCubic(raw);
+        this.dragProgress = start + delta * eased;
+        this.renderSwipeProgress(this.dragProgress);
+
+        if (raw < 1) {
+          requestAnimationFrame(tick);
+        } else {
+          this.dragProgress = target;
+          resolve();
+        }
+      };
+
+      requestAnimationFrame(tick);
+    });
+  }
+
+  private async finishSwipe(direction: "next" | "back", skipCount: number) {
+    const target = direction === "next" ? -1 : 1;
+    await this.animateDragRelease(target);
+    this.dragProgress = 0;
+
+    if (direction === "next" && this.deckIndex < this.deck.length - 1) {
+      this.deckIndex++;
+    } else if (direction === "back" && this.deckIndex > 0) {
+      this.deckIndex--;
+    }
+
+    await this.refreshVisibleCards();
+    this.refreshCardButtons();
+
+    console.log(skipCount);
+    //const extraSteps = Math.min(
+    //  skipCount - 1,
+    //  direction === "next"
+    //    ? this.deck.length - 1 - this.deckIndex
+    //    : this.deckIndex,
+    //);
+
+    //for (let i = 0; i < extraSteps; i++) {
+    //  await this.slideTo(direction);
+    //}
+  }
+
   private lerp(a: number, b: number, t: number) {
     return a + (b - a) * t;
   }
@@ -508,7 +648,7 @@ export class PlayScene implements Scene {
     this.isAnimating = true;
 
     const layouts = this.getCardLayouts();
-    const duration = 220;
+    const duration = 60;
 
     const from = {
       prev: layouts.prev,
