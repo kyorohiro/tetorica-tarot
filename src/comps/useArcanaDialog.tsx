@@ -99,7 +99,7 @@ export function useArcanaDialog() {
                                 {
                                     getTagFromElements(card.elements.map((v) => v.type), lang).map((keyword) => (
                                         <span
-                                            key={`eltag-${lang}-${keyword}`}
+                                            key={`eltag-${lang}-${keyword.keyword}`}
                                             className="rounded-full border border-gray-100 border-0.5 px-0.5 py-0.5 my-1 text-xs text-mist-200"
                                             style={{
                                                 color: cssColorFromElement(keyword.element),
