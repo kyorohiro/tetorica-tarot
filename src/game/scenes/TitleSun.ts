@@ -26,6 +26,11 @@ export class Sun extends Sprite {
             Ticker.shared.remove(this.fadeTick);
         }
 
+        this.x = 100;
+        this.y = 100;
+        this.scale.set(1.0);
+        //this.anchor.set(0.48, 0.45);
+        this.anchor.set(0.55, 0.45);
         this.fadeTick = () => {
             this.alpha += 0.05;
             if (this.alpha >= 1) {
@@ -47,26 +52,32 @@ export class Sun extends Sprite {
 
         this.x = 100;
         this.y = 100;
-        this.scale.set(0.3);
+        this.scale.set(0.2);
         //this.anchor.set(0.48, 0.45);
         this.anchor.set(0.55, 0.45);
 
 
         const _self = this;
-        if(!self.parent) {
+        if (!self.parent) {
             return;
         }
-        const pw = _self.parent!.width 
-        const rightLimit = pw *0.83;// * (1 - this.anchor.x);
+        const pw = _self.parent!.width
+        const rightLimit = pw * 0.75;// * (1 - this.anchor.x);
         this.animTick = () => {
 
 
             //console.log("x > rightLimit", this.x, rightLimit, pw);
             if (this.x < rightLimit) {
-                this.x += 3;
+                this.x += 0.8;
+            } else {
+                if (this.animTick) {
+                    Ticker.shared.remove(this.animTick);
+                    this.animTick = undefined;
+                }
             }
 
-            this.rotation += 0.012;
+            this.rotation += 0.003;
+
         };
 
         Ticker.shared.add(this.animTick);
