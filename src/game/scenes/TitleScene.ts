@@ -27,7 +27,9 @@ export class TitleScene implements Scene {
 
   private readonly startButton = makeButton("", () => {
     //this.game.playClick();
-    this.game.showPlayScene({ forceUpdate: true, isShuffleCards: true });
+    
+    //this.game.showPlayScene({ forceUpdate: true, isShuffleCards: true });
+    this.game.setCurrentScene("play");
   });
 
   constructor(private readonly game: GameApp) {

@@ -70,7 +70,8 @@ export class GameApp {
     this.resizeObserver.observe(this.root);
   }
 
-  private setCurrentScene(v: SceneKey)  {
+  public setCurrentScene(v: SceneKey)  {
+    console.log("> setCurrentScene");
     this.currentScene = v;
     this.onChangeCurrentScene(v);
   }
@@ -93,6 +94,7 @@ export class GameApp {
   }
 
   setLanguage(language: Lang) {
+    console.log("> setLanguage", language)
     this.language = language;
     if (!this.initialized || this.destroyed) return;
 
@@ -128,7 +130,7 @@ export class GameApp {
     forceUpdate?:boolean|undefined
     isShuffleCards?: boolean | undefined
   }) {
-    console.log("> showPlayScene ", props)
+    console.log("> showPlayScene ", props, this.language)
     if (!this.initialized || this.destroyed || !this.sceneManager) return;
 
     if (props.forceUpdate || this.currentScene != "play") {
@@ -136,8 +138,19 @@ export class GameApp {
       //this.currentScene = "play";
       this.setCurrentScene("play");
       if (props.forceUpdate || !this.playScene) {
+        console.log("> showPlayScene new")
         this.playScene = new PlayScene({game:this, isShuffleCards: props.isShuffleCards ?? false})
       }
+      console.log(">>ch ", this.playScene.getDeck()[0]);
+      this.sceneManager.change(
+        this.playScene,
+        this.app.screen.width,
+        this.app.screen.height,
+      );
+    }
+    else if (this.currentScene == "play" && this.playScene) {
+      //
+      console.log(">>ch ", this.playScene.getDeck()[0]);
       this.sceneManager.change(
         this.playScene,
         this.app.screen.width,

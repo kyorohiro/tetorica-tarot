@@ -28,11 +28,13 @@ function sortCards(cards: TarotCard[]): TarotCard[] {
 }
 
 function shuffleCards(cards: TarotCard[]): TarotCard[] {
+  console.log("> shuffleCards s", cards[0])
   const result = [...cards];
   for (let i = result.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [result[i], result[j]] = [result[j], result[i]];
   }
+  console.log("> shuffleCards r", result[0])
   return result;
 }
 

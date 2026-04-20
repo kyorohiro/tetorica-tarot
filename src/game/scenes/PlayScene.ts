@@ -30,7 +30,7 @@ export class PlayScene implements Scene {
   private currentCardId: string | null = null;
   private currentReversed = false;
 
-  private deck = shuffleCards(tarotCards);
+  private deck = [...tarotCards];
   private deckIndex = 0;
   private scrollPosition = 0;
   private targetScrollPosition = 0;
@@ -162,6 +162,9 @@ export class PlayScene implements Scene {
     this.renderScene();
   }
 
+  public getDeck() {
+    return this.deck;
+  }
   private showLoading(message: string) {
     this.loadingText.text = message;
     this.loadingText.anchor.set(0.5);
@@ -419,8 +422,17 @@ export class PlayScene implements Scene {
     }
   }
 
+public rerenderScene() {
+  console.log("> rerenderScene");
+  this.ensureVisibleTextures();
+  this.renderScene();
+  this.refreshCardButtons();
+}
   private renderScene() {
-    if (!this.width || !this.height) return;
+    if (!this.width || !this.height) {
+      console.log("renderScene", this.width, this.height)
+      return;
+    }
 
     for (const cardView of this.cards) {
       cardView.container.visible = false;
@@ -587,6 +599,7 @@ export class PlayScene implements Scene {
   }
 
   private getCurrentCardText() {
+    console.log("> getCurrentCardText", this.currentCardId);
     if (!this.currentCardId) return null;
 
     const cardText = majorArcanaCards[this.currentCardId];
@@ -606,8 +619,10 @@ export class PlayScene implements Scene {
   }
 
   private refreshCardText() {
+    console.log("> refreshCardText");
     const text = this.getCurrentCardText();
     if (!text) {
+      console.log(">> text:", text)
       this.titleText.text = "";
       this.uprightText.text = "";
       this.reversedText.text = "";
@@ -640,10 +655,12 @@ export class PlayScene implements Scene {
     }
 
     if (this.game.getLanguage() === "ja") {
+      console.log(">> ja", text.titleJa)
       this.titleText.text = text.titleJa;
       this.uprightText.text = text.upright.keywordsJa.map((v) => `#${v}`).join("  ");
       this.reversedText.text = text.revered.keywordsJa.map((v) => `#${v}`).join("  ");
     } else {
+      console.log(">> en", text.titleEn)
       this.titleText.text = text.titleEn;
       this.uprightText.text = text.upright.keywordsEn.map((v) => `#${v}`).join("  ");
       this.reversedText.text = text.revered.keywordsEn.map((v) => `#${v}`).join("  ");

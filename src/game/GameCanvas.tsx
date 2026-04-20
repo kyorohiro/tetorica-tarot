@@ -24,7 +24,10 @@ export const GameCanvas = forwardRef<GameCanvasHandle, Props>(function ({ langua
     if (!host) return;
 
     let disposed = false;
-    const game = new GameApp(host, language, currentScene, setCurrentScene, arcanaDialog);
+    const game = new GameApp(host, language, currentScene, (v)=>{
+      console.log("> onChangeCurrentScene v:", v)
+      setCurrentScene(v)
+    }, arcanaDialog);
     gameRef.current = game;
 
     void game.init().then(() => {
@@ -43,7 +46,7 @@ export const GameCanvas = forwardRef<GameCanvasHandle, Props>(function ({ langua
   useEffect(() => {
     console.log("> useEffect language", language, currentScene);
     gameRef.current?.setLanguage(language);
-  }, [language, currentScene]);
+  }, [language]);
 
   useEffect(() => {
     console.log("> useEffect currentScene", currentScene);
