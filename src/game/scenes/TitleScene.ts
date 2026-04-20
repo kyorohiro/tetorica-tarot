@@ -14,9 +14,13 @@ export class TitleScene implements Scene {
   private readonly title = new Text({
     text: "",
     style: {
-      fill: 0xffffff,
+      fill: 0xffffee,
       fontSize: 42,
       fontWeight: "700",
+      stroke: {
+        color: 0x333300,
+        width: 2,
+      },
     },
   });
 
@@ -36,7 +40,7 @@ export class TitleScene implements Scene {
   });
 
   constructor(private readonly game: GameApp) {
-    this.bg.tint = 0xf5d95a;//0x0f172a;
+    this.bg.tint = 0xf5d95a;//0xe5c94a;//0xf5d95a;//0x0f172a;
     this.bg.anchor.set(0);
     this.title.anchor.set(0.5);
     this.subtitle.anchor.set(0.5);
@@ -60,7 +64,7 @@ export class TitleScene implements Scene {
       this.startButton,
     );
     this.sun.load();
-    this.sun.startAnimation();
+    //this.sun.startAnimation();
   }
 
   private refreshText() {

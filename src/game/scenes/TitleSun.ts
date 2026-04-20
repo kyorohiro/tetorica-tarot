@@ -28,7 +28,9 @@ export class Sun extends Sprite {
 
         this.x = 100;
         this.y = 100;
-        this.scale.set(1.0);
+        this.scale.set(0.7);
+        //this.scale.set(1.0);
+
         //this.anchor.set(0.48, 0.45);
         this.anchor.set(0.55, 0.45);
         this.fadeTick = () => {
