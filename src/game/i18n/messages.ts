@@ -2,7 +2,7 @@ export type Lang = "ja" | "en";
 
 const ja = {
   gameTitle: "Tetorica Tarot",
-  subtitle: "TODO : A creative support tool",
+  subtitle: "A creative support tool",
   start: "スタート",
   backToTitle: "タイトルへ",
   score: "スコア",
@@ -11,7 +11,7 @@ const ja = {
 
 const en = {
   gameTitle: "Tetorica Tarot",
-  subtitle: "TODO : A creative support tool",
+  subtitle: "A creative support tool",
   start: "Start",
   backToTitle: "Back to Title",
   score: "Score",

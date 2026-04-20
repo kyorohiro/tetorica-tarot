@@ -51,7 +51,9 @@ export const GameCanvas = forwardRef<GameCanvasHandle, Props>(function ({ langua
   useEffect(() => {
     console.log("> useEffect currentScene", currentScene);
     if (currentScene == "title") {
-      gameRef.current?.showTitleScene();
+      gameRef.current?.showTitleScene({
+        forceUpdate:false
+      });
     } else if (currentScene == "play") {
       gameRef.current?.showPlayScene({forceUpdate:true, isShuffleCards: true});
     }

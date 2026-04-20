@@ -10,6 +10,9 @@ export type SceneKey = "title" | "play";
 
 export class GameApp {
   private readonly app = new Application();
+  public getApp() {
+    return this.app;
+  }
 
   private sceneManager: SceneManager | null = null;
   private resizeObserver: ResizeObserver | null = null;
@@ -59,7 +62,7 @@ export class GameApp {
     this.setupResize();
     //this.setupSound();
 
-    this.showTitleScene();
+    this.showTitleScene({forceUpdate:false});
   }
 
   private setupResize() {
@@ -99,7 +102,7 @@ export class GameApp {
     if (!this.initialized || this.destroyed) return;
 
     if (this.currentScene === "title") {
-      this.showTitleScene();
+      this.showTitleScene({forceUpdate:true});
     } else {
       this.showPlayScene({
         
@@ -111,12 +114,14 @@ export class GameApp {
     await this.arcanaDialog.showArcanaDialog(cardId, this.language)
   }
 
-  showTitleScene() {
+  showTitleScene(props:{
+    forceUpdate?:boolean|undefined
+  }) {
     console.log("> showTitleScene", this.currentScene )
     if (!this.initialized || this.destroyed || !this.sceneManager) return;
 
     //this.currentScene = "title";
-    if (this.currentScene != "title") {
+    if (props.forceUpdate || this.currentScene != "title") {
       this.setCurrentScene("title");
       this.sceneManager.change(
         new TitleScene(this),
