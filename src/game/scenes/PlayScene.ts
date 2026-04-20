@@ -93,6 +93,7 @@ export class PlayScene implements Scene {
   });
 
   constructor(params: { readonly game: GameApp; isShuffleCards: boolean }) {
+    console.log("> new PlayScene ")
     this.game = params.game;
     this.bg.tint = 0x111827;
     this.bg.eventMode = "static";
@@ -124,9 +125,9 @@ export class PlayScene implements Scene {
     this.container.addChild(
       this.bg,
       ...this.cards.map((card) => card.container),
+      this.elementMark,
       this.keywordsBg,
       this.titleText,
-      this.elementMark,
       this.uprightText,
       this.reversedText,
       this.cardNextButton,
@@ -444,6 +445,7 @@ export class PlayScene implements Scene {
       cardView.container.zIndex = Math.round(1000 - Math.abs(delta) * 100);
       this.cardBackButton.zIndex = 4000;
       this.cardNextButton.zIndex = 4000;
+      //Index = 3;
     }
 
     const roundedIndex = Math.round(this.scrollPosition);

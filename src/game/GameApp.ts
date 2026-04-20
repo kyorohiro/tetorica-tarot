@@ -21,19 +21,19 @@ export class GameApp {
   private destroyed = false;
   private destroyRequested = false;
   private playScene: PlayScene | undefined;
-  private setCurrentScene: (v: SceneKey) => void;
+  private onChangeCurrentScene: (v: SceneKey) => void;
   private arcanaDialog: UseArcanaDialogReturn;
 
   constructor(
     private readonly root: HTMLElement,
     language: Lang,
     currentScene: SceneKey| undefined,
-    setCurrentScene: (v: SceneKey) => void,
+    onChangeCurrentScene: (v: SceneKey) => void,
     arcanaDialog: UseArcanaDialogReturn,
   ) {
     this.language = language;
     this.currentScene = currentScene;
-    this.setCurrentScene = setCurrentScene;
+    this.onChangeCurrentScene = onChangeCurrentScene;
     this.arcanaDialog = arcanaDialog;
   }
 
@@ -70,6 +70,10 @@ export class GameApp {
     this.resizeObserver.observe(this.root);
   }
 
+  private setCurrentScene(v: SceneKey)  {
+    this.currentScene = v;
+    this.onChangeCurrentScene(v);
+  }
   //private setupSound() {
   //  try {
   //    if (!sound.exists("click")) {
@@ -124,9 +128,11 @@ export class GameApp {
     forceUpdate?:boolean|undefined
     isShuffleCards?: boolean | undefined
   }) {
+    console.log("> showPlayScene ", props)
     if (!this.initialized || this.destroyed || !this.sceneManager) return;
 
     if (props.forceUpdate || this.currentScene != "play") {
+      console.log(">> ", props.forceUpdate,  this.currentScene)
       //this.currentScene = "play";
       this.setCurrentScene("play");
       if (props.forceUpdate || !this.playScene) {

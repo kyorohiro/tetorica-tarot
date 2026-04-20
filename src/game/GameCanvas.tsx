@@ -41,9 +41,9 @@ export const GameCanvas = forwardRef<GameCanvasHandle, Props>(function ({ langua
   }, []);
 
   useEffect(() => {
-    console.log("> useEffect language", language);
+    console.log("> useEffect language", language, currentScene);
     gameRef.current?.setLanguage(language);
-  }, [language]);
+  }, [language, currentScene]);
 
   useEffect(() => {
     console.log("> useEffect currentScene", currentScene);
