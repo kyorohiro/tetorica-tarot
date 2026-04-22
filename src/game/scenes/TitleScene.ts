@@ -63,7 +63,7 @@ export class TitleScene implements Scene {
       this.subtitle,
       this.startButton,
     );
-    this.sun.load();
+    //this.sun.load();
     //this.sun.startAnimation();
   }
 
