@@ -140,16 +140,41 @@ export class PlayScene implements Scene {
     this.reversedText.resolution = window.devicePixelRatio || 2;
   }
 
+  private readonly handleKeyDown = async (event: KeyboardEvent) => {
+    if (this.isAnimating) return;
+    if (this.isDragging) return;
+
+    // 入力欄にフォーカスがある時は反応させない
+    const target = event.target as HTMLElement | null;
+    const tagName = target?.tagName?.toLowerCase();
+    const isEditable =
+      tagName === "input" ||
+      tagName === "textarea" ||
+      target?.isContentEditable;
+
+    if (isEditable) return;
+
+    if (event.key === "ArrowRight" || event.key === "d") {
+      event.preventDefault();
+      await this.slideTo("next");
+    } else if (event.key === "ArrowLeft" || event.key === "a") {
+      event.preventDefault();
+      await this.slideTo("back");
+    }
+  };
+  
   async mount() {
     this.showLoading("Loading cards...");
     this.ensureVisibleTextures();
     this.renderScene();
     this.refreshCardButtons();
     this.hideLoading();
+    window.addEventListener("keydown", this.handleKeyDown);
   }
 
   unmount() {
     this.stopAnimation();
+    window.removeEventListener("keydown", this.handleKeyDown);
   }
 
   resize(width: number, height: number) {
@@ -193,7 +218,7 @@ export class PlayScene implements Scene {
     });
 
     target.on("pointermove", (event) => {
-      if(!this.isDragging) {
+      if (!this.isDragging) {
         return;
       }
       if (this.swipePointerId !== event.pointerId) return;
@@ -249,7 +274,7 @@ export class PlayScene implements Scene {
       const scrollVelocity = (-this.swipeVelocityX / Math.max(spacing, 1)) * 1.15;
       await this.startMomentum(scrollVelocity);
       this.resetSwipeState();
-      
+
     };
 
     target.on("pointerup", (event) => {
@@ -422,12 +447,12 @@ export class PlayScene implements Scene {
     }
   }
 
-public rerenderScene() {
-  console.log("> rerenderScene");
-  this.ensureVisibleTextures();
-  this.renderScene();
-  this.refreshCardButtons();
-}
+  public rerenderScene() {
+    console.log("> rerenderScene");
+    this.ensureVisibleTextures();
+    this.renderScene();
+    this.refreshCardButtons();
+  }
   private renderScene() {
     if (!this.width || !this.height) {
       console.log("renderScene", this.width, this.height)
