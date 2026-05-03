@@ -3,7 +3,7 @@ import { Application } from "pixi.js";
 import { SceneManager } from "./core/SceneManager";
 import { TitleScene } from "./scenes/TitleScene";
 import { PlayScene } from "./scenes/PlayScene";
-import { t, type Lang, type MessageKey } from "./i18n/messages";
+import { type Lang, type MessageKey, t } from "./i18n/messages";
 import { UseArcanaDialogReturn } from "../comps/useArcanaDialog";
 
 export type SceneKey = "title" | "play";
@@ -17,7 +17,7 @@ export class GameApp {
   private sceneManager: SceneManager | null = null;
   private resizeObserver: ResizeObserver | null = null;
 
-  private currentScene: SceneKey|undefined;
+  private currentScene: SceneKey | undefined;
   private language: Lang;
 
   private initialized = false;
@@ -30,7 +30,7 @@ export class GameApp {
   constructor(
     private readonly root: HTMLElement,
     language: Lang,
-    currentScene: SceneKey| undefined,
+    currentScene: SceneKey | undefined,
     onChangeCurrentScene: (v: SceneKey) => void,
     arcanaDialog: UseArcanaDialogReturn,
   ) {
@@ -62,7 +62,7 @@ export class GameApp {
     this.setupResize();
     //this.setupSound();
 
-    this.showTitleScene({forceUpdate:false});
+    this.showTitleScene({ forceUpdate: false });
   }
 
   private setupResize() {
@@ -73,7 +73,7 @@ export class GameApp {
     this.resizeObserver.observe(this.root);
   }
 
-  public setCurrentScene(v: SceneKey)  {
+  public setCurrentScene(v: SceneKey) {
     console.log("> setCurrentScene");
     this.currentScene = v;
     this.onChangeCurrentScene(v);
@@ -97,27 +97,25 @@ export class GameApp {
   }
 
   setLanguage(language: Lang) {
-    console.log("> setLanguage", language)
+    console.log("> setLanguage", language);
     this.language = language;
     if (!this.initialized || this.destroyed) return;
 
     if (this.currentScene === "title") {
-      this.showTitleScene({forceUpdate:true});
+      this.showTitleScene({ forceUpdate: true });
     } else {
-      this.showPlayScene({
-        
-      });
+      this.showPlayScene({});
     }
   }
 
-  async showArcanaDialog(cardId:string)  {
-    await this.arcanaDialog.showArcanaDialog(cardId, this.language)
+  async showArcanaDialog(cardId: string) {
+    await this.arcanaDialog.showArcanaDialog(cardId, this.language);
   }
 
-  showTitleScene(props:{
-    forceUpdate?:boolean|undefined
+  showTitleScene(props: {
+    forceUpdate?: boolean | undefined;
   }) {
-    console.log("> showTitleScene", this.currentScene )
+    console.log("> showTitleScene", this.currentScene);
     if (!this.initialized || this.destroyed || !this.sceneManager) return;
 
     //this.currentScene = "title";
@@ -131,20 +129,25 @@ export class GameApp {
     }
   }
 
-  showPlayScene(props:{
-    forceUpdate?:boolean|undefined
-    isShuffleCards?: boolean | undefined
+  showPlayScene(props: {
+    forceUpdate?: boolean | undefined;
+    isShuffleCards?: boolean | undefined;
+    cards?: string[] | undefined;
   }) {
-    console.log("> showPlayScene ", props, this.language)
+    console.log("> showPlayScene ", props, this.language);
     if (!this.initialized || this.destroyed || !this.sceneManager) return;
 
     if (props.forceUpdate || this.currentScene != "play") {
-      console.log(">> ", props.forceUpdate,  this.currentScene)
+      console.log(">> ", props.forceUpdate, this.currentScene);
       //this.currentScene = "play";
       this.setCurrentScene("play");
       if (props.forceUpdate || !this.playScene) {
-        console.log("> showPlayScene new")
-        this.playScene = new PlayScene({game:this, isShuffleCards: props.isShuffleCards ?? false})
+        console.log("> showPlayScene new");
+        this.playScene = new PlayScene({
+          game: this,
+          isShuffleCards: props.isShuffleCards ?? false,
+          cards: props.cards
+        });
       }
       console.log(">>ch ", this.playScene.getDeck()[0]);
       this.sceneManager.change(
@@ -152,8 +155,7 @@ export class GameApp {
         this.app.screen.width,
         this.app.screen.height,
       );
-    }
-    else if (this.currentScene == "play" && this.playScene) {
+    } else if (this.currentScene == "play" && this.playScene) {
       //
       console.log(">>ch ", this.playScene.getDeck()[0]);
       this.sceneManager.change(
@@ -164,6 +166,14 @@ export class GameApp {
     }
   }
 
+  async getCurrentCards(): Promise<string[]> {
+    return (this.playScene?.getDeck() ?? []).map((c) => {
+      return `${c.index}${c.reversed ? "r" : ""}`;
+    });
+  }
+  async setCurrentCards(cards: string[]) {
+    
+  }
   //playClick() {
   //  try {
   //    sound.play("click", { volume: 0.15 });

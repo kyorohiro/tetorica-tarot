@@ -2,6 +2,7 @@ import { forwardRef, useEffect, useImperativeHandle, useRef } from "react";
 import { GameApp, SceneKey } from "./GameApp";
 import type { Lang } from "./i18n/messages";
 import { UseArcanaDialogReturn } from "../comps/useArcanaDialog";
+import { TarotCard } from "./scenes/tarotCards";
 
 type Props = {
   language: Lang;
@@ -11,8 +12,10 @@ type Props = {
 };
 
 export type GameCanvasHandle = {
-  orderCards: ()=>Promise<void>
-  shuffleCards: ()=>Promise<void>
+  orderCards: () => Promise<void>
+  shuffleCards: () => Promise<void>
+  getCurrentCards: () => Promise<string[]>
+  setCurrentCards: (cards: string[]) => Promise<void>
 }
 
 export const GameCanvas = forwardRef<GameCanvasHandle, Props>(function ({ language, currentScene, setCurrentScene, arcanaDialog }: Props, ref) {
@@ -24,7 +27,7 @@ export const GameCanvas = forwardRef<GameCanvasHandle, Props>(function ({ langua
     if (!host) return;
 
     let disposed = false;
-    const game = new GameApp(host, language, currentScene, (v)=>{
+    const game = new GameApp(host, language, currentScene, (v) => {
       console.log("> onChangeCurrentScene v:", v)
       setCurrentScene(v)
     }, arcanaDialog);
@@ -52,10 +55,10 @@ export const GameCanvas = forwardRef<GameCanvasHandle, Props>(function ({ langua
     console.log("> useEffect currentScene", currentScene);
     if (currentScene == "title") {
       gameRef.current?.showTitleScene({
-        forceUpdate:false
+        forceUpdate: false
       });
     } else if (currentScene == "play") {
-      gameRef.current?.showPlayScene({forceUpdate:true, isShuffleCards: true});
+      gameRef.current?.showPlayScene({ forceUpdate: true, isShuffleCards: true });
     }
   }, [currentScene]);
 
@@ -63,22 +66,38 @@ export const GameCanvas = forwardRef<GameCanvasHandle, Props>(function ({ langua
   useImperativeHandle(
     ref,
     () => ({
-      orderCards: async () =>{
-        if(gameRef.current) {
+      orderCards: async () => {
+        if (gameRef.current) {
           gameRef.current.showPlayScene({
             forceUpdate: true,
             isShuffleCards: false,
           });
         }
       },
-      shuffleCards: async () =>{
-        if(gameRef.current) {
+      shuffleCards: async () => {
+        if (gameRef.current) {
           gameRef.current.showPlayScene({
             forceUpdate: true,
             isShuffleCards: true,
           });
         }
       },
+      getCurrentCards: async () => {
+        if (gameRef.current) {
+          return gameRef.current.getCurrentCards();
+        } else {
+          return [];
+        }
+      },
+      setCurrentCards: async (cards: string[]) => {
+        if (gameRef.current) {
+          gameRef.current.showPlayScene({
+            forceUpdate: true,
+            isShuffleCards: false,
+            cards: cards
+          });
+        }
+      }
     }),
     []
   );

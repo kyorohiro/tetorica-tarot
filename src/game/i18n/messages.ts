@@ -7,6 +7,8 @@ const ja = {
   backToTitle: "タイトルへ",
   score: "スコア",
   hitOrb: "丸をクリック",
+  export: "エクスポート",
+  share: "共有",
 };
 
 const en = {
@@ -16,6 +18,8 @@ const en = {
   backToTitle: "Back to Title",
   score: "Score",
   hitOrb: "Click the orb",
+  export: "Export",
+  share: "Share",
 };
 
 export type MessageKey = keyof typeof ja;

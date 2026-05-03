@@ -92,12 +92,23 @@ export class PlayScene implements Scene {
     }),
   });
 
-  constructor(params: { readonly game: GameApp; isShuffleCards: boolean }) {
+  constructor(params: { readonly game: GameApp; isShuffleCards: boolean, cards?: string[] }) {
     console.log("> new PlayScene ")
     this.game = params.game;
     this.bg.tint = 0x111827;
     this.bg.eventMode = "static";
     this.deck = params.isShuffleCards ? shuffleCards(tarotCards) : sortCards(tarotCards);
+    // もしも Cards が指定されているなら、その順番に deck を並び替える
+    if(params.cards) {
+      const sortedCards = sortCards(tarotCards);
+      this.deck = params.cards.map((id) => {
+        const index = parseInt(id.trim().replace("r", ""));
+        const reversed = id.trim().endsWith("r");
+        return Object.assign({}, sortedCards[index], { reversed });
+      });
+    } else {
+      this.deck = params.isShuffleCards ? shuffleCards(tarotCards) : sortCards(tarotCards);
+    }
     this.scrollPosition = this.deckIndex;
     this.targetScrollPosition = this.deckIndex;
 
