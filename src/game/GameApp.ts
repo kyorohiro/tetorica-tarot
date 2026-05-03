@@ -171,9 +171,7 @@ export class GameApp {
       return `${c.index}${c.reversed ? "r" : ""}`;
     });
   }
-  async setCurrentCards(cards: string[]) {
-    
-  }
+
   //playClick() {
   //  try {
   //    sound.play("click", { volume: 0.15 });

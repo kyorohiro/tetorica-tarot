@@ -2,7 +2,6 @@ import { forwardRef, useEffect, useImperativeHandle, useRef } from "react";
 import { GameApp, SceneKey } from "./GameApp";
 import type { Lang } from "./i18n/messages";
 import { UseArcanaDialogReturn } from "../comps/useArcanaDialog";
-import { TarotCard } from "./scenes/tarotCards";
 
 type Props = {
   language: Lang;
