@@ -466,6 +466,7 @@ const majorArcanaSpecialRelations: TarotRelations = {
     { to: "21-TheWorld", type: "complements", labelJa: "始まり ↔ 完成", labelEn: "Beginning ↔ Completion" },
     { to: "04-TheEmperor", type: "tension", labelJa: "自由 ↔ 秩序", labelEn: "Freedom ↔ Order" },
     { to: "01-TheMagician", type: "similarTheme", labelJa: "可能性 ↔ 意志の発動", labelEn: "Potential ↔ Activation of Will" },
+    { to: "12-TheHangedMan", type: "tension", labelJa: "衝動 ↔ 停止", labelEn: "Impulse ↔ Pause" },
   ],
 
   "01-TheMagician": [
@@ -489,6 +490,7 @@ const majorArcanaSpecialRelations: TarotRelations = {
     { to: "03-TheEmpress", type: "complements", labelJa: "統治 ↔ 育成", labelEn: "Rule ↔ Nurture" },
     { to: "00-TheFool", type: "tension", labelJa: "秩序 ↔ 自由", labelEn: "Order ↔ Freedom" },
     { to: "16-TheTower", type: "tension", labelJa: "秩序ある構造 ↔ 構造の崩壊", labelEn: "Ordered Structure ↔ Collapse of Structure" },
+    { to: "11-Justice", type: "similarTheme", labelJa: "統治 ↔ 公正", labelEn: "Rule ↔ Justice" },
   ],
 
   "05-TheHierophant": [
@@ -524,17 +526,21 @@ const majorArcanaSpecialRelations: TarotRelations = {
   "11-Justice": [
     { to: "06-TheLovers", type: "similarTheme", labelJa: "判断 ↔ 選択", labelEn: "Judgment ↔ Choice" },
     { to: "20-Judgement", type: "similarTheme", labelJa: "審理 ↔ 最終的な裁き", labelEn: "Evaluation ↔ Final Judgment" },
+    { to: "04-TheEmperor", type: "similarTheme", labelJa: "公正 ↔ 統治", labelEn: "Justice ↔ Rule" },
   ],
 
   "12-TheHangedMan": [
     { to: "07-TheChariot", type: "tension", labelJa: "停止 ↔ 前進", labelEn: "Pause ↔ Advance" },
     { to: "13-Death", type: "similarTheme", labelJa: "手放し ↔ 終焉による変化", labelEn: "Letting Go ↔ Change Through Ending" },
+    { to: "00-TheFool", type: "tension", labelJa: "停止 ↔ 衝動", labelEn: "Pause ↔ Impulse" },
   ],
 
   "13-Death": [
     { to: "14-Temperance", type: "complements", labelJa: "終わり ↔ 再調整", labelEn: "Ending ↔ Rebalancing" },
     { to: "21-TheWorld", type: "similarTheme", labelJa: "変容 ↔ 統合", labelEn: "Transformation ↔ Integration" },
     { to: "12-TheHangedMan", type: "similarTheme", labelJa: "終焉による変化 ↔ 手放し", labelEn: "Change Through Ending ↔ Letting Go" },
+    { to: "15-TheDevil", type: "tension", labelJa: "手放し ↔ 執着", labelEn: "Letting Go ↔ Attachment" },
+    { to: "20-Judgement", type: "complements", labelJa: "終焉 ↔ 再生", labelEn: "Ending ↔ Rebirth" },
   ],
 
   "14-Temperance": [
@@ -546,6 +552,7 @@ const majorArcanaSpecialRelations: TarotRelations = {
     { to: "05-TheHierophant", type: "tension", labelJa: "欲望 ↔ 規範", labelEn: "Desire ↔ Doctrine" },
     { to: "06-TheLovers", type: "tension", labelJa: "執着 ↔ 愛", labelEn: "Attachment ↔ Love" },
     { to: "08-Strength", type: "tension", labelJa: "欲望への屈服 ↔ 自制", labelEn: "Surrender to Desire ↔ Self-Mastery" },
+    { to: "13-Death", type: "tension", labelJa: "執着 ↔ 手放し", labelEn: "Attachment ↔ Letting Go" },
   ],
 
   "16-TheTower": [
@@ -577,6 +584,7 @@ const majorArcanaSpecialRelations: TarotRelations = {
     { to: "05-TheHierophant", type: "similarTheme", labelJa: "呼び覚まし ↔ 教え", labelEn: "Awakening Call ↔ Teaching" },
     { to: "11-Justice", type: "similarTheme", labelJa: "最終的な裁き ↔ 審理", labelEn: "Final Judgment ↔ Evaluation" },
     { to: "21-TheWorld", type: "complements", labelJa: "再生 ↔ 完成", labelEn: "Rebirth ↔ Completion" },
+    { to: "13-Death", type: "complements", labelJa: "再生 ↔ 終焉", labelEn: "Rebirth ↔ Ending" },
   ],
 
   "21-TheWorld": [

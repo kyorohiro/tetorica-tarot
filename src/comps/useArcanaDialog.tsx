@@ -1,12 +1,21 @@
 import React from "react";
 import { useDialog } from "./useDialog";
-import { cssColorFromElement, getTagFromElements, majorArcanaCards } from "../game/tarot/majorArcana";
+import {
+    cssColorFromElement,
+    elementLabelEn,
+    elementLabelJa,
+    getTagFromElements,
+    majorArcanaCards,
+    TarotElement,
+    TarotElementItem,
+} from "../game/tarot/majorArcana";
 import { majorArcanaSpecialRelations } from "../game/tarot/majorArcana";
 import { Lang } from "../game/i18n/messages";
 import { LoadingImage } from "./LoadingImageProps";
 import { assetUrl } from "../lib/assetUrl";
 
 type MajorArcanaKey = keyof typeof majorArcanaCards;
+const radarElements: TarotElement[] = ["fire", "air", "earth", "water"];
 
 function relationTypeLabelJa(type: string) {
     switch (type) {
@@ -32,6 +41,121 @@ function relationTypeLabelEn(type: string) {
         default:
             return type;
     }
+}
+
+function elementLabel(element: TarotElement, lang: Lang) {
+    return lang === "ja" ? elementLabelJa(element) : elementLabelEn(element);
+}
+
+function getElementWeight(elements: TarotElementItem[], target: TarotElement) {
+    return elements.find((item) => item.type === target)?.weight ?? 0;
+}
+
+function radarPoint(cx: number, cy: number, radius: number, weight: number, element: TarotElement) {
+    const distance = radius * Math.max(0, Math.min(weight, 1));
+
+    switch (element) {
+        case "fire":
+            return `${cx},${cy - distance}`;
+        case "air":
+            return `${cx + distance},${cy}`;
+        case "earth":
+            return `${cx},${cy + distance}`;
+        case "water":
+            return `${cx - distance},${cy}`;
+        default:
+            return `${cx},${cy}`;
+    }
+}
+
+function ArcanaElementRadar({ elements, lang, isSpecial }: { elements: TarotElementItem[]; lang: Lang; isSpecial: boolean }) {
+    const size = 168;
+    const cx = size / 2;
+    const cy = size / 2;
+    const radius = 54;
+    const levels = [0.25, 0.5, 0.75, 1];
+    const polygonPoints = radarElements
+        .map((element) => radarPoint(cx, cy, radius, getElementWeight(elements, element), element))
+        .join(" ");
+
+    return (
+        <div className="relative mx-auto w-[168px] shrink-0">
+            <svg viewBox={`0 0 ${size} ${size}`} className="h-[168px] w-[168px] overflow-visible">
+                {levels.map((level) => {
+                    const points = radarElements
+                        .map((element) => radarPoint(cx, cy, radius, level, element))
+                        .join(" ");
+                    return (
+                        <polygon
+                            key={level}
+                            points={points}
+                            fill="none"
+                            stroke="rgba(148, 163, 184, 0.22)"
+                            strokeWidth="1"
+                        />
+                    );
+                })}
+
+                {radarElements.map((element) => {
+                    const end = radarPoint(cx, cy, radius, 1, element).split(",").map(Number);
+                    return (
+                        <line
+                            key={element}
+                            x1={cx}
+                            y1={cy}
+                            x2={end[0]}
+                            y2={end[1]}
+                            stroke="rgba(148, 163, 184, 0.28)"
+                            strokeWidth="1"
+                        />
+                    );
+                })}
+
+                {isSpecial ? (
+                    <circle
+                        cx={cx}
+                        cy={cy}
+                        r="15"
+                        fill="rgba(255, 215, 0, 0.12)"
+                        stroke="#ffd700"
+                        strokeWidth="1.5"
+                    />
+                ) : null}
+
+                <polygon
+                    points={polygonPoints}
+                    fill="rgba(148, 163, 184, 0.12)"
+                    stroke={isSpecial ? "#ffd700" : "#e2e8f0"}
+                    strokeWidth="2"
+                />
+
+                {radarElements.map((element) => {
+                    const end = radarPoint(cx, cy, radius + 12, 1, element).split(",").map(Number);
+                    return (
+                        <circle
+                            key={`${element}-node`}
+                            cx={end[0]}
+                            cy={end[1]}
+                            r="3"
+                            fill={cssColorFromElement(element)}
+                        />
+                    );
+                })}
+            </svg>
+
+            <div className="pointer-events-none absolute inset-0 text-[10px] font-medium tracking-[0.18em] text-slate-300">
+                <div className="absolute left-1/2 top-1 -translate-x-1/2">{elementLabel("fire", lang)}</div>
+                <div className="absolute right-0 top-1/2 -translate-y-1/2">{elementLabel("air", lang)}</div>
+                <div className="absolute bottom-1 left-1/2 -translate-x-1/2">{elementLabel("earth", lang)}</div>
+                <div className="absolute left-0 top-1/2 -translate-y-1/2">{elementLabel("water", lang)}</div>
+                {isSpecial ? (
+                    <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-[9px] text-amber-300">
+                        {lang === "ja" ? "特別" : "Special"}
+                    </div>
+                ) : null}
+            </div>
+        </div>
+    );
 }
 
 export function useArcanaDialog() {
@@ -81,7 +205,46 @@ export function useArcanaDialog() {
                             <h3 className="mb-2 text-sm font-semibold text-slate-200">
                                 {isJa ? "属性" : "Elements"}
                             </h3>
-                            <div className="flex flex-wrap gap-2">
+                            <div className="rounded-2xl border border-slate-700 bg-slate-950/40 px-4 py-4">
+                                <div className="flex flex-col gap-4 md:flex-row md:items-center md:gap-6">
+                                    <ArcanaElementRadar
+                                        elements={card.elements}
+                                        lang={lang}
+                                        isSpecial={card.element === "special"}
+                                    />
+                                    <div className="flex-1 space-y-3">
+                                        {card.elements.map((keyword) => (
+                                            <div key={`meter-${lang}-${keyword.type}`} className="space-y-1">
+                                                <div className="flex items-center justify-between gap-3 text-xs">
+                                                    <span
+                                                        className="font-medium tracking-[0.18em]"
+                                                        style={{ color: cssColorFromElement(keyword.type) }}
+                                                    >
+                                                        {elementLabel(keyword.type, lang)}
+                                                    </span>
+                                                    <span className="text-slate-400">{Math.round(keyword.weight * 100)}%</span>
+                                                </div>
+                                                <div className="h-2 overflow-hidden rounded-full bg-slate-800">
+                                                    <div
+                                                        className="h-full rounded-full"
+                                                        style={{
+                                                            width: `${Math.max(8, Math.min(keyword.weight * 100, 100))}%`,
+                                                            backgroundColor: cssColorFromElement(keyword.type),
+                                                            opacity: 0.88,
+                                                        }}
+                                                    />
+                                                </div>
+                                            </div>
+                                        ))}
+                                        {card.element === "special" ? (
+                                            <div className="rounded-xl border border-amber-500/40 bg-amber-500/10 px-3 py-2 text-xs text-amber-200">
+                                                {isJa ? "特別属性: 4元素を横断するカード" : "Special: a card that bridges all four elements"}
+                                            </div>
+                                        ) : null}
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="mt-3 flex flex-wrap gap-2">
                                 {card.elements.map((keyword) => (
                                     <span
                                         key={`el-${lang}-${keyword.type}`}
@@ -89,9 +252,10 @@ export function useArcanaDialog() {
                                         style={{
                                             color: cssColorFromElement(keyword.type),
                                             borderColor: cssColorFromElement(keyword.type),
+                                            opacity: Math.max(0.45, keyword.weight),
                                         }}
                                     >
-                                        {keyword.type}
+                                        {elementLabel(keyword.type, lang)}
                                     </span>
                                 ))}
                             </div>
