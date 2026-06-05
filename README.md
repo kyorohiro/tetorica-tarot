@@ -95,6 +95,20 @@ It is a **creative thinking tool**.
 % ~/bin/butler push "tetorica-tarot_0.5.8_x64-setup.exe" kyorohiro/tetorica-tarot:windows --userversion 0.5.8
 ```
 
+```
+npm run tauri android build -- --apk
+
+
+~/Library/Android/sdk/build-tools/35.0.0/apksigner sign \
+  --ks my-release-key.jks \
+  --out app-release-signed_0.5.8.apk \
+  src-tauri/gen/android/app/build/outputs/apk/universal/release/app-universal-release-unsigned.apk
+
+~/bin/butler push \
+  "app-release-signed_0.5.8.apk" \
+  kyorohiro/tetorica-tarot:android \
+  --userversion 0.5.8
+```
 
 ### For itch.io / web pag
 
