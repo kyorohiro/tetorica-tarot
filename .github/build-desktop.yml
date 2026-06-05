@@ -74,7 +74,7 @@ jobs:
         with:
           args: ${{ matrix.args }}
           tagName: ${{ github.ref_name }}
-          releaseName: "retoro player ${{ github.ref_name }}"
-          releaseBody: "retoro player desktop build"
+          releaseName: "tarot ${{ github.ref_name }}"
+          releaseBody: "tarot desktop build"
           releaseDraft: true
           prerelease: false
