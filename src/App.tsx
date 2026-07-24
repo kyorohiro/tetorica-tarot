@@ -26,6 +26,7 @@ export default function App() {
   const arcanaDialog: UseArcanaDialogReturn = useArcanaDialog();
   const readHandsDialog = useReadHandsDialog();
   const dialog = useDialog();
+  const isJa = language === "ja";
 
   const handleShuffleCards = async () => {
     const cards = Object.values(majorArcanaCards);
@@ -201,7 +202,7 @@ export default function App() {
                   void handleShuffleFullDeck();
                 }}
               >
-                Shuffle Full Deck
+                {isJa ? "全体をシャッフル" : "Shuffle Full Deck"}
               </button>
               <button
                 className="rounded-xl px-5 py-3 text-sm bg-white/10 text-slate-200 hover:bg-white/20"
@@ -209,7 +210,7 @@ export default function App() {
                   void handleDealFiveCardHand();
                 }}
               >
-                Deal 5-Card Hand
+                {isJa ? "5枚の手札を配る" : "Deal 5-Card Hand"}
               </button>
             </div>
           </div>
