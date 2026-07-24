@@ -1684,6 +1684,455 @@ const candidateSpecialHandDefinitions:
             ],
             minimumCount: 3,
         },
+        //
+        //
+        // ---------------------------------------------------------------------
+        // トリックスター・運命のいたずら
+        // ---------------------------------------------------------------------
+
+        {
+            id: "luckyBreak",
+            score: 240,
+            labelJa: "幸運",
+            labelEn: "Lucky Break",
+            descriptionJa:
+                "思い切った行動が運命の追い風を受け、予想外の成功へつながります。",
+            descriptionEn:
+                "A bold action catches a favorable turn of fate and leads to unexpected success.",
+            candidateUids: [
+                "00-TheFool",
+                "01-TheMagician",
+                "10-WheelOfFortune",
+                "19-TheSun",
+            ],
+            minimumCount: 3,
+        },
+        {
+            id: "unexpectedEncounter",
+            score: 230,
+            labelJa: "運命の出会い",
+            labelEn: "Unexpected Encounter",
+            descriptionJa:
+                "偶然の旅立ちの中で、運命を変える出会いが訪れます。",
+            descriptionEn:
+                "A chance journey brings an encounter that changes the course of fate.",
+            candidateUids: [
+                "00-TheFool",
+                "06-TheLovers",
+                "10-WheelOfFortune",
+                "17-TheStar",
+            ],
+            minimumCount: 3,
+        },
+        {
+            id: "twistOfFate",
+            score: 250,
+            labelJa: "運命のいたずら",
+            labelEn: "Twist of Fate",
+            descriptionJa:
+                "予測不能な変化によって、物語の行方が大きく覆されます。",
+            descriptionEn:
+                "An unpredictable change overturns the direction of the story.",
+            candidateUids: [
+                "00-TheFool",
+                "10-WheelOfFortune",
+                "16-TheTower",
+                "18-TheMoon",
+            ],
+            minimumCount: 3,
+        },
+        {
+            id: "serendipity",
+            score: 250,
+            labelJa: "思いがけない幸運",
+            labelEn: "Serendipity",
+            descriptionJa:
+                "偶然の選択や出会いが、希望に満ちた結果を引き寄せます。",
+            descriptionEn:
+                "A chance choice or encounter draws an unexpectedly hopeful result.",
+            candidateUids: [
+                "00-TheFool",
+                "06-TheLovers",
+                "10-WheelOfFortune",
+                "17-TheStar",
+                "19-TheSun",
+            ],
+            minimumCount: 3,
+        },
+
+        // ---------------------------------------------------------------------
+        // 支配と解放
+        // ---------------------------------------------------------------------
+
+        {
+            id: "liberation",
+            score: 270,
+            labelJa: "解放",
+            labelEn: "Liberation",
+            descriptionJa:
+                "束縛された状態が崩れ、自分の意志で新しい道へ進みます。",
+            descriptionEn:
+                "Bondage collapses, allowing a new path to be chosen freely.",
+            candidateUids: [
+                "00-TheFool",
+                "15-TheDevil",
+                "16-TheTower",
+                "20-Judgement",
+            ],
+            minimumCount: 3,
+        },
+        {
+            id: "breakingChains",
+            score: 280,
+            labelJa: "束縛からの脱出",
+            labelEn: "Breaking Chains",
+            descriptionJa:
+                "強い意志によって執着と支配を断ち切り、自由を取り戻します。",
+            descriptionEn:
+                "Determination breaks attachment and domination, restoring freedom.",
+            candidateUids: [
+                "07-TheChariot",
+                "08-Strength",
+                "15-TheDevil",
+                "16-TheTower",
+            ],
+            minimumCount: 3,
+        },
+        {
+            id: "independence",
+            score: 250,
+            labelJa: "自立",
+            labelEn: "Independence",
+            descriptionJa:
+                "他者の支配や教えを離れ、自らの意志で人生を選びます。",
+            descriptionEn:
+                "External authority is left behind as life is chosen by one's own will.",
+            candidateUids: [
+                "00-TheFool",
+                "01-TheMagician",
+                "04-TheEmperor",
+                "09-TheHermit",
+            ],
+            minimumCount: 3,
+        },
+
+        // ---------------------------------------------------------------------
+        // 師弟・継承
+        // ---------------------------------------------------------------------
+
+        {
+            id: "mentor",
+            score: 230,
+            labelJa: "導師",
+            labelEn: "Mentor",
+            descriptionJa:
+                "深い知識と経験を持つ者が、進むべき道を教えます。",
+            descriptionEn:
+                "A figure of knowledge and experience reveals the path forward.",
+            candidateUids: [
+                "02-TheHighPriestess",
+                "05-TheHierophant",
+                "09-TheHermit",
+                "17-TheStar",
+            ],
+            minimumCount: 3,
+        },
+        {
+            id: "apprentice",
+            score: 220,
+            labelJa: "弟子",
+            labelEn: "Apprentice",
+            descriptionJa:
+                "新たな可能性を持つ者が、導きの下で技術と知恵を学びます。",
+            descriptionEn:
+                "A person of new potential learns skill and wisdom under guidance.",
+            candidateUids: [
+                "00-TheFool",
+                "01-TheMagician",
+                "05-TheHierophant",
+                "09-TheHermit",
+            ],
+            minimumCount: 3,
+        },
+        {
+            id: "inheritance",
+            score: 260,
+            labelJa: "継承",
+            labelEn: "Inheritance",
+            descriptionJa:
+                "古い教えや力が審判を経て、次の世代へ受け継がれます。",
+            descriptionEn:
+                "Old teachings and authority pass through judgment into a new generation.",
+            candidateUids: [
+                "04-TheEmperor",
+                "05-TheHierophant",
+                "13-Death",
+                "20-Judgement",
+            ],
+            minimumCount: 3,
+        },
+
+        // legacy は既存定義を使用する。
+        // {
+        //     id: "legacy",
+        //     ...
+        // },
+
+        // ---------------------------------------------------------------------
+        // 旅路の途中
+        // ---------------------------------------------------------------------
+
+        {
+            id: "callToAdventure",
+            score: 230,
+            labelJa: "冒険への呼び声",
+            labelEn: "Call to Adventure",
+            descriptionJa:
+                "未知への誘いを受け、意志を持って旅へ踏み出します。",
+            descriptionEn:
+                "A call from the unknown inspires the first deliberate step into adventure.",
+            candidateUids: [
+                "00-TheFool",
+                "01-TheMagician",
+                "07-TheChariot",
+                "10-WheelOfFortune",
+            ],
+            minimumCount: 3,
+        },
+        {
+            id: "crossingTheThreshold",
+            score: 250,
+            labelJa: "境界を越える",
+            labelEn: "Crossing the Threshold",
+            descriptionJa:
+                "後戻りできない境界を越え、本当の試練が始まります。",
+            descriptionEn:
+                "A point of no return is crossed, and the true trial begins.",
+            candidateUids: [
+                "00-TheFool",
+                "07-TheChariot",
+                "12-TheHangedMan",
+                "13-Death",
+            ],
+            minimumCount: 3,
+        },
+        {
+            id: "returnHome",
+            score: 280,
+            labelJa: "帰還",
+            labelEn: "Return Home",
+            descriptionJa:
+                "長い旅と変容を経て、新しい自分として故郷へ戻ります。",
+            descriptionEn:
+                "After a long journey and transformation, the traveler returns home renewed.",
+            candidateUids: [
+                "00-TheFool",
+                "09-TheHermit",
+                "20-Judgement",
+                "21-TheWorld",
+            ],
+            minimumCount: 3,
+        },
+
+        // ---------------------------------------------------------------------
+        // 感情
+        // ---------------------------------------------------------------------
+
+        {
+            id: "hope",
+            score: 220,
+            labelJa: "希望",
+            labelEn: "Hope",
+            descriptionJa:
+                "困難の先に光を見出し、未来を信じる心が芽生えます。",
+            descriptionEn:
+                "Light is found beyond hardship, renewing faith in the future.",
+            candidateUids: [
+                "14-Temperance",
+                "17-TheStar",
+                "19-TheSun",
+                "20-Judgement",
+            ],
+            minimumCount: 3,
+        },
+        {
+            id: "fear",
+            score: 220,
+            labelJa: "恐怖",
+            labelEn: "Fear",
+            descriptionJa:
+                "孤独・束縛・崩壊・不安が、心を恐怖で満たします。",
+            descriptionEn:
+                "Solitude, bondage, collapse, and uncertainty fill the heart with fear.",
+            candidateUids: [
+                "09-TheHermit",
+                "15-TheDevil",
+                "16-TheTower",
+                "18-TheMoon",
+            ],
+            minimumCount: 3,
+        },
+        {
+            id: "joy",
+            score: 230,
+            labelJa: "歓喜",
+            labelEn: "Joy",
+            descriptionJa:
+                "愛と豊かさ、希望が結びつき、純粋な喜びがあふれます。",
+            descriptionEn:
+                "Love, abundance, and hope combine into pure joy.",
+            candidateUids: [
+                "03-TheEmpress",
+                "06-TheLovers",
+                "17-TheStar",
+                "19-TheSun",
+            ],
+            minimumCount: 3,
+        },
+        {
+            id: "sorrow",
+            score: 230,
+            labelJa: "悲しみ",
+            labelEn: "Sorrow",
+            descriptionJa:
+                "愛や希望を失った痛みが、孤独と不安の中に残ります。",
+            descriptionEn:
+                "The pain of lost love or hope remains within solitude and uncertainty.",
+            candidateUids: [
+                "06-TheLovers",
+                "09-TheHermit",
+                "13-Death",
+                "18-TheMoon",
+            ],
+            minimumCount: 3,
+        },
+        {
+            id: "anger",
+            score: 230,
+            labelJa: "怒り",
+            labelEn: "Anger",
+            descriptionJa:
+                "抑え込まれた力が支配や不正と衝突し、激しい怒りとなります。",
+            descriptionEn:
+                "Suppressed power collides with domination and injustice, becoming anger.",
+            candidateUids: [
+                "04-TheEmperor",
+                "07-TheChariot",
+                "08-Strength",
+                "16-TheTower",
+            ],
+            minimumCount: 3,
+        },
+        {
+            id: "compassion",
+            score: 240,
+            labelJa: "慈悲",
+            labelEn: "Compassion",
+            descriptionJa:
+                "他者の痛みを受け入れ、優しさと忍耐によって癒やします。",
+            descriptionEn:
+                "The pain of others is accepted and healed through kindness and patience.",
+            candidateUids: [
+                "03-TheEmpress",
+                "08-Strength",
+                "12-TheHangedMan",
+                "14-Temperance",
+            ],
+            minimumCount: 3,
+        },
+
+        // ---------------------------------------------------------------------
+        // 哲学・概念
+        // ---------------------------------------------------------------------
+
+        {
+            id: "freeWill",
+            score: 260,
+            labelJa: "自由意志",
+            labelEn: "Free Will",
+            descriptionJa:
+                "運命に流されるのではなく、自らの選択と意志で道を作ります。",
+            descriptionEn:
+                "Rather than being carried by fate, the path is created through choice and will.",
+            candidateUids: [
+                "00-TheFool",
+                "01-TheMagician",
+                "06-TheLovers",
+                "07-TheChariot",
+            ],
+            minimumCount: 3,
+        },
+        {
+            id: "destinyVsChoice",
+            score: 270,
+            labelJa: "運命と選択",
+            labelEn: "Destiny vs Choice",
+            descriptionJa:
+                "定められた運命と、自ら選び取る意志が対立しています。",
+            descriptionEn:
+                "Predetermined fate conflicts with the power of personal choice.",
+            candidateUids: [
+                "06-TheLovers",
+                "07-TheChariot",
+                "10-WheelOfFortune",
+                "11-Justice",
+            ],
+            minimumCount: 3,
+        },
+        {
+            id: "duality",
+            score: 240,
+            labelJa: "二元性",
+            labelEn: "Duality",
+            descriptionJa:
+                "光と闇、理性と直感など、相反する二つの側面が現れています。",
+            descriptionEn:
+                "Opposing aspects such as light and darkness or reason and intuition emerge together.",
+            candidateUids: [
+                "02-TheHighPriestess",
+                "06-TheLovers",
+                "18-TheMoon",
+                "19-TheSun",
+            ],
+            minimumCount: 3,
+        },
+        {
+            id: "balanceOfOpposites",
+            score: 270,
+            labelJa: "対立の均衡",
+            labelEn: "Balance of Opposites",
+            descriptionJa:
+                "相反する力が衝突しながらも、より大きな調和へ統合されます。",
+            descriptionEn:
+                "Opposing forces clash and are integrated into a greater harmony.",
+            candidateUids: [
+                "06-TheLovers",
+                "11-Justice",
+                "14-Temperance",
+                "18-TheMoon",
+                "19-TheSun",
+            ],
+            minimumCount: 3,
+        },
+        {
+            id: "cycleOfLife",
+            score: 300,
+            labelJa: "生命の循環",
+            labelEn: "Cycle of Life",
+            descriptionJa:
+                "誕生・変化・死・再生が一つの生命の輪を形作ります。",
+            descriptionEn:
+                "Birth, change, death, and rebirth form the cycle of life.",
+            candidateUids: [
+                "00-TheFool",
+                "03-TheEmpress",
+                "10-WheelOfFortune",
+                "13-Death",
+                "20-Judgement",
+                "21-TheWorld",
+            ],
+            minimumCount: 4,
+        },
     ];
 
 /**
