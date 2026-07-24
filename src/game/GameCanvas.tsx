@@ -57,7 +57,7 @@ export const GameCanvas = forwardRef<GameCanvasHandle, Props>(function ({ langua
         forceUpdate: false
       });
     } else if (currentScene == "play") {
-      gameRef.current?.showPlayScene({ forceUpdate: true, isShuffleCards: true });
+      gameRef.current?.showPlayScene({ forceUpdate: false });
     }
   }, [currentScene]);
 

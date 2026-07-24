@@ -1,7 +1,6 @@
 import { Container, Sprite, Text, Texture } from "pixi.js";
 import type { Scene } from "../core/Scene";
 import type { GameApp } from "../GameApp";
-import { makeButton } from "../ui/makeButton";
 
 import { Sun } from "./TitleSun";
 
@@ -32,13 +31,6 @@ export class TitleScene implements Scene {
     },
   });
 
-  private readonly startButton = makeButton("", () => {
-    //this.game.playClick();
-
-    //this.game.showPlayScene({ forceUpdate: true, isShuffleCards: true });
-    this.game.setCurrentScene("play");
-  });
-
   constructor(private readonly game: GameApp) {
     this.bg.tint = 0xf5d95a;//0xe5c94a;//0xf5d95a;//0x0f172a;
     this.bg.anchor.set(0);
@@ -61,7 +53,6 @@ export class TitleScene implements Scene {
       this.sun,
       this.title,
       this.subtitle,
-      this.startButton,
     );
     //this.sun.load();
     //this.sun.startAnimation();
@@ -70,7 +61,6 @@ export class TitleScene implements Scene {
   private refreshText() {
     this.title.text = this.game.t("gameTitle");
     this.subtitle.text = this.game.t("subtitle");
-    this.startButton.setLabel(this.game.t("start"));
   }
 
   mount() { }
@@ -88,8 +78,5 @@ export class TitleScene implements Scene {
 
     this.subtitle.x = width / 2;
     this.subtitle.y = height * 0.42;
-
-    this.startButton.x = width / 2;
-    this.startButton.y = height * 0.58;
   }
 }
