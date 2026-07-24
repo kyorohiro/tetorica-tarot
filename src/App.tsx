@@ -202,7 +202,7 @@ export default function App() {
                   void handleShuffleFullDeck();
                 }}
               >
-                {isJa ? "全体をシャッフル" : "Shuffle Full Deck"}
+                {isJa ? "アルカナをシャッフル" : "Shuffle Arcana"}
               </button>
               <button
                 className="rounded-xl px-5 py-3 text-sm bg-white/10 text-slate-200 hover:bg-white/20"
@@ -210,7 +210,7 @@ export default function App() {
                   void handleDealFiveCardHand();
                 }}
               >
-                {isJa ? "5枚の手札を配る" : "Deal 5-Card Hand"}
+                {isJa ? "アルカナポーカーの役" : "Arcana Poker Hands"}
               </button>
             </div>
           </div>
