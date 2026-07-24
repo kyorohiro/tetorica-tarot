@@ -88,11 +88,11 @@ It is a **creative thinking tool**.
 ``` 
 % sh deploy_mac.sh
 % ~/bin/butler login
-% ~/bin/butler push src-tauri/target/aarch64-apple-darwin/release/bundle/dmg/tetorica-tarot_0.5.9_aarch64.dmg kyorohiro/tetorica-tarot:mac-apple-silicon --userversion 0.5.9
+% ~/bin/butler push src-tauri/target/aarch64-apple-darwin/release/bundle/dmg/tetorica-tarot_0.6.1_aarch64.dmg kyorohiro/tetorica-tarot:mac-apple-silicon --userversion 0.6.1
 
-% ~/bin/butler push src-tauri/target/x86_64-apple-darwin/release/bundle/dmg/tetorica-tarot_0.5.9_x64.dmg kyorohiro/tetorica-tarot:mac-intel --userversion 0.5.9
+% ~/bin/butler push src-tauri/target/x86_64-apple-darwin/release/bundle/dmg/tetorica-tarot_0.6.1_x64.dmg kyorohiro/tetorica-tarot:mac-intel --userversion 0.6.1
 
-% ~/bin/butler push "tetorica-tarot_0.5.9_x64-setup.exe" kyorohiro/tetorica-tarot:windows --userversion 0.5.9
+% ~/bin/butler push "tetorica-tarot_0.6.1_x64-setup.exe" kyorohiro/tetorica-tarot:windows --userversion 0.6.1
 ```
 
 ```
@@ -101,13 +101,13 @@ npm run tauri android build -- --apk
 
 ~/Library/Android/sdk/build-tools/35.0.0/apksigner sign \
   --ks my-release-key.jks \
-  --out app-release-signed_0.5.9.apk \
+  --out app-release-signed_0.6.1.apk \
   src-tauri/gen/android/app/build/outputs/apk/universal/release/app-universal-release-unsigned.apk
 
 ~/bin/butler push \
-  "app-release-signed_0.5.9.apk" \
+  "app-release-signed_0.6.1.apk" \
   kyorohiro/tetorica-tarot:android \
-  --userversion 0.5.9
+  --userversion 0.6.1
 ```
 
 ### For itch.io / web pag
@@ -115,7 +115,7 @@ npm run tauri android build -- --apk
 ```
 npm run build:web
 cd dist
-zip -r ../web-build_0.5.9.zip .
+zip -r ../web-build_0.6.1.zip .
 ```
 
 ### For github pages (pwa)
@@ -123,5 +123,5 @@ zip -r ../web-build_0.5.9.zip .
 ```
 npm run build:gh
 cd dist
-zip -r ../web-build_0.5.9_gh.zip .
+zip -r ../web-build_0.6.1_gh.zip .
 ```

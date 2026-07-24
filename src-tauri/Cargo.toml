@@ -1,6 +1,6 @@
 [package]
 name = "tetorica-tarot"
-version = "0.5.9"
+version = "0.6.1"
 description = "A Tauri App"
 authors = ["you"]
 edition = "2021"
