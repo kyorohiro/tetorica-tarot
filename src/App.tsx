@@ -44,12 +44,14 @@ export default function App() {
       .slice(0, 5)
       .map((card) => ({
         card,
-        reversed: false,
+        reversed: Math.random() < 0.5,
       }));
 
     setPlayedCards(nextPlayedCards);
     await gameCanvas.current?.setCurrentCards(
-      nextPlayedCards.map(({ card }) => `${card.id}`),
+      nextPlayedCards.map(
+        ({ card, reversed }) => `${card.id}${reversed ? "r" : ""}`,
+      ),
     );
   };
 
@@ -98,7 +100,7 @@ export default function App() {
 
         return {
           card,
-          reversed: false,
+          reversed: trimmed.endsWith("r"),
         };
       })
       .filter((card): card is TarotPlayedCard => card !== null);
@@ -298,7 +300,7 @@ export default function App() {
                 }}
                 disabled={playedCards.length !== 5}
               >
-                Read Hands
+                {isJa ? "役を読む" : "Read Hands"}
               </button>
               <button
                 className="rounded-xl px-3 py-2 text-sm bg-white/10 text-slate-200 hover:bg-white/20"

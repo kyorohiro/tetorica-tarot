@@ -2,6 +2,47 @@ import React from "react";
 import { useDialog } from "./useDialog";
 import type { Lang } from "../game/i18n/messages";
 import type { TarotHandEvaluation } from "../game/tarot/tarotHand";
+import { cssColorFromElement } from "../game/tarot/majorArcana";
+import { LoadingImage } from "./LoadingImageProps";
+import { assetUrl } from "../lib/assetUrl";
+
+function HandCardChip({
+    title,
+    uid,
+    element,
+}: {
+    title: string;
+    uid: string;
+    element: string;
+}) {
+    return (
+        <div className="overflow-hidden rounded-xl border border-slate-700 bg-slate-900/80">
+            <div
+                className="h-1.5 w-full"
+                style={{ backgroundColor: cssColorFromElement(element) }}
+            />
+            <div className="flex items-center gap-3 px-3 py-2">
+                <div
+                    className="shrink-0 overflow-hidden rounded-md border border-slate-700"
+                    style={{ width: 42, height: 74 }}
+                >
+                    <LoadingImage src={assetUrl(`assets/${uid}.jpg`)} />
+                </div>
+                <div className="min-w-0">
+                    <div
+                        className="text-[10px] font-medium tracking-[0.18em]"
+                        style={{ color: cssColorFromElement(element) }}
+                    >
+                        {element}
+                    </div>
+                    <div className="mt-1 text-xs font-medium text-slate-100">
+                        {title}
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}
 
 function HandResultDialog({
     evaluation,
@@ -13,6 +54,14 @@ function HandResultDialog({
     onClose: () => void;
 }) {
     const isJa = lang === "ja";
+    const formatCardLabel = (titleJa: string, titleEn: string, reversed?: boolean) => {
+        const title = isJa ? titleJa : titleEn;
+        if (!reversed) {
+            return title;
+        }
+
+        return isJa ? `${title}（逆位置）` : `${title} (Reversed)`;
+    };
 
     return (
         <div className="flex w-[min(96vw,960px)] max-h-[calc(100vh-2rem)] flex-col overflow-hidden rounded-2xl border border-slate-700 bg-slate-900 text-slate-100 shadow-xl">
@@ -64,14 +113,14 @@ function HandResultDialog({
                                 <div className="mb-2 text-xs font-medium tracking-[0.18em] text-slate-400">
                                     {isJa ? "使用カード" : "Cards Used"}
                                 </div>
-                                <div className="flex flex-wrap gap-2">
-                                    {hand.matchedCards.map(({ card }) => (
-                                        <span
+                                <div className="grid gap-2 sm:grid-cols-2">
+                                    {hand.matchedCards.map(({ card, reversed }) => (
+                                        <HandCardChip
                                             key={`${hand.id}-${card.uid}`}
-                                            className="rounded-full border border-slate-600 bg-slate-900/70 px-2.5 py-1 text-xs text-slate-200"
-                                        >
-                                            {isJa ? card.titleJa : card.titleEn}
-                                        </span>
+                                            uid={card.uid}
+                                            element={card.element}
+                                            title={formatCardLabel(card.titleJa, card.titleEn, reversed)}
+                                        />
                                     ))}
                                 </div>
                             </div>
